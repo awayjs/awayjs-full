@@ -1,7 +1,7 @@
 {
-  "name": "awayjs-all",
+  "name": "awayjs-dist",
   "version": "0.1.0",
-  "description": "Complete build of AwayJS",
+  "description": "Distribution build of AwayJS",
   "url": "http://www.away3d.com",
   "dependencies": {
     "awayjs-core": "^0.2.0",
@@ -14,6 +14,10 @@
     "exorcist": "^0.1.6",
     "glob": "^4.0.6",
     "gulp": "^3.8.8",
+    "gulp-concat": "^2.4.1",
+    "gulp-rename": "^1.2.0",
+    "gulp-sourcemaps": "git://github.com/rob-bateman/gulp-sourcemaps.git",
+    "gulp-uglify": "^1.0.1",
     "path": "^0.4.9",
     "vinyl-source-stream": "^1.0.0"
   }
