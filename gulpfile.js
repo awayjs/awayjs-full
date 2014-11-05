@@ -38,7 +38,7 @@ gulp.task('package-require', function(callback){
 gulp.task('package-require-min', ['package-require'], function(callback){
    return gulp.src('./build/awayjs-dist-require.js')
        .pipe(sourcemaps.init({loadMaps:true}))
-       .pipe(uglify())
+       .pipe(uglify({compress:false}))
        .pipe(rename(function (path) {
            path.basename += '.min';
        }))
