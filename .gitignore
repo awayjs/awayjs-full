@@ -1,10 +1,9 @@
 # Build and Release Folders
 node_modules/
+dist/
 
 # Dev files
 npm-debug.log
-.travis.yml
-
 
 # Project property files
 .actionScriptProperties
