@@ -55,7 +55,9 @@
   "devDependencies": {
     "awesome-typescript-loader": "^0.17.0",
     "compression-webpack-plugin": "^0.3.1",
-    "typescript": "^1.9.0-dev.20160411",
+    "rimraf": "^2.5.2",
+    "source-map-loader": "^0.1.5",
+    "typescript": "^1.9.0-dev.20160603-1.0",
     "uglifyjs": "^2.4.10",
     "webpack": "^1.12.15"
   }

@@ -3,7 +3,8 @@ var path = require("path");
 module.exports = {
     entry: ['./index.ts'],
     output: {
-        filename: './dist/awayjs-full.js',
+        path: './dist',
+        filename: 'awayjs-full.js',
         libraryTarget: 'umd',
         umdNamedDefine: true,
         library: "awayjs-full"
@@ -21,7 +22,9 @@ module.exports = {
     module: {
         loaders: [
             // all files with a `.ts` or `.tsx` extension will be handled by 'awesome-typescript-loader'
-            { test: /\.ts(x?)$/, loader: require.resolve('awesome-typescript-loader') }
+            { test: /\.ts(x?)$/, loader: require.resolve('awesome-typescript-loader') },
+
+            { test: /\.js(x?)$/, loader: require.resolve('source-map-loader') }
         ]
     }
 }
