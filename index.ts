@@ -1,5 +1,8 @@
+import * as adapters				from "./lib/adapters";
+import * as animators				from "./lib/animators";
 import * as attributes				from "./lib/attributes";
 import * as base					from "./lib/base";
+import * as bounds					from "./lib/bounds";
 import * as controllers				from "./lib/controllers";
 import * as display					from "./lib/display";
 import * as draw					from "./lib/draw";
@@ -9,13 +12,18 @@ import * as geom					from "./lib/geom";
 import * as graphics				from "./lib/graphics";
 import * as image					from "./lib/image";
 import * as library					from "./lib/library";
+import * as managers				from "./lib/managers";
 import * as materials				from "./lib/materials";
 import * as net						from "./lib/net";
 import * as parsers					from "./lib/parsers";
 import * as partition				from "./lib/partition";
+import * as pick					from "./lib/pick";
 import * as prefabs					from "./lib/prefabs";
 import * as projections				from "./lib/projections";
+import * as shaders					from "./lib/shaders";
+import * as text					from "./lib/text";
 import * as textures				from "./lib/textures";
+import * as tools					from "./lib/tools";
 import * as ui						from "./lib/ui";
 import * as utils					from "./lib/utils";
 
@@ -100,8 +108,11 @@ RendererBase.registerAbstraction(GL_GraphicRenderable, graphics.Graphic);
 RendererBase.registerAbstraction(GL_SkyboxRenderable, display.Skybox);
 
 export {
+	adapters,
+	animators,
 	attributes,
 	base,
+	bounds,
 	controllers,
 	display,
 	draw,
@@ -111,13 +122,18 @@ export {
 	graphics,
 	image,
 	library,
+	managers,
 	materials,
 	net,
 	parsers,
 	partition,
+	pick,
 	prefabs,
 	projections,
+	shaders,
+	text,
 	textures,
+	tools,
 	ui,
 	utils,
 	DefaultRenderer,
