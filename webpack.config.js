@@ -93,11 +93,11 @@ module.exports = {
             },
             {
                 from: "./package.json",
-                to: './dist/package.json'
+                to: './package.json'
             },
             {
                 from: "./README.md",
-                to: './dist/README.md'
+                to: './README.md'
             }
         ])
     ]
