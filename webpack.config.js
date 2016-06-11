@@ -91,18 +91,9 @@ module.exports = {
                 from: "**/*.d.ts",
                 to: './node_modules/awayjs-parsers'
             },
-            {
-                from: "./package.json",
-                to: './package.json'
-            },
-            {
-                from: "./README.md",
-                to: './README.md'
-            },
-            {
-                from: "./.npmignore",
-                to: './.npmignore'
-            }
+            { from: "./package.json" },
+            { from: "./README.md" },
+            { from: "./.npmignore" }
         ])
     ]
 };
