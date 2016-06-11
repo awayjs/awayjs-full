@@ -24,7 +24,7 @@
     "build:prod": "webpack --config webpack.config.js  --progress --profile --colors --display-error-details --display-cached --bail",
     "postbuild:prod": "uglifyjs ./dist/awayjs-full.js --output ./dist/awayjs-full.min.js --source-map ./dist/awayjs-full.min.js.map --in-source-map ./dist/awayjs-full.js.map --mangle",
     "version": "npm run build:prod",
-    "postversion": "git push && git push --tags && npm publish"
+    "postversion": "git push && git push --tags && npm publish dist"
   },
   "repository": {
     "type": "git",
@@ -43,18 +43,17 @@
     "url": "https://github.com/awayjs/awayjs-full/issues"
   },
   "homepage": "https://github.com/awayjs/awayjs-full#readme",
-  "dependencies": {
+  "devDependencies": {
     "awayjs-core": "^0.6.0",
     "awayjs-display": "^0.8.36",
     "awayjs-renderergl": "^0.8.26",
     "awayjs-stagegl": "^0.8.12",
     "awayjs-methodmaterials": "^0.3.20",
     "awayjs-parsers": "^0.5.31",
-    "awayjs-player": "^0.5.16"
-  },
-  "devDependencies": {
+    "awayjs-player": "^0.5.16",
     "awesome-typescript-loader": "^0.17.0",
     "compression-webpack-plugin": "^0.3.1",
+    "copy-webpack-plugin": "^3.0.1",
     "rimraf": "^2.5.2",
     "source-map-loader": "^0.1.5",
     "typescript": "^1.9.0-dev.20160603-1.0",

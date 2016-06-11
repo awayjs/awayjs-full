@@ -3,8 +3,19 @@
     "target": "ES5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "baseUrl": "."
+    "declaration": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "awayjs-core/*": ["./node_modules/awayjs-core/dist/*"],
+      "awayjs-display/*": ["./node_modules/awayjs-display/dist/*"],
+      "awayjs-stagegl/*": ["./node_modules/awayjs-stagegl/dist/*"],
+      "awayjs-renderergl/*": ["./node_modules/awayjs-renderergl/dist/*"],
+      "awayjs-methodmaterials/*": ["./node_modules/awayjs-methodmaterials/dist/*"],
+      "awayjs-player/*": ["./node_modules/awayjs-player/dist/*"],
+      "awayjs-parsers": ["./node_modules/awayjs-parsers/dist"],
+      "awayjs-parsers/*": ["./node_modules/awayjs-parsers/dist/*"]
+    }
   },
   "files": [
     "./index.ts"
