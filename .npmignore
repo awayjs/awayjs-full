@@ -1,6 +1,3 @@
-# Build and Release Folders
-node_modules/
-
 # Dev files
 npm-debug.log
 tests/

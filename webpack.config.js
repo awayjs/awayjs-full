@@ -90,8 +90,15 @@ module.exports = {
                 context: "./node_modules/awayjs-parsers/dist",
                 from: "**/*.d.ts",
                 to: './node_modules/awayjs-parsers'
+            },
+            {
+                from: "./package.json",
+                to: './dist/package.json'
+            },
+            {
+                from: "./README.md",
+                to: './dist/README.md'
             }
-            
         ])
     ]
 };
