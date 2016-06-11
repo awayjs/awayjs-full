@@ -2,6 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var webpack = require('webpack');
 var CopyWebPackPlugin = require('copy-webpack-plugin');
+var DtsBundlerPlugin = require('dtsbundler-webpack-plugin');
 
 var subModules = fs.readdirSync(path.join(__dirname, "lib")).filter(function (file) {
     return (file.slice(-3) == ".ts");
@@ -56,44 +57,8 @@ module.exports = {
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({name:'awayjs-full', filename:'index.js'}),
         new CopyWebPackPlugin([
-            {
-                context: "./node_modules/awayjs-core/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-core'
-            },
-            {
-                context: "./node_modules/awayjs-display/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-display'
-            },
-            {
-                context: "./node_modules/awayjs-stagegl/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-stagegl'
-            },
-            {
-                context: "./node_modules/awayjs-renderergl/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-renderergl'
-            },
-            {
-                context: "./node_modules/awayjs-methodmaterials/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-methodmaterials'
-            },
-            {
-                context: "./node_modules/awayjs-player/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-player'
-            },
-            {
-                context: "./node_modules/awayjs-parsers/dist",
-                from: "**/*.d.ts",
-                to: './node_modules/awayjs-parsers'
-            },
             { from: "./package.json" },
-            { from: "./README.md" },
-            { from: "./.npmignore" }
+            { from: "./README.md" }
         ])
     ]
 };
