@@ -43,14 +43,25 @@
     "url": "https://github.com/awayjs/awayjs-full/issues"
   },
   "homepage": "https://github.com/awayjs/awayjs-full#readme",
-  "devDependencies": {
+  "dependencies": {
     "awayjs-core": "^0.6.0",
     "awayjs-display": "^0.8.36",
     "awayjs-renderergl": "^0.8.26",
     "awayjs-stagegl": "^0.8.12",
     "awayjs-methodmaterials": "^0.3.20",
     "awayjs-parsers": "^0.5.31",
-    "awayjs-player": "^0.5.16",
+    "awayjs-player": "^0.5.16"
+  },
+  "peerDependencies": {
+    "awayjs-core": "^0.6.0",
+    "awayjs-display": "^0.8.36",
+    "awayjs-renderergl": "^0.8.26",
+    "awayjs-stagegl": "^0.8.12",
+    "awayjs-methodmaterials": "^0.3.20",
+    "awayjs-parsers": "^0.5.31",
+    "awayjs-player": "^0.5.16"
+  },
+  "devDependencies": {
     "awesome-typescript-loader": "^0.17.0",
     "compression-webpack-plugin": "^0.3.1",
     "copy-webpack-plugin": "^3.0.1",
