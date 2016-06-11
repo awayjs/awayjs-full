@@ -22,7 +22,7 @@
     "build:dev": "webpack --config webpack.config.js --progress --profile --colors --display-error-details --display-cached",
     "prebuild:prod": "npm run clean:dist",
     "build:prod": "webpack --config webpack.config.js  --progress --profile --colors --display-error-details --display-cached --bail",
-    "postbuild:prod": "uglifyjs ./dist/awayjs-full.js --output ./dist/awayjs-full.min.js --source-map ./dist/awayjs-full.min.js.map --in-source-map ./dist/awayjs-full.js.map --mangle",
+    "postbuild:prod": "uglifyjs ./dist/index.js --output ./dist/index.min.js --source-map ./dist/index.min.js.map --in-source-map ./dist/index.js.map --mangle",
     "version": "npm run build:prod",
     "postversion": "git push && git push --tags && npm publish dist"
   },
