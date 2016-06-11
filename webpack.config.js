@@ -98,6 +98,10 @@ module.exports = {
             {
                 from: "./README.md",
                 to: './README.md'
+            },
+            {
+                from: "./.npmignore",
+                to: './.npmignore'
             }
         ])
     ]
