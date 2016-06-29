@@ -1,20 +1,18 @@
 var path = require('path');
 var fs = require('fs');
 var webpack = require('webpack');
-var CopyWebPackPlugin = require('copy-webpack-plugin');
-var DtsBundlerPlugin = require('dtsbundler-webpack-plugin');
 
-var subModules = fs.readdirSync(path.join(__dirname, "ts", "lib")).filter(function (file) {
-    return (file.slice(-3) == ".ts");
+var subModules = fs.readdirSync(path.join(__dirname, "lib")).filter(function (file) {
+    return (file.slice(-3) == ".js");
 });
 var entry = {};
 
 for (var i = 0; i < subModules.length; i++) {
     var name = subModules[i].split('.')[0];
-    entry[String(name)] = [path.join(__dirname, "ts", "lib", subModules[i])];
+    entry[String(name)] = [path.join(__dirname, "lib", subModules[i])];
 }
 
-entry['awayjs'] = ['./ts/index'];
+entry['awayjs'] = ['./index'];
 
 module.exports = {
 
@@ -28,22 +26,12 @@ module.exports = {
         library: "[name]"
     },
     resolve: {
-        // Add `.ts` and `.tsx` as a resolvable extension.
-        extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
+        extensions: ['', '.webpack.js', '.web.js', '.js'],
         fallback: [path.join(__dirname, 'node_modules')]
     },
     resolveLoader: {
         root: path.join(__dirname, 'node_modules'),
         fallback: [path.join(__dirname, 'node_modules')]
-    },
-    module: {
-        loaders: [
-            // all files with a `.ts` or `.tsx` extension will be handled by `awesome-typescript-loader`
-            { test: /\.ts(x?)$/, loader: require.resolve('awesome-typescript-loader')},
-
-            // all files with a `.js` or `.jsx` extension will be handled by `source-map-loader`
-            { test: /\.js(x?)$/, loader: require.resolve('source-map-loader') }
-        ]
     },
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({name:'awayjs', filename:'index.js'})
