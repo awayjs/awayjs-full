@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <style>
+
+        body
+        {
+            height: 100%;
+        }
+
+    </style>
+
+    <script type="text/javascript" language="javascript" src="AppHarness.js"></script>
+
+    <script type="text/javascript">
+
+
+        window.onload = function ()
+        {
+            var harness = new away.AppHarness();
+
+            //---------------------------------------------------------------------------
+            // Demos
+            //---------------------------------------------------------------------------
+            harness.addSeperator("Software");
+            harness.addTest("Software.SoftwarePrimitivesTest", "tests.software.SoftwarePrimitivesTest", "software/SoftwarePrimitivesTest.js", "software/SoftwarePrimitivesTest.ts");
+            harness.addTest("Software.MipMapSoftwareTest", "tests.software.MipMapSoftwareTest", "software/MipMapSoftwareTest.js", "software/MipMapSoftwareTest.ts");
+
+            harness.addSeperator("Objects");
+            harness.addTest("Objects.TorusObject3DDemo", "tests.object3d.TorusObject3DDemo", "object3d/TorusObject3DDemo.js", "object3d/TorusObject3DDemo.ts");
+
+            //---------------------------------------------------------------------------
+            // Test - Primitives
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator("Primitives");
+            harness.addTest("Primitives.PrimitivesTest", "tests.primitives.PrimitivesTest", "primitives/PrimitivesTest.js", "primitives/PrimitivesTest.ts");
+
+            //---------------------------------------------------------------------------
+            // Test - Materials
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator("Materials");
+            harness.addTest("Materials.ColorMultiPassMatTest", "tests.materials.ColorMultiPassMatTest", "materials/ColorMultiPassMatTest.js", "materials/ColorMultiPassMatTest.ts");
+            harness.addTest("Materials.TextureMultiPassMatTest", "tests.materials.TextureMultiPassMatTest", "materials/TextureMultiPassMatTest.js", "materials/TextureMultiPassMatTest.ts");
+
+            //---------------------------------------------------------------------------
+            // Test - Lights
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator("Lights");
+            harness.addTest("Lights.TorusLight", "tests.lights.TorusLight", "lights/TorusLight.js", "lights/TorusLight.ts");
+
+            //---------------------------------------------------------------------------
+            // Load a default
+            harness.load("tests.object3d.TorusObject3DDemo", "object3d/TorusObject3DDemo.js", "object3d/TorusObject3DDemo.ts");
+            harness.start(); // Start
+
+        }
+
+
+    </script>
+</head>
+
+</head>
+<body>
+
+</body>
+</html>

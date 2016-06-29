@@ -4,39 +4,30 @@ var webpack = require('webpack');
 var CopyWebPackPlugin = require('copy-webpack-plugin');
 var DtsBundlerPlugin = require('dtsbundler-webpack-plugin');
 
-var subModules = fs.readdirSync(path.join(__dirname, "lib")).filter(function (file) {
+var subModules = fs.readdirSync(path.join(__dirname, "ts", "lib")).filter(function (file) {
     return (file.slice(-3) == ".ts");
 });
 var entry = {};
 
 for (var i = 0; i < subModules.length; i++) {
     var name = subModules[i].split('.')[0];
-    entry[String(name)] = [path.join(__dirname, "lib", subModules[i])];
+    entry[String(name)] = [path.join(__dirname, "ts", "lib", subModules[i])];
 }
 
-entry['awayjs-full'] = ['./index'];
+entry['awayjs'] = ['./ts/index'];
 
 module.exports = {
 
     entry: entry,
     devtool: 'source-map',
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "bundles"),
         filename: 'lib/[name].js',
         libraryTarget: 'umd',
         umdNamedDefine: true,
         library: "[name]"
     },
     resolve: {
-        alias: {
-            "awayjs-core": "awayjs-core/dist",
-			"awayjs-display": "awayjs-display/dist",
-			"awayjs-stagegl": "awayjs-stagegl/dist",
-			"awayjs-renderergl": "awayjs-renderergl/dist",
-			"awayjs-methodmaterials": "awayjs-methodmaterials/dist",
-			"awayjs-player": "awayjs-player/dist",
-			"awayjs-parsers": "awayjs-parsers/dist"
-        },
         // Add `.ts` and `.tsx` as a resolvable extension.
         extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
         fallback: [path.join(__dirname, 'node_modules')]
@@ -55,10 +46,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({name:'awayjs-full', filename:'index.js'}),
-        new CopyWebPackPlugin([
-            { from: "./package.json" },
-            { from: "./README.md" }
-        ])
+        new webpack.optimize.CommonsChunkPlugin({name:'awayjs', filename:'index.js'})
     ]
 };

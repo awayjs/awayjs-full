@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "../../../node_modules/@awayjs/renderer"
+  },
+  "files": [
+    "./index.ts"
+  ]
+}

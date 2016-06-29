@@ -6,8 +6,8 @@
   "scripts": {
     "rimraf": "rimraf",
     "webpack": "webpack",
-    "clean": "npm cache clean && npm run rimraf -- node_modules dist",
-    "clean:dist": "npm run rimraf -- dist",
+    "clean": "npm cache clean && npm run rimraf -- node_modules bundles",
+    "clean:bundles": "npm run rimraf -- bundles",
     "preclean:install": "npm run clean",
     "clean:install": "npm set progress=false && npm install",
     "preclean:start": "npm run clean",
@@ -18,13 +18,13 @@
     "watch:test": "npm run test -- --auto-watch --no-single-run",
     "watch:prod": "npm run build:prod -- --watch",
     "build": "npm run build:dev",
-    "prebuild:dev": "npm run clean:dist",
+    "prebuild:dev": "npm run clean:bundles",
     "build:dev": "webpack --config webpack.config.js --progress --profile --colors --display-error-details --display-cached",
-    "prebuild:prod": "npm run clean:dist",
+    "prebuild:prod": "npm run clean:bundles",
     "build:prod": "webpack --config webpack.config.js  --progress --profile --colors --display-error-details --display-cached --bail",
-    "postbuild:prod": "uglifyjs ./dist/index.js --output ./dist/index.min.js --source-map ./dist/index.min.js.map --in-source-map ./dist/index.js.map --mangle",
+    "postbuild:prod": "uglifyjs ./bundles/index.js --output ./bundles/index.min.js --source-map ./bundles/index.min.js.map --in-source-map ./bundles/index.js.map --mangle",
     "version": "npm run build:prod",
-    "postversion": "git push && git push --tags && npm publish dist"
+    "postversion": "git push && git push --tags && npm publish bundles"
   },
   "repository": {
     "type": "git",
@@ -44,22 +44,13 @@
   },
   "homepage": "https://github.com/awayjs/awayjs-full#readme",
   "dependencies": {
-    "awayjs-core": "^0.6.0",
-    "awayjs-display": "^0.8.36",
-    "awayjs-renderergl": "^0.8.26",
-    "awayjs-stagegl": "^0.8.12",
-    "awayjs-methodmaterials": "^0.3.20",
-    "awayjs-parsers": "^0.5.31",
-    "awayjs-player": "^0.5.16"
-  },
-  "peerDependencies": {
-    "awayjs-core": "^0.6.0",
-    "awayjs-display": "^0.8.36",
-    "awayjs-renderergl": "^0.8.26",
-    "awayjs-stagegl": "^0.8.12",
-    "awayjs-methodmaterials": "^0.3.20",
-    "awayjs-parsers": "^0.5.31",
-    "awayjs-player": "^0.5.16"
+    "@awayjs/core": "^0.6.0",
+    "@awayjs/display": "^0.8.36",
+    "@awayjs/stage": "^0.8.12",
+    "@awayjs/renderer": "^0.8.26",
+    "@awayjs/materials": "^0.3.20",
+    "@awayjs/player": "^0.5.16",
+    "@awayjs/parsers": "^0.5.31"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^0.17.0",

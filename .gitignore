@@ -1,6 +1,6 @@
 # Build and Release Folders
+bundles/
 node_modules/
-dist/
 
 # Dev files
 npm-debug.log
