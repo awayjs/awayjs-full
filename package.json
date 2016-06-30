@@ -24,7 +24,7 @@
     "build:prod": "webpack --config webpack.config.js  --progress --profile --colors --display-error-details --display-cached --bail",
     "postbuild:prod": "uglifyjs ./bundles/index.js --output ./bundles/index.min.js --source-map ./bundles/index.min.js.map --in-source-map ./bundles/index.js.map --mangle",
     "version": "npm run build:prod",
-    "postversion": "git push && git push --tags && npm publish bundles"
+    "postversion": "git push && git push --tags && npm publish"
   },
   "repository": {
     "type": "git",
