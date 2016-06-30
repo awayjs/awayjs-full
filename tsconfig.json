@@ -2,15 +2,15 @@
   "compilerOptions": {
     "target": "ES5",
     "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "classic",
     "declaration": true,
-    "outDir": "./",
+    "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@awayjs/*": ["./node_modules/@awayjs/*"]
+      "*": ["*", "node_modules/*"]
     }
   },
   "files": [
-    "./ts/index.ts"
+    "./index.ts"
   ]
 }

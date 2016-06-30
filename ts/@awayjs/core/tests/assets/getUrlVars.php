@@ -1,1 +1,0 @@
-<?php echo'name=awaymediaengine&version=1&date=03/07/13&parse=false'; ?>
