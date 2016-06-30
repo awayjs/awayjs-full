@@ -5,7 +5,10 @@
     "moduleResolution": "node",
     "declaration": true,
     "outDir": "./",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@awayjs/*": ["./node_modules/@awayjs/*"]
+    }
   },
   "files": [
     "./ts/index.ts"
