@@ -8,6 +8,7 @@ export * from "./lib/display";
 export * from "./lib/draw";
 export * from "./lib/errors";
 export * from "./lib/events";
+export * from "./lib/filters";
 export * from "./lib/geom";
 export * from "./lib/graphics";
 export * from "./lib/image";

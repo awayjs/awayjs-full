@@ -84,6 +84,7 @@ __export(require("./lib/display"));
 __export(require("./lib/draw"));
 __export(require("./lib/errors"));
 __export(require("./lib/events"));
+__export(require("./lib/filters"));
 __export(require("./lib/geom"));
 __export(require("./lib/graphics"));
 __export(require("./lib/image"));
