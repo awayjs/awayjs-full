@@ -41,6 +41,7 @@
     "@awayjs/parsers": "^0.5.31"
   },
   "devDependencies": {
+    "awesome-typescript-loader": "^1.1.1",
     "compression-webpack-plugin": "^0.3.1",
     "rimraf": "^2.5.2",
     "typescript": "^1.9.0-dev.20160603-1.0",
