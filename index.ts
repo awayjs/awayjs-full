@@ -56,7 +56,6 @@ partition.PartitionBase.registerAbstraction(partition.EntityNode, display.MovieC
 partition.PartitionBase.registerAbstraction(partition.EntityNode, display.Billboard);
 partition.PartitionBase.registerAbstraction(partition.EntityNode, display.LineSegment);
 partition.PartitionBase.registerAbstraction(partition.EntityNode, display.TextField);
-partition.PartitionBase.registerAbstraction(partition.EntityNode, display.TextFieldMultiRender);
 partition.PartitionBase.registerAbstraction(partition.LightProbeNode, display.LightProbe);
 partition.PartitionBase.registerAbstraction(partition.PointLightNode, display.PointLight);
 partition.PartitionBase.registerAbstraction(partition.DirectionalLightNode, display.DirectionalLight);
