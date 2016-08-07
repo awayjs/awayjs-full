@@ -19,7 +19,7 @@ module.exports = {
     entry: entry,
     devtool: 'source-map',
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "bundles"),
         filename: 'lib/[name].js',
         libraryTarget: 'umd',
         umdNamedDefine: true,
@@ -41,6 +41,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({name:'awayjs', filename:'index.js'})
+        new webpack.optimize.CommonsChunkPlugin({name:'awayjs', filename:'awayjs.umd.js'})
     ]
 };
