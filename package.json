@@ -1,6 +1,6 @@
 {
   "name": "awayjs-full",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "Complete monolitic build for all types of AwayJS projects",
   "main": "index.js",
   "scripts": {
