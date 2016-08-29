@@ -114,5 +114,5 @@ export * from "./lib/textures";
 export * from "./lib/tools";
 export * from "./lib/ui";
 export * from "./lib/utils";
-export {View} from "@awayjs/display/lib/View";
+export {View} from "@awayjs/view/lib/View";
 export {DefaultRenderer} from "@awayjs/renderer/lib/DefaultRenderer";

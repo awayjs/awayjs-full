@@ -1,1 +1,1 @@
-export * from "@awayjs/display/lib/partition";
+export * from "@awayjs/view/lib/partition";
