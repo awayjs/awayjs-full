@@ -35,7 +35,7 @@
     "@awayjs/core": "^0.6.0",
     "@awayjs/display": "^0.8.36",
     "@awayjs/stage": "^0.8.12",
-    "@awayjs/view": "^0.0.1",
+    "@awayjs/view": "^0.2.0",
     "@awayjs/renderer": "^0.8.26",
     "@awayjs/materials": "^0.3.20",
     "@awayjs/player": "^0.5.16",
