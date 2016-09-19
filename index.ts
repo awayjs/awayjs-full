@@ -48,6 +48,7 @@ library.Loader.enableParser(parsers.MD5AnimParser);
 library.Loader.enableParser(parsers.MD5MeshParser);
 library.Loader.enableParser(parsers.Image2DParser);
 library.Loader.enableParser(parsers.ImageCubeParser);
+library.Loader.enableParser(parsers.WaveAudioParser);
 
 partition.PartitionBase.registerAbstraction(partition.CameraNode, display.Camera);
 partition.PartitionBase.registerAbstraction(partition.EntityNode, display.Sprite);
