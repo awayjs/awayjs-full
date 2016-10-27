@@ -37,8 +37,10 @@ npm link to each of these, on all of the modules. This might take a while!
 11) You should be all setup locally now. Try altering part of the awayjs library code and running your project. If the awayjs watcher and your project's watcher are active, 
 you should see the changes refresh in your browser in a matter of seconds.
 
-12) Any changes that you make to an awayjs module should be published to git via a direct commit to github or a pull request. Since awayjs uses npm, another option is to
-run "npm version patch" (or "npm version minor" or "npm version major") to up the semver version of the module.
+12) Any changes that you make to an awayjs module should be published to git via a pull request. If you are merging a request, you can use "npm push" to automatically up the semver numbers.
+
+***IMPORTANT*** 
+The watcher from item 5) is less strict than tsc compile, so before pushing any changes (or making a pull request), make sure to run "tsc compile" so that you catch any errors before pushing
 
 13) At some point in the awayjs collaborative development, your pushed changes may be merged into the official awayjs-full module.
 
