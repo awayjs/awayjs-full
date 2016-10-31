@@ -28,7 +28,7 @@ By now, your project is using your specified awayjs-full version as a dependency
 
 9) In your awayjs-full folder, run "npm link path-to-module" for each of awayjs' sub modules. For example: npm link ../core, npm link ../display, etc.
 
-Now your awayjs-full project folder properly points to the actual awayjs submodules, but they themselves doint point to each other locally. A bit of interlinking is 
+Now your awayjs-full project folder properly points to the actual awayjs submodules, but they themselves dont point to each other locally. A bit of interlinking is 
 to be done amongst the submodules themselves now.
 
 10) On each of the awayjs module folders (i.e. core, display, etc), inside the node_modules folder, you should be able to see to what other awayjs submodules the module depends on.
