@@ -1,1 +1,1 @@
-export * from "@awayjs/display/lib/graphics";
+export * from "@awayjs/graphics/index";

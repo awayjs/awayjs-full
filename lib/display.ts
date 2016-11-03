@@ -1,1 +1,1 @@
-export * from "@awayjs/display/lib/display";
+export * from "@awayjs/display/index";
