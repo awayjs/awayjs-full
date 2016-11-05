@@ -12,7 +12,17 @@ for (var i = 0; i < subModules.length; i++) {
     entry[String(name)] = [path.join(__dirname, "lib", subModules[i])];
 }
 
-entry['awayjs'] = ['./index'];
+entry['awayjs-full'] = ['./index'];
+entry['awayjs-full/lib/core'] = ['./index'];
+entry['@awayjs/core'] = ['@awayjs/core'];
+entry['@awayjs/graphics'] = ['@awayjs/graphics'];
+entry['@awayjs/materials'] = ['@awayjs/materials'];
+entry['@awayjs/parsers'] = ['@awayjs/parsers'];
+entry['@awayjs/player'] = ['@awayjs/player'];
+entry['@awayjs/renderer'] = ['@awayjs/renderer'];
+entry['@awayjs/scene'] = ['@awayjs/scene'];
+entry['@awayjs/stage'] = ['@awayjs/stage'];
+
 
 module.exports = {
 
@@ -41,6 +51,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({name:'awayjs', filename:'awayjs.umd.js'})
+        new webpack.optimize.CommonsChunkPlugin({name:'@awayjs/core', filename:'@awayjs/core.js'})
     ]
 };
