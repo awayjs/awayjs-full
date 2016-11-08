@@ -21,7 +21,7 @@ stage.Stage.registerAbstraction(stage.GL_AttributesBuffer, core.AttributesBuffer
 renderer.MaterialPool.registerAbstraction(renderer.GL_SkyboxMaterial, scene.Skybox);
 renderer.RendererBase.registerAbstraction(renderer.GL_BillboardRenderable, scene.Billboard);
 renderer.RendererBase.registerAbstraction(renderer.GL_LineSegmentRenderable, scene.LineSegment);
-renderer.RendererBase.registerAbstraction(renderer.GL_GraphicRenderable, graphics.Graphic);
+renderer.RendererBase.registerAbstraction(renderer.GL_ShapeRenderable, graphics.Shape);
 renderer.RendererBase.registerAbstraction(renderer.GL_SkyboxRenderable, scene.Skybox);
 
 //register graphics images
@@ -51,7 +51,6 @@ renderer.MaterialPool.registerAbstraction(materials.GL_MethodMaterial, materials
 view.PartitionBase.registerAbstraction(view.CameraNode, scene.Camera);
 view.PartitionBase.registerAbstraction(view.EntityNode, scene.DirectionalLight);
 view.PartitionBase.registerAbstraction(view.EntityNode, scene.Sprite);
-view.PartitionBase.registerAbstraction(view.EntityNode, scene.Shape);
 view.PartitionBase.registerAbstraction(view.EntityNode, scene.MovieClip);
 view.PartitionBase.registerAbstraction(view.EntityNode, scene.Billboard);
 view.PartitionBase.registerAbstraction(view.EntityNode, scene.LineSegment);
