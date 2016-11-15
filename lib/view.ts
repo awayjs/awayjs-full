@@ -19,10 +19,11 @@ stage.Stage.registerAbstraction(stage.GL_AttributesBuffer, core.AttributesBuffer
 
 //register scene entities
 renderer.MaterialPool.registerAbstraction(renderer.GL_SkyboxMaterial, scene.Skybox);
-renderer.RendererBase.registerAbstraction(renderer.GL_BillboardRenderable, scene.Billboard);
-renderer.RendererBase.registerAbstraction(renderer.GL_LineSegmentRenderable, scene.LineSegment);
-renderer.RendererBase.registerAbstraction(renderer.GL_ShapeRenderable, graphics.Shape);
-renderer.RendererBase.registerAbstraction(renderer.GL_SkyboxRenderable, scene.Skybox);
+
+renderer.RenderablePool.registerAbstraction(renderer.GL_BillboardRenderable, scene.Billboard);
+renderer.RenderablePool.registerAbstraction(renderer.GL_LineSegmentRenderable, scene.LineSegment);
+renderer.RenderablePool.registerAbstraction(renderer.GL_ShapeRenderable, graphics.Shape);
+renderer.RenderablePool.registerAbstraction(renderer.GL_SkyboxRenderable, scene.Skybox);
 
 //register graphics images
 stage.Stage.registerAbstraction(stage.GL_RenderImage2D, graphics.Image2D);
