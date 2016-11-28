@@ -2,17 +2,30 @@
   "name": "awayjs-full",
   "version": "0.2.32",
   "description": "Complete monolitic build for all types of AwayJS projects",
-  "main": "index.js",
+  "main": "bundle/awayjs-full.umd.js",
+  "types": "index.d.ts",
   "scripts": {
     "rimraf": "rimraf",
+    "rollup": "rollup -c",
+    "uglifyjs": "uglifyjs ./bundle/awayjs-full.umd.js -o ./bundle/awayjs-full.umd.min.js --in-source-map ./bundle/awayjs-full.umd.js.map --source-map ./bundle/awayjs-full.umd.min.js.map --mangle",
     "tsc": "tsc",
-    "clean": "npm cache clean && npm run rimraf -- node_modules dist",
-    "clean:dist": "npm run rimraf -- dist",
-    "watch": "npm run build -- --w",
+    "clean": "npm cache clean && npm run rimraf -- node_modules dist bundle",
+    "clean:dist": "npm run rimraf -- dist bundle",
+    "watch": "npm run tsc -- --w",
     "prebuild": "npm run clean:dist",
-    "build": "tsc",
+    "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "git push && git push --tags && npm publish"
+    "postversion": "git push && git push --tags && npm publish",
+    "core:watch": "cd ./node_modules/@awayjs/core && npm run watch",
+    "graphics:watch": "cd ./node_modules/@awayjs/graphics && npm run watch",
+    "scene:watch": "cd ./node_modules/@awayjs/scene && npm run watch",
+    "stage:watch": "cd ./node_modules/@awayjs/stage && npm run watch",
+    "renderer:watch": "cd ./node_modules/@awayjs/renderer && npm run watch",
+    "view:watch": "cd ./node_modules/@awayjs/view && npm run watch",
+    "materials:watch": "cd ./node_modules/@awayjs/materials && npm run watch",
+    "player:watch": "cd ./node_modules/@awayjs/player && npm run watch",
+    "parsers:watch": "cd ./node_modules/@awayjs/parsers && npm run watch",
+    "modules:watch": "concurrently 'npm run core:watch' 'npm run graphics:watch' 'npm run scene:watch' 'npm run stage:watch' 'npm run renderer:watch' 'npm run view:watch' 'npm run materials:watch' 'npm run player:watch' 'npm run parsers:watch'"
   },
   "repository": {
     "type": "git",
@@ -40,14 +53,15 @@
     "@awayjs/renderer": "^0.8.26",
     "@awayjs/materials": "^0.3.20",
     "@awayjs/player": "^0.5.16",
-    "@awayjs/parsers": "^0.5.31"
+    "@awayjs/parsers": "^0.5.31",
+    "tslib": "github:microsoft/tslib"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^1.1.1",
-    "compression-webpack-plugin": "^0.3.1",
+    "concurrently": "^3.1.0",
     "rimraf": "^2.5.2",
-    "typescript": "^1.9.0-dev.20160603-1.0",
-    "uglifyjs": "^2.4.10",
-    "webpack": "^1.12.15"
+    "rollup": "^0.36.4",
+    "rollup-plugin-includepaths": "^0.1.6",
+    "typescript": "^2.2.0-dev.20161123",
+    "uglifyjs": "^2.4.10"
   }
 }

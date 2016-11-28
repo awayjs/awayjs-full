@@ -1,6 +1,4 @@
 # Build and Release Folders
-bundles/
-dist/
 node_modules/
 
 # Dev files

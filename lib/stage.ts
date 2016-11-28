@@ -1,1 +1,1 @@
-export * from "@awayjs/stage/index";
+export * from "@awayjs/stage";

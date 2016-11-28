@@ -1,1 +1,1 @@
-export * from "@awayjs/materials/index";
+export * from "@awayjs/materials";
