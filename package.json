@@ -1,6 +1,6 @@
 {
   "name": "awayjs-full",
-  "version": "0.2.34",
+  "version": "0.2.35",
   "description": "Complete monolitic build for all types of AwayJS projects",
   "main": "bundle/awayjs-full.umd.js",
   "types": "index.d.ts",
@@ -25,7 +25,7 @@
     "materials:watch": "cd ./node_modules/@awayjs/materials && npm run watch",
     "player:watch": "cd ./node_modules/@awayjs/player && npm run watch",
     "parsers:watch": "cd ./node_modules/@awayjs/parsers && npm run watch",
-    "modules:watch": "concurrently 'npm run core:watch' 'npm run graphics:watch' 'npm run scene:watch' 'npm run stage:watch' 'npm run renderer:watch' 'npm run view:watch' 'npm run materials:watch' 'npm run player:watch' 'npm run parsers:watch'"
+    "modules:watch": "concurrently \"npm run core:watch\" \"npm run graphics:watch\" \"npm run scene:watch\" \"npm run stage:watch\" \"npm run renderer:watch\" \"npm run view:watch\" \"npm run materials:watch\" \"npm run player:watch\" \"npm run parsers:watch\""
   },
   "repository": {
     "type": "git",
