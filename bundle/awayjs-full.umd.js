@@ -458,7 +458,6 @@ var AttributesBuffer = (function (_super) {
          * @returns {string}
          */
         get: function () {
-            var test = 77777666;
             return AttributesBuffer.assetType;
         },
         enumerable: true,
@@ -11195,14 +11194,14 @@ var Byte32Array = (function () {
             return String.fromCharCode(parseInt('0x' + p1));
         });
         if (binstr.length % 4) {
-            var padding = binstr.length % 4;
+            var padding = 4 - (binstr.length % 4);
             for (var i = 0; i < padding; i++)
                 binstr += " ";
         }
         this._ensureSpace(this.bytePosition + 4 + binstr.length);
         this.writeInt(binstr.length);
         for (var i = 0; i < binstr.length; i += 4)
-            this.writeUnsignedInt((binstr.charCodeAt(i) << 24) | (binstr.charCodeAt(i + 1) << 16) | (binstr.charCodeAt(i + 2) << 8) | binstr.charCodeAt(i));
+            this.writeUnsignedInt((binstr.charCodeAt(i + 3) << 24) | (binstr.charCodeAt(i + 2) << 16) | (binstr.charCodeAt(i + 1) << 8) | binstr.charCodeAt(i));
         return binstr.length;
     };
     Byte32Array.prototype.readInt = function () {
@@ -23312,7 +23311,7 @@ var TextureBaseGLES = (function (_super) {
         // this._gl = gl;
     }
     TextureBaseGLES.prototype.dispose = function () {
-        console.log("dispose texturedata " + this.id);
+        //console.log("dispose texturedata "+this.id);
         ///this._context.addStream(String.fromCharCode(OpCodes.disposeTexture) + this.id.toString() + "#END");
         this._context._createBytes.writeInt(OpCodes.disposeTexture);
         this._context._createBytes.writeInt(this.id);
@@ -23429,8 +23428,8 @@ var ProgramGLES = (function (_super) {
         var _this = _super.call(this, context, id) || this;
         _this._uniforms = [[], [], []];
         _this._attribs = [];
-        console.log("awayjs created program with id " + id);
         return _this;
+        //console.log("awayjs created program with id "+ id);
         // this._gl = gl;
         // this._program = this._gl.createProgram();
     }
@@ -23638,7 +23637,7 @@ var TextureGLES = (function (_super) {
             return base64
         }*/
         //this._context.addCreateStream(String.fromCharCode(OpCodes.uploadBytesTexture) + this.id.toString() + "," + miplevel + "," + (this._width >> miplevel) + "," + (this._height >> miplevel) + "," +base64ArrayBuffer(data.data.buffer)+"#END");
-        console.log("upload texturedata " + this.id);
+        //console.log("upload texturedata "+this.id);
         this._context._createBytes.writeInt(OpCodes.uploadBytesTexture | miplevel << 8);
         this._context._createBytes.writeInt(this.id);
         this._context._createBytes.writeFloat(this._width);
@@ -23736,7 +23735,7 @@ var VertexBufferGLES = (function (_super) {
         }
         */
         //this._context.addCreateStream(String.fromCharCode(OpCodes.uploadArrayVertexBuffer) + this.id + "," + startVertex +  "," + numVertices + ","+base64ArrayBuffer(data)+"#END");
-        console.log("upload vertexdata " + this.id);
+        //console.log("upload vertexdata "+this.id);
         this._context._createBytes.writeInt(OpCodes.uploadArrayVertexBuffer);
         this._context._createBytes.writeInt(this.id);
         this._context._createBytes.writeInt(startVertex);
@@ -23773,7 +23772,7 @@ var VertexBufferGLES = (function (_super) {
         configurable: true
     });
     VertexBufferGLES.prototype.dispose = function () {
-        console.log("dispose vertexdata " + this.id);
+        //console.log("dispose vertexdata "+this.id);
         //this._context.addCreateStream(String.fromCharCode(OpCodes.disposeVertexBuffer) + this.id+"#END");
         this._context._createBytes.writeInt(OpCodes.disposeVertexBuffer);
         this._context._createBytes.writeInt(this.id);
@@ -26228,14 +26227,26 @@ var ContextSoftware = (function () {
                 // Calculate derivative (neighbor) weights.
                 if (x != this._bboxMax.x) {
                     this._barycentricRight.x = this._barycentric.x + w0_dx;
-                    this._barycentricRight.y = this._barycentric.x + w1_dx;
-                    this._barycentricRight.z = this._barycentric.x + w2_dx;
+                    this._barycentricRight.y = this._barycentric.y + w1_dx;
+                    this._barycentricRight.z = this._barycentric.z + w2_dx;
+                    this._barycentricRight.x /= this._project.x;
+                    this._barycentricRight.y /= this._project.y;
+                    this._barycentricRight.z /= this._project.z;
+                    this._barycentricRight.scaleBy(1 / (this._barycentricRight.x + this._barycentricRight.y + this._barycentricRight.z));
                 }
                 if (y != this._bboxMax.y) {
                     this._barycentricBottom.x = this._barycentric.x + w0_dy;
-                    this._barycentricBottom.y = this._barycentric.x + w1_dy;
-                    this._barycentricBottom.z = this._barycentric.x + w2_dy;
+                    this._barycentricBottom.y = this._barycentric.y + w1_dy;
+                    this._barycentricBottom.z = this._barycentric.z + w2_dy;
+                    this._barycentricBottom.x /= this._project.x;
+                    this._barycentricBottom.y /= this._project.y;
+                    this._barycentricBottom.z /= this._project.z;
+                    this._barycentricBottom.scaleBy(1 / (this._barycentricBottom.x + this._barycentricBottom.y + this._barycentricBottom.z));
                 }
+                this._barycentric.x /= this._project.x;
+                this._barycentric.y /= this._project.y;
+                this._barycentric.z /= this._project.z;
+                this._barycentric.scaleBy(1 / (this._barycentric.x + this._barycentric.y + this._barycentric.z));
                 // Interpolate frag depth.
                 var index = (x % this._activeBuffer.width) + y * this._activeBuffer.width;
                 var fragDepth = this._barycentric.x * this._p0.z + this._barycentric.y * this._p1.z + this._barycentric.z * this._p2.z;
@@ -26408,6 +26419,7 @@ var ContextSoftware = (function () {
         if (mask === void 0) { mask = ContextGLClearMask.ALL; }
         this._backBufferColor.lock();
         if (mask & ContextGLClearMask.COLOR) {
+            this._colorClearUint8.fill(((alpha * 0xFF << 24) | (red * 0xFF << 16) | (green * 0xFF << 8) | blue * 0xFF));
             this._colorClearUint32.fill(((alpha * 0xFF << 24) | (red * 0xFF << 16) | (green * 0xFF << 8) | blue * 0xFF));
             this._backBufferColor.setPixels(this._backBufferRect, this._colorClearUint8);
         }
@@ -62071,7 +62083,7 @@ var AS2SymbolAdapter = (function () {
         this._view = view;
         this._blockedByScript = false;
         if (AS2SymbolAdapter.REFERENCE_TIME === -1)
-            AS2SymbolAdapter.REFERENCE_TIME = new Date().getTime();
+            AS2SymbolAdapter.REFERENCE_TIME = Date.now();
     }
     AS2SymbolAdapter.prototype.isBlockedByScript = function () { return this._blockedByScript; };
     AS2SymbolAdapter.prototype.isVisibilityByScript = function () { return this._visibilityByScript; };
@@ -62230,7 +62242,7 @@ var AS2SymbolAdapter = (function () {
     };
     // may need proper high-def timer mechanism
     AS2SymbolAdapter.prototype.getTimer = function () {
-        return new Date().getTime() - AS2SymbolAdapter.REFERENCE_TIME;
+        return Date.now() - AS2SymbolAdapter.REFERENCE_TIME;
     };
     Object.defineProperty(AS2SymbolAdapter.prototype, "_alpha", {
         get: function () {
@@ -69125,6 +69137,94 @@ var MouseManager = (function () {
             view.htmlElement.removeEventListener("mouseover", this.onMouseOverDelegate);
             view.htmlElement.removeEventListener("mouseout", this.onMouseOutDelegate);
             this._viewLookup.slice(this._viewLookup.indexOf(view), 1);
+        }
+    };
+    MouseManager.prototype.addEventsForViewBinary = function (touchMessage, viewIdx) {
+        if (viewIdx === void 0) { viewIdx = 0; }
+        var newTouchEvent = {};
+        newTouchEvent.clientX = null; // we get the x position from the active touch
+        newTouchEvent.clientY = null; // we get the y position from the active touch
+        newTouchEvent.touches = [];
+        newTouchEvent.changedTouches = [];
+        newTouchEvent.preventDefault = function () { };
+        var messageView = new Float32Array(touchMessage);
+        // transfer touches to event
+        var i = 0;
+        var cnt = 0;
+        var touchCnt = 0;
+        cnt++; //we temporary added 1 float to transfer fps from java to js. skip this
+        var numTouches = messageView[cnt++];
+        var touchtype = messageView[cnt++];
+        var activeTouchID = messageView[cnt++];
+        var x = 0;
+        var y = 0;
+        if ((touchtype != 1) && (touchtype != 6) && (touchtype != 12) && (touchtype != 262) && (touchtype != 518)) {
+            // if this is not a UP command, we add all touches
+            for (i = 0; i < numTouches; i++) {
+                var newTouch = {};
+                newTouch.identifier = messageView[cnt++];
+                newTouch.clientX = messageView[cnt++];
+                newTouch.clientY = messageView[cnt++];
+                newTouchEvent.touches[i] = newTouch;
+                newTouchEvent.changedTouches[i] = newTouch;
+            }
+            newTouchEvent.changedTouches[0] = newTouchEvent.touches[activeTouchID];
+            x = newTouchEvent.changedTouches[0].clientX;
+            y = newTouchEvent.changedTouches[0].clientY;
+        }
+        else {
+            // if this is a UP command, we add all touches, except the active one
+            for (i = 0; i < numTouches; i++) {
+                var newTouch = {};
+                newTouch.identifier = messageView[cnt++];
+                newTouch.clientX = messageView[cnt++];
+                newTouch.clientY = messageView[cnt++];
+                if (newTouch.identifier != activeTouchID) {
+                    newTouchEvent.touches[touchCnt] = newTouch;
+                    newTouchEvent.changedTouches[touchCnt++] = newTouch;
+                }
+                else {
+                    newTouchEvent.clientX = newTouch.clientX;
+                    newTouchEvent.clientY = newTouch.clientY;
+                    x = newTouchEvent.clientX;
+                    y = newTouchEvent.clientY;
+                }
+            }
+        }
+        // set the target in order to have a collision
+        newTouchEvent.target = this._viewLookup[viewIdx].htmlElement;
+        console.log("Touch ID:" + touchtype + " activeTouchID " + activeTouchID + " numTouches " + numTouches + " x" + x + " y" + y);
+        /*
+         public static final int ACTION_DOWN = 0;
+         public static final int ACTION_POINTER_1_DOWN = 5;
+         public static final int ACTION_POINTER_DOWN = 5;
+         public static final int ACTION_BUTTON_PRESS = 11;
+         public static final int ACTION_POINTER_2_DOWN = 261;
+         public static final int ACTION_POINTER_3_DOWN = 517;
+
+
+         public static final int ACTION_UP = 1;
+         public static final int ACTION_POINTER_1_UP = 6;
+         public static final int ACTION_POINTER_UP = 6;
+         public static final int ACTION_BUTTON_RELEASE = 12;
+         public static final int ACTION_POINTER_2_UP = 262;
+         public static final int ACTION_POINTER_3_UP = 518;
+
+         public static final int ACTION_MOVE = 2;
+
+
+         */
+        if ((touchtype == 0) || (touchtype == 5) || (touchtype == 11) || (touchtype == 261) || (touchtype == 517)) {
+            this.onMouseDown(newTouchEvent);
+        }
+        else if ((touchtype == 1) || (touchtype == 6) || (touchtype == 12) || (touchtype == 262) || (touchtype == 518)) {
+            this.onMouseUp(newTouchEvent);
+        }
+        else if (touchtype == 2) {
+            this.onMouseMove(newTouchEvent);
+        }
+        else {
+            console.log("recieved unknown touch event-type: " + touchtype);
         }
     };
     MouseManager.prototype.fireEventsForViewFromString = function (touchMessage, viewIdx) {
