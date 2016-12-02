@@ -2,14 +2,14 @@
 
 repos=( 
   "./../../core/"
-  "./../../graphics/"
-  "./../../materials/"
-  "./../../parsers/"
-  "./../../player/"
-  "./../../renderer/"
-  "./../../scene/"
-  "./../../stage/"
-  "./../../view/"
+  "./../graphics/"
+  "./../materials/"
+  "./../parsers/"
+  "./../player/"
+  "./../renderer/"
+  "./../scene/"
+  "./../stage/"
+  "./../view/"
 )
 
 ver=$1
