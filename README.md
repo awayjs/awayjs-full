@@ -1,5 +1,13 @@
-awayjs-all
+awayjs-full
 ==========
+
+GENERAL ENVIRONMENT SETUP
+=========================
+
+1) Install node version is 7.2.0
+2) Install npm version is 4.0.3
+3) Install webpack version 2.1.0-beta.27
+4) Install typescript version 2.2.0-dev.20161130
 
 USING AWAYJS-FULL IN YOUR PROJECT
 ==========================================================
