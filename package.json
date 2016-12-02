@@ -3,7 +3,7 @@
   "version": "0.2.35",
   "description": "Complete monolitic build for all types of AwayJS projects",
   "main": "bundle/awayjs-full.umd.js",
-  "types": "index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "rimraf": "rimraf",
     "rollup": "rollup -c",

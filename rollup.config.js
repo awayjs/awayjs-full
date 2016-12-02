@@ -1,7 +1,7 @@
 var includePaths = require('rollup-plugin-includepaths');
 
 module.exports = {
-	entry: './index.js',
+	entry: './dist/index.js',
 	sourceMap: true,
 	format: 'umd',
 	moduleName: 'AwayjsFull',

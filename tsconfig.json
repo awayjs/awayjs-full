@@ -6,7 +6,8 @@
     "noImplicitUseStrict": true,
     "noEmitHelpers": true,
     "importHelpers": true,
-    "declaration": true
+    "declaration": true,
+    "outDir": "./dist"
   },
   "files": [
     "./index.ts"
