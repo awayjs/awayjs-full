@@ -1,15 +1,15 @@
 #!/bin/bash
 
 repos=( 
-  "./../core/"
-  "./../graphics/"
-  "./../materials/"
-  "./../parsers/"
-  "./../player/"
-  "./../renderer/"
-  "./../scene/"
-  "./../stage/"
-  "./../view/"
+  "./../../core/"
+  "./../../graphics/"
+  "./../../materials/"
+  "./../../parsers/"
+  "./../../player/"
+  "./../../renderer/"
+  "./../../scene/"
+  "./../../stage/"
+  "./../../view/"
 )
 
 ver=$1
