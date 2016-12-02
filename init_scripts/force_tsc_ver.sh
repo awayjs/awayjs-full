@@ -10,6 +10,7 @@ repos=(
   "./../scene/"
   "./../stage/"
   "./../view/"
+  "./../awayjs-full/"
 )
 
 ver=$1
