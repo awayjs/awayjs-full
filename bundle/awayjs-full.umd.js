@@ -16200,9 +16200,10 @@ var BitmapImage2D = (function (_super) {
         if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var i;
-        var w = this._imageData.width;
+        var imageWidth = this._rect.width;
+        var inputWidth = rect.width;
         for (i = 0; i < rect.height; ++i)
-            this._imageData.data.set(input.subarray(i * w * 4, (i + 1) * w * 4), (rect.x + (i + rect.y) * w) * 4);
+            this._imageData.data.set(input.subarray(i * inputWidth * 4, (i + 1) * inputWidth * 4), (rect.x + (i + rect.y) * imageWidth) * 4);
         if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
         this.invalidate();
@@ -23311,7 +23312,7 @@ var TextureBaseGLES = (function (_super) {
         // this._gl = gl;
     }
     TextureBaseGLES.prototype.dispose = function () {
-        //console.log("dispose texturedata "+this.id);
+        console.log("dispose texturedata " + this.id);
         ///this._context.addStream(String.fromCharCode(OpCodes.disposeTexture) + this.id.toString() + "#END");
         this._context._createBytes.writeInt(OpCodes.disposeTexture);
         this._context._createBytes.writeInt(this.id);
@@ -23428,8 +23429,8 @@ var ProgramGLES = (function (_super) {
         var _this = _super.call(this, context, id) || this;
         _this._uniforms = [[], [], []];
         _this._attribs = [];
+        console.log("awayjs created program with id " + id);
         return _this;
-        //console.log("awayjs created program with id "+ id);
         // this._gl = gl;
         // this._program = this._gl.createProgram();
     }
@@ -23637,7 +23638,7 @@ var TextureGLES = (function (_super) {
             return base64
         }*/
         //this._context.addCreateStream(String.fromCharCode(OpCodes.uploadBytesTexture) + this.id.toString() + "," + miplevel + "," + (this._width >> miplevel) + "," + (this._height >> miplevel) + "," +base64ArrayBuffer(data.data.buffer)+"#END");
-        //console.log("upload texturedata "+this.id);
+        console.log("upload texturedata " + this.id);
         this._context._createBytes.writeInt(OpCodes.uploadBytesTexture | miplevel << 8);
         this._context._createBytes.writeInt(this.id);
         this._context._createBytes.writeFloat(this._width);
@@ -23735,7 +23736,7 @@ var VertexBufferGLES = (function (_super) {
         }
         */
         //this._context.addCreateStream(String.fromCharCode(OpCodes.uploadArrayVertexBuffer) + this.id + "," + startVertex +  "," + numVertices + ","+base64ArrayBuffer(data)+"#END");
-        //console.log("upload vertexdata "+this.id);
+        console.log("upload vertexdata " + this.id);
         this._context._createBytes.writeInt(OpCodes.uploadArrayVertexBuffer);
         this._context._createBytes.writeInt(this.id);
         this._context._createBytes.writeInt(startVertex);
@@ -23772,7 +23773,7 @@ var VertexBufferGLES = (function (_super) {
         configurable: true
     });
     VertexBufferGLES.prototype.dispose = function () {
-        //console.log("dispose vertexdata "+this.id);
+        console.log("dispose vertexdata " + this.id);
         //this._context.addCreateStream(String.fromCharCode(OpCodes.disposeVertexBuffer) + this.id+"#END");
         this._context._createBytes.writeInt(OpCodes.disposeVertexBuffer);
         this._context._createBytes.writeInt(this.id);
@@ -25015,8 +25016,8 @@ var ProgramSoftware = (function () {
     ProgramSoftware.sampleSimpleTexture = function (vo, desc, context, source1, textureIndex) {
         var source1Reg = 4 * source1.regnum;
         var source1Target = ProgramSoftware.getSourceTarget(vo, desc, source1, context);
-        var u = source1Target[((source1.swizzle >> 0) & 3)];
-        var v = source1Target[((source1.swizzle >> 2) & 3)];
+        var u = source1Target[source1Reg + ((source1.swizzle >> 0) & 3)];
+        var v = source1Target[source1Reg + ((source1.swizzle >> 2) & 3)];
         if (textureIndex >= context._textures.length || context._textures[textureIndex] == null)
             return new Float32Array([1, u, v, 0]);
         var texture = context._textures[textureIndex];
@@ -25645,13 +25646,13 @@ var ProgramSoftware = (function () {
         var source2TargetZ = source2Target[source2Reg + ((source2Swizzle >> 4) & 3)];
         var source2TargetW = source2Target[source2Reg + ((source2Swizzle >> 6) & 3)];
         if (mask & 1)
-            target[targetReg] = source1TargetX < source2TargetX ? 1 : 0;
+            target[targetReg] = source1TargetX < source2TargetX ? 0xFF : 0;
         if (mask & 2)
-            target[targetReg + 1] = source1TargetY < source2TargetY ? 1 : 0;
+            target[targetReg + 1] = source1TargetY < source2TargetY ? 0xFF : 0;
         if (mask & 4)
-            target[targetReg + 2] = source1TargetZ < source2TargetZ ? 1 : 0;
+            target[targetReg + 2] = source1TargetZ < source2TargetZ ? 0xFF : 0;
         if (mask & 8)
-            target[targetReg + 3] = source1TargetW < source2TargetW ? 1 : 0;
+            target[targetReg + 3] = source1TargetW < source2TargetW ? 0xFF : 0;
     };
     ProgramSoftware.seq = function (vo, desc, dest, source1, source2, context) {
         var targetReg = 4 * dest.regnum;
@@ -25948,18 +25949,18 @@ var ContextSoftware = (function () {
         this._backBufferRect.width = backBufferWidth;
         this._backBufferRect.height = backBufferHeight;
         this._backBufferColor._setSize(backBufferWidth, backBufferHeight);
-        this.activateScreenMatrix(this._backBufferRect.width, this._backBufferRect.height);
+        this.activateScreenMatrix(this._backBufferRect.width, this._backBufferRect.height, true);
         this._frontBufferMatrix = new Matrix();
         this._frontBufferMatrix.scale(1 / this._antialias, 1 / this._antialias);
     };
-    ContextSoftware.prototype.activateScreenMatrix = function (width, height) {
+    ContextSoftware.prototype.activateScreenMatrix = function (width, height, yflip) {
         var raw = this._screenMatrix._rawData;
         raw[0] = width / 2;
         raw[1] = 0;
         raw[2] = 0;
         raw[3] = width / 2;
         raw[4] = 0;
-        raw[5] = -height / 2;
+        raw[5] = yflip ? -height / 2 : height / 2;
         raw[6] = 0;
         raw[7] = height / 2;
         raw[8] = 0;
@@ -25987,14 +25988,14 @@ var ContextSoftware = (function () {
         else {
             textureBuffer.fillRect(textureBuffer.rect, 0xFFFFFF);
         }
-        this.activateScreenMatrix(target.width, target.height);
+        this.activateScreenMatrix(target.width, target.height, true);
         this._activeTexture = target;
         this._activeBuffer = textureBuffer;
         this._activeBuffer.lock();
     };
     ContextSoftware.prototype.setRenderToBackBuffer = function () {
         this._activeBuffer = this._backBufferColor;
-        this.activateScreenMatrix(this._backBufferColor.width, this._backBufferColor.height);
+        this.activateScreenMatrix(this._backBufferColor.width, this._backBufferColor.height, true);
     };
     ContextSoftware.prototype.drawIndices = function (mode, indexBuffer, firstIndex, numIndices) {
         if (!this._program)
@@ -26352,9 +26353,9 @@ var ContextSoftware = (function () {
     ContextSoftware.prototype.drawToBitmapImage2D = function (destination) {
         // TODO: remove software renderToTexture
         // This is just a hack used to debug depth maps.
-        if (this._activeBuffer != this._backBufferColor) {
-            destination.setPixels(destination.rect, this._activeBuffer.getImageData().data);
-        }
+        //if (this._activeBuffer != this._backBufferColor) {
+        destination.setPixels(this._activeBuffer.rect, this._activeBuffer.getImageData().data);
+        //}
     };
     ContextSoftware.prototype._interpolateVertexPair = function (factor, v0, v1, result) {
         for (var i = 0; i < v0.length; i++) {
@@ -26419,7 +26420,6 @@ var ContextSoftware = (function () {
         if (mask === void 0) { mask = ContextGLClearMask.ALL; }
         this._backBufferColor.lock();
         if (mask & ContextGLClearMask.COLOR) {
-            this._colorClearUint8.fill(((alpha * 0xFF << 24) | (red * 0xFF << 16) | (green * 0xFF << 8) | blue * 0xFF));
             this._colorClearUint32.fill(((alpha * 0xFF << 24) | (red * 0xFF << 16) | (green * 0xFF << 8) | blue * 0xFF));
             this._backBufferColor.setPixels(this._backBufferRect, this._colorClearUint8);
         }
@@ -26901,9 +26901,9 @@ var ContextWebGL = (function () {
             this._samplerStates[i] = null;
     };
     ContextWebGL.prototype.drawToBitmapImage2D = function (destination) {
-        var pixels = new Uint8ClampedArray(destination.width * destination.height * 4);
+        var pixels = new Uint8Array(destination.width * destination.height * 4);
         this._gl.readPixels(0, 0, destination.width, destination.height, this._gl.RGBA, this._gl.UNSIGNED_BYTE, pixels);
-        destination.setPixels(new Rectangle(0, 0, destination.width, destination.height), pixels);
+        destination.setPixels(new Rectangle(0, 0, destination.width, destination.height), new Uint8ClampedArray(pixels.buffer));
     };
     ContextWebGL.prototype.drawIndices = function (mode, indexBuffer, firstIndex, numIndices) {
         if (firstIndex === void 0) { firstIndex = 0; }
@@ -37656,7 +37656,7 @@ var RendererBase = (function (_super) {
         }
         this._pStage.scissorRect = null;
         // TODO: remove software renderToTexture
-        if (this.drawCallback != null && target != null) {
+        if (this.drawCallback != null) {
             this.drawCallback();
         }
     };
@@ -55383,9 +55383,6 @@ var DiffuseBasicMethod = (function (_super) {
         var code = "";
         var diffuseColor;
         var cutOffReg;
-        // incorporate input from ambient
-        if (sharedRegisters.shadowTarget)
-            code += this.pApplyShadow(shader, methodVO, registerCache, sharedRegisters);
         registerCache.addFragmentTempUsages(diffuseColor = registerCache.getFreeFragmentVectorTemp(), 1);
         var ambientColorRegister = registerCache.getFreeFragmentConstant();
         methodVO.fragmentConstantsIndex = ambientColorRegister.index * 4;
@@ -55414,6 +55411,9 @@ var DiffuseBasicMethod = (function (_super) {
                 "add " + diffuseColor + ".xyz, " + diffuseColor + ", " + this._pTotalLightColorReg + "\n" +
                 "mul " + targetReg + ".xyz, " + targetReg + ", " + diffuseColor + "\n"; // multiply by target which could be texture or white
         }
+        // incorporate input from ambient
+        if (sharedRegisters.shadowTarget)
+            code += "mov " + targetReg + ".xyz, " + sharedRegisters.shadowTarget + ".xyz\n";
         registerCache.removeFragmentTempUsage(this._pTotalLightColorReg);
         registerCache.removeFragmentTempUsage(diffuseColor);
         return code;
@@ -59242,7 +59242,7 @@ var ShadowMethodBase = (function (_super) {
         index = methodVO.vertexConstantsIndex;
         if (index != -1) {
             vertexData[index] = .5;
-            vertexData[index + 1] = .5;
+            vertexData[index + 1] = -.5;
             vertexData[index + 2] = 0.0;
             vertexData[index + 3] = 1.0;
         }
@@ -59784,7 +59784,7 @@ var ShadowHardMethod = (function (_super) {
         methodVO.fragmentConstantsIndex = decReg.index * 4;
         code += methodVO.textureGL._iGetFragmentCode(depthCol, regCache, sharedRegisters, this._pDepthMapCoordReg) +
             "dp4 " + depthCol + ".z, " + depthCol + ", " + decReg + "\n" +
-            "slt " + targetReg + ".w, " + this._pDepthMapCoordReg + ".z, " + depthCol + ".z\n"; // 0 if in shadow
+            "slt " + targetReg + ".z, " + this._pDepthMapCoordReg + ".z, " + depthCol + ".z\n"; // 0 if in shadow
         return code;
     };
     /**
@@ -62083,7 +62083,7 @@ var AS2SymbolAdapter = (function () {
         this._view = view;
         this._blockedByScript = false;
         if (AS2SymbolAdapter.REFERENCE_TIME === -1)
-            AS2SymbolAdapter.REFERENCE_TIME = Date.now();
+            AS2SymbolAdapter.REFERENCE_TIME = new Date().getTime();
     }
     AS2SymbolAdapter.prototype.isBlockedByScript = function () { return this._blockedByScript; };
     AS2SymbolAdapter.prototype.isVisibilityByScript = function () { return this._visibilityByScript; };
@@ -62242,7 +62242,7 @@ var AS2SymbolAdapter = (function () {
     };
     // may need proper high-def timer mechanism
     AS2SymbolAdapter.prototype.getTimer = function () {
-        return Date.now() - AS2SymbolAdapter.REFERENCE_TIME;
+        return new Date().getTime() - AS2SymbolAdapter.REFERENCE_TIME;
     };
     Object.defineProperty(AS2SymbolAdapter.prototype, "_alpha", {
         get: function () {
@@ -69151,14 +69151,11 @@ var MouseManager = (function () {
         // transfer touches to event
         var i = 0;
         var cnt = 0;
-        var touchCnt = 0;
         cnt++; //we temporary added 1 float to transfer fps from java to js. skip this
         var numTouches = messageView[cnt++];
         var touchtype = messageView[cnt++];
         var activeTouchID = messageView[cnt++];
-        var x = 0;
-        var y = 0;
-        if ((touchtype != 1) && (touchtype != 6) && (touchtype != 12) && (touchtype != 262) && (touchtype != 518)) {
+        if ((touchtype != 1) && (touchtype != 6)) {
             // if this is not a UP command, we add all touches
             for (i = 0; i < numTouches; i++) {
                 var newTouch = {};
@@ -69168,63 +69165,44 @@ var MouseManager = (function () {
                 newTouchEvent.touches[i] = newTouch;
                 newTouchEvent.changedTouches[i] = newTouch;
             }
-            newTouchEvent.changedTouches[0] = newTouchEvent.touches[activeTouchID];
-            x = newTouchEvent.changedTouches[0].clientX;
-            y = newTouchEvent.changedTouches[0].clientY;
+            
+            newTouchEvent.changedTouches[i] = newTouchEvent.touches[activeTouchID];
         }
         else {
             // if this is a UP command, we add all touches, except the active one
             for (i = 0; i < numTouches; i++) {
-                var newTouch = {};
-                newTouch.identifier = messageView[cnt++];
-                newTouch.clientX = messageView[cnt++];
-                newTouch.clientY = messageView[cnt++];
-                if (newTouch.identifier != activeTouchID) {
-                    newTouchEvent.touches[touchCnt] = newTouch;
-                    newTouchEvent.changedTouches[touchCnt++] = newTouch;
+                if (i != activeTouchID) {
+                    var newTouch = {};
+                    newTouch.identifier = messageView[cnt++];
+                    newTouch.clientX = messageView[cnt++];
+                    newTouch.clientY = messageView[cnt++];
+                    newTouchEvent.touches[i] = newTouch;
+                    newTouchEvent.changedTouches[i] = newTouch;
                 }
                 else {
-                    newTouchEvent.clientX = newTouch.clientX;
-                    newTouchEvent.clientY = newTouch.clientY;
-                    x = newTouchEvent.clientX;
-                    y = newTouchEvent.clientY;
+                    newTouchEvent.clientX = messageView[cnt++];
+                    newTouchEvent.clientY = messageView[cnt++];
+                    cnt++;
                 }
             }
+            
         }
         // set the target in order to have a collision
         newTouchEvent.target = this._viewLookup[viewIdx].htmlElement;
-        console.log("Touch ID:" + touchtype + " activeTouchID " + activeTouchID + " numTouches " + numTouches + " x" + x + " y" + y);
-        /*
-         public static final int ACTION_DOWN = 0;
-         public static final int ACTION_POINTER_1_DOWN = 5;
-         public static final int ACTION_POINTER_DOWN = 5;
-         public static final int ACTION_BUTTON_PRESS = 11;
-         public static final int ACTION_POINTER_2_DOWN = 261;
-         public static final int ACTION_POINTER_3_DOWN = 517;
-
-
-         public static final int ACTION_UP = 1;
-         public static final int ACTION_POINTER_1_UP = 6;
-         public static final int ACTION_POINTER_UP = 6;
-         public static final int ACTION_BUTTON_RELEASE = 12;
-         public static final int ACTION_POINTER_2_UP = 262;
-         public static final int ACTION_POINTER_3_UP = 518;
-
-         public static final int ACTION_MOVE = 2;
-
-
-         */
-        if ((touchtype == 0) || (touchtype == 5) || (touchtype == 11) || (touchtype == 261) || (touchtype == 517)) {
+        if (touchtype == 0) {
             this.onMouseDown(newTouchEvent);
         }
-        else if ((touchtype == 1) || (touchtype == 6) || (touchtype == 12) || (touchtype == 262) || (touchtype == 518)) {
+        else if (touchtype == 1) {
             this.onMouseUp(newTouchEvent);
         }
         else if (touchtype == 2) {
             this.onMouseMove(newTouchEvent);
         }
-        else {
-            console.log("recieved unknown touch event-type: " + touchtype);
+        else if (touchtype == 261) {
+            this.onMouseDown(newTouchEvent);
+        }
+        else if (touchtype == 6) {
+            this.onMouseUp(newTouchEvent);
         }
     };
     MouseManager.prototype.fireEventsForViewFromString = function (touchMessage, viewIdx) {
