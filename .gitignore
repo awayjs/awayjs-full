@@ -4,6 +4,7 @@ dist/
 
 # Dev files
 npm-debug.log
+.awcache/
 
 # Project property files
 .actionScriptProperties
