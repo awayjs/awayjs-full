@@ -49,3 +49,5 @@ or if you want to setup a watcher:
 "npm run modules:watch"
 
 This basically builds or starts a watcher in each of the submodules.
+
+For this to work, the module aliases need to be commented out in webpack.config.js, in the resolve: alias: section. However, note that this could produce slower re-build times.
