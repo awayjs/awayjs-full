@@ -454,7 +454,6 @@ var AttributesBuffer = (function (_super) {
     }
     Object.defineProperty(AttributesBuffer.prototype, "assetType", {
         /**
-         *
          * @returns {string}
          */
         get: function () {
@@ -674,6 +673,7 @@ var AttributesView = (function (_super) {
     }
     Object.defineProperty(AttributesView.prototype, "assetType", {
         /**
+         *
          *
          */
         get: function () {
@@ -4563,6 +4563,26 @@ var Matrix3D = (function () {
         this._positionDirty = true;
         return invertable;
     };
+    Matrix3D.prototype.isIdentity = function () {
+        if (this._rawData[0] == 1 &&
+            this._rawData[1] == 0 &&
+            this._rawData[2] == 0 &&
+            this._rawData[3] == 0 &&
+            this._rawData[4] == 0 &&
+            this._rawData[5] == 1 &&
+            this._rawData[6] == 0 &&
+            this._rawData[7] == 0 &&
+            this._rawData[8] == 0 &&
+            this._rawData[9] == 0 &&
+            this._rawData[10] == 1 &&
+            this._rawData[11] == 0 &&
+            this._rawData[12] == 0 &&
+            this._rawData[13] == 0 &&
+            this._rawData[14] == 0 &&
+            this._rawData[15] == 1)
+            return true;
+        return false;
+    };
     /**
      * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
      */
@@ -6004,6 +6024,169 @@ var AssetLibraryIterator = (function () {
     return AssetLibraryIterator;
 }());
 
+var LoaderContext = (function () {
+    /**
+     * LoaderContext provides configuration for the Loader load() and parse() operations.
+     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
+     * embedded data.
+     *
+     * @see away.loading.Loader
+     */
+    function LoaderContext(includeDependencies, dependencyBaseUrl) {
+        if (includeDependencies === void 0) { includeDependencies = true; }
+        if (dependencyBaseUrl === void 0) { dependencyBaseUrl = null; }
+        this._includeDependencies = includeDependencies;
+        this._dependencyBaseUrl = dependencyBaseUrl || '';
+        this._embeddedDataByUrl = {};
+        this._remappedUrls = {};
+        this._materialMode = LoaderContext.UNDEFINED;
+        this._externalAssetMode = LoaderContext.PRELOADED;
+    }
+    Object.defineProperty(LoaderContext.prototype, "includeDependencies", {
+        /**
+         * Defines whether dependencies (all files except the one at the URL given to the load() or
+         * parseData() operations) should be automatically loaded. Defaults to true.
+         */
+        get: function () {
+            return this._includeDependencies;
+        },
+        set: function (val) {
+            this._includeDependencies = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "materialMode", {
+        /**
+         * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
+         * Options:
+         * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
+         * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
+         * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+         *
+         */
+        get: function () {
+            return this._materialMode;
+        },
+        set: function (value) {
+            this._materialMode = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "externalAssetMode", {
+        get: function () {
+            return this._externalAssetMode;
+        },
+        set: function (value) {
+            this._externalAssetMode = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "dependencyBaseUrl", {
+        /**
+         * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
+         * Absolute paths will not be affected by the value of this property.
+         */
+        get: function () {
+            return this._dependencyBaseUrl;
+        },
+        set: function (val) {
+            this._dependencyBaseUrl = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "overrideAbsolutePaths", {
+        /**
+         * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
+         * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
+         * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+         */
+        get: function () {
+            return this._overrideAbsPath;
+        },
+        set: function (val) {
+            this._overrideAbsPath = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "overrideFullURLs", {
+        /**
+         * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
+         * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
+         * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+         */
+        get: function () {
+            return this._overrideFullUrls;
+        },
+        set: function (val) {
+            this._overrideFullUrls = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Map a URL to another URL, so that files that are referred to by the original URL will instead
+     * be loaded from the new URL. Use this when your file structure does not match the one that is
+     * expected by the loaded file.
+     *
+     * @param originalUrl The original URL which is referenced in the loaded resource.
+     * @param newUrl The URL from which away.should load the resource instead.
+     *
+     * @see mapUrlToData()
+     */
+    LoaderContext.prototype.mapUrl = function (originalUrl, newUrl) {
+        this._remappedUrls[originalUrl] = newUrl;
+    };
+    /**
+     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
+     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+     *
+     * @param originalUrl The original URL which is referenced in the loaded resource.
+     * @param data The embedded data. Can be ByteArray or a export class which can be used to create a bytearray.
+     */
+    LoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
+        this._embeddedDataByUrl[originalUrl] = data;
+    };
+    /**
+     * @private
+     * Defines whether embedded data has been mapped to a particular URL.
+     */
+    LoaderContext.prototype._iHasDataForUrl = function (url) {
+        return this._embeddedDataByUrl.hasOwnProperty(url);
+    };
+    /**
+     * @private
+     * Returns embedded data for a particular URL.
+     */
+    LoaderContext.prototype._iGetDataForUrl = function (url) {
+        return this._embeddedDataByUrl[url];
+    };
+    /**
+     * @private
+     * Defines whether a replacement URL has been mapped to a particular URL.
+     */
+    LoaderContext.prototype._iHasMappingForUrl = function (url) {
+        return this._remappedUrls.hasOwnProperty(url);
+    };
+    /**
+     * @private
+     * Returns new (replacement) URL for a particular original URL.
+     */
+    LoaderContext.prototype._iGetRemappedUrl = function (originalUrl) {
+        return this._remappedUrls[originalUrl];
+    };
+    return LoaderContext;
+}());
+LoaderContext.UNDEFINED = 0;
+LoaderContext.SINGLEPASS_MATERIALS = 1;
+LoaderContext.MULTIPASS_MATERIALS = 2;
+LoaderContext.ON_DEMAND = "onDemand";
+LoaderContext.PRELOADED = "preloaded";
+
 var URLLoaderDataFormat = (function () {
     function URLLoaderDataFormat() {
     }
@@ -6808,8 +6991,16 @@ var Loader = (function (_super) {
         this.addEventListeners(dependency._iLoader);
         // Get already loaded (or mapped) data if available
         data = dependency.data;
-        if (this._context && dependency.request && this._context._iHasDataForUrl(dependency.request.url))
-            data = this._context._iGetDataForUrl(dependency.request.url);
+        if (this._context && dependency.request) {
+            if (this._context._iHasDataForUrl(dependency.request.url)) {
+                data = this._context._iGetDataForUrl(dependency.request.url);
+            }
+            else if (this._context.externalAssetMode == LoaderContext.ON_DEMAND && (this.getSuffix(dependency.request.url) == "jpg" || this.getSuffix(dependency.request.url) == "png")) {
+                data = dependency.request;
+                if (!dependency.parser)
+                    dependency._iSetParser(this.getParserFromSuffix(dependency.request.url));
+            }
+        }
         if (data) {
             if (data.constructor === Function)
                 data = new data();
@@ -7151,9 +7342,7 @@ var Loader = (function (_super) {
      * @return An instance of the guessed parser.
      */
     Loader.prototype.getParserFromSuffix = function (url) {
-        // Get rid of query string if any and extract extension
-        var base = (url.indexOf('?') > 0) ? url.split('?')[0] : url;
-        var fileExtension = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
+        var fileExtension = this.getSuffix(url);
         var len = Loader._parsers.length;
         // go in reverse order to allow application override of default parser added in away.proper
         for (var i = len - 1; i >= 0; i--) {
@@ -7162,6 +7351,11 @@ var Loader = (function (_super) {
                 return new parserClass();
         }
         return null;
+    };
+    Loader.prototype.getSuffix = function (url) {
+        // Get rid of query string if any and extract extension
+        var base = (url.indexOf('?') > 0) ? url.split('?')[0] : url;
+        return base.substr(base.lastIndexOf('.') + 1).toLowerCase();
     };
     return Loader;
 }(EventDispatcher));
@@ -8066,156 +8260,6 @@ var IDUtil = (function () {
  *  Char codes for 0123456789ABCDEF
  */
 IDUtil.ALPHA_CHAR_CODES = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70];
-
-var LoaderContext = (function () {
-    /**
-     * LoaderContext provides configuration for the Loader load() and parse() operations.
-     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-     * embedded data.
-     *
-     * @see away.loading.Loader
-     */
-    function LoaderContext(includeDependencies, dependencyBaseUrl) {
-        if (includeDependencies === void 0) { includeDependencies = true; }
-        if (dependencyBaseUrl === void 0) { dependencyBaseUrl = null; }
-        this._includeDependencies = includeDependencies;
-        this._dependencyBaseUrl = dependencyBaseUrl || '';
-        this._embeddedDataByUrl = {};
-        this._remappedUrls = {};
-        this._materialMode = LoaderContext.UNDEFINED;
-    }
-    Object.defineProperty(LoaderContext.prototype, "includeDependencies", {
-        /**
-         * Defines whether dependencies (all files except the one at the URL given to the load() or
-         * parseData() operations) should be automatically loaded. Defaults to true.
-         */
-        get: function () {
-            return this._includeDependencies;
-        },
-        set: function (val) {
-            this._includeDependencies = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LoaderContext.prototype, "materialMode", {
-        /**
-         * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-         * Options:
-         * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-         * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-         * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
-         *
-         */
-        get: function () {
-            return this._materialMode;
-        },
-        set: function (materialMode) {
-            this._materialMode = materialMode;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LoaderContext.prototype, "dependencyBaseUrl", {
-        /**
-         * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-         * Absolute paths will not be affected by the value of this property.
-         */
-        get: function () {
-            return this._dependencyBaseUrl;
-        },
-        set: function (val) {
-            this._dependencyBaseUrl = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LoaderContext.prototype, "overrideAbsolutePaths", {
-        /**
-         * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-         * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-         * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-         */
-        get: function () {
-            return this._overrideAbsPath;
-        },
-        set: function (val) {
-            this._overrideAbsPath = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LoaderContext.prototype, "overrideFullURLs", {
-        /**
-         * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-         * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-         * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-         */
-        get: function () {
-            return this._overrideFullUrls;
-        },
-        set: function (val) {
-            this._overrideFullUrls = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Map a URL to another URL, so that files that are referred to by the original URL will instead
-     * be loaded from the new URL. Use this when your file structure does not match the one that is
-     * expected by the loaded file.
-     *
-     * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param newUrl The URL from which away.should load the resource instead.
-     *
-     * @see mapUrlToData()
-     */
-    LoaderContext.prototype.mapUrl = function (originalUrl, newUrl) {
-        this._remappedUrls[originalUrl] = newUrl;
-    };
-    /**
-     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
-     *
-     * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param data The embedded data. Can be ByteArray or a export class which can be used to create a bytearray.
-     */
-    LoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
-        this._embeddedDataByUrl[originalUrl] = data;
-    };
-    /**
-     * @private
-     * Defines whether embedded data has been mapped to a particular URL.
-     */
-    LoaderContext.prototype._iHasDataForUrl = function (url) {
-        return this._embeddedDataByUrl.hasOwnProperty(url);
-    };
-    /**
-     * @private
-     * Returns embedded data for a particular URL.
-     */
-    LoaderContext.prototype._iGetDataForUrl = function (url) {
-        return this._embeddedDataByUrl[url];
-    };
-    /**
-     * @private
-     * Defines whether a replacement URL has been mapped to a particular URL.
-     */
-    LoaderContext.prototype._iHasMappingForUrl = function (url) {
-        return this._remappedUrls.hasOwnProperty(url);
-    };
-    /**
-     * @private
-     * Returns new (replacement) URL for a particular original URL.
-     */
-    LoaderContext.prototype._iGetRemappedUrl = function (originalUrl) {
-        return this._remappedUrls[originalUrl];
-    };
-    return LoaderContext;
-}());
-LoaderContext.UNDEFINED = 0;
-LoaderContext.SINGLEPASS_MATERIALS = 1;
-LoaderContext.MULTIPASS_MATERIALS = 2;
 
 /**
  * The LoaderInfo export class provides information about a loaded SWF file or a
@@ -9553,24 +9597,26 @@ var WaveAudioParser = (function (_super) {
  *
  * @see away.projections.PerspectiveLens#coordinateSystem
  */
-var CoordinateSystem = (function () {
-    function CoordinateSystem() {
-    }
-    return CoordinateSystem;
-}());
 /**
- * Default option, projects to a left-handed coordinate system
- */
-CoordinateSystem.LEFT_HANDED = "leftHanded";
-/**
- * Projects to a right-handed coordinate system
- */
-CoordinateSystem.RIGHT_HANDED = "rightHanded";
+ * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
+ *
+ * @see away.projections.PerspectiveLens#coordinateSystem
+ */ 
+(function (CoordinateSystem) {
+    /**
+     * Default option, projects to a left-handed coordinate system
+     */
+    CoordinateSystem[CoordinateSystem["LEFT_HANDED"] = 0] = "LEFT_HANDED";
+    /**
+     * Projects to a right-handed coordinate system
+     */
+    CoordinateSystem[CoordinateSystem["RIGHT_HANDED"] = 1] = "RIGHT_HANDED";
+})(exports.CoordinateSystem || (exports.CoordinateSystem = {}));
 
 var ProjectionBase = (function (_super) {
     __extends(ProjectionBase, _super);
     function ProjectionBase(coordinateSystem) {
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         var _this = _super.call(this) || this;
         _this._pMatrix = new Matrix3D();
         _this._pScissorRect = new Rectangle();
@@ -9749,7 +9795,7 @@ var PerspectiveProjection = (function (_super) {
     __extends(PerspectiveProjection, _super);
     function PerspectiveProjection(fieldOfView, coordinateSystem) {
         if (fieldOfView === void 0) { fieldOfView = 60; }
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         var _this = _super.call(this, coordinateSystem) || this;
         _this._fieldOfView = 60;
         _this._focalLength = 1000;
@@ -9924,7 +9970,7 @@ var PerspectiveProjection = (function (_super) {
         raw[11] = 1;
         raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[12] = raw[13] = raw[15] = 0;
         raw[14] = -2 * this._pFar * this._pNear / (this._pFar - this._pNear);
-        if (this._pCoordinateSystem == CoordinateSystem.RIGHT_HANDED)
+        if (this._pCoordinateSystem == exports.CoordinateSystem.RIGHT_HANDED)
             raw[5] = -raw[5];
         this._pMatrix.copyRawDataFrom(raw);
         this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pNear * left;
@@ -15184,6 +15230,13 @@ var Image2D = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    /**
+     *
+     * @returns {ImageData}
+     */
+    Image2D.prototype.getImageData = function () {
+        throw new AbstractMethodError();
+    };
     return Image2D;
 }(ImageBase));
 Image2D.assetType = "[image Image2D]";
@@ -15332,14 +15385,14 @@ var CPURenderingContext2D = (function () {
             return;
         var index = (x + y * target.width) * 4;
         //var alpha:number = color[3] / 255;
-        target.data[index] += color[0];
-        target.data[index + 1] += color[1];
-        target.data[index + 2] += color[2];
-        target.data[index + 3] += color[3];
-        //target.data[index] = color[0];
-        //target.data[index + 1] = color[1];
-        //target.data[index + 2] = color[2];
-        //target.data[index + 3] = color[3];
+        // target.data[index] += color[0];
+        // target.data[index + 1] += color[1];
+        // target.data[index + 2] += color[2];
+        // target.data[index + 3] += color[3];
+        target.data[index] = color[0];
+        target.data[index + 1] = color[1];
+        target.data[index + 2] = color[2];
+        target.data[index + 3] = color[3];
         target.data[index] = target.data[index] & 0xFF;
         target.data[index + 1] = target.data[index + 1] & 0xFF;
         target.data[index + 2] = target.data[index + 2] & 0xFF;
@@ -16057,7 +16110,7 @@ var BitmapImage2D = (function (_super) {
         this._imageData.data[index + 0] = imagePixel[0];
         this._imageData.data[index + 1] = imagePixel[1];
         this._imageData.data[index + 2] = imagePixel[2];
-        this._imageData.data[index + 3] = imagePixel[3];
+        this._imageData.data[index + 3] = this._transparent ? imagePixel[3] : 0xFF;
         this.invalidate();
     };
     /**
@@ -16096,7 +16149,7 @@ var BitmapImage2D = (function (_super) {
                 this._imageData.data[index + 0] = argb[1];
                 this._imageData.data[index + 1] = argb[2];
                 this._imageData.data[index + 2] = argb[3];
-                this._imageData.data[index + 3] = argb[0];
+                this._imageData.data[index + 3] = this._transparent ? argb[0] : 0xFF;
             }
         }
         if (!this._locked)
@@ -16172,7 +16225,7 @@ var BitmapImage2D = (function (_super) {
         this._imageData.data[index + 0] = argb[1];
         this._imageData.data[index + 1] = argb[2];
         this._imageData.data[index + 2] = argb[3];
-        this._imageData.data[index + 3] = argb[0];
+        this._imageData.data[index + 3] = this._transparent ? argb[0] : 0xFF;
         if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
         this.invalidate();
@@ -16301,6 +16354,13 @@ var ImageCube = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    /**
+     *
+     * @returns {ImageData}
+     */
+    ImageCube.prototype.getImageData = function (side) {
+        throw new AbstractMethodError();
+    };
     /**
      *
      * @param width
@@ -19273,6 +19333,54 @@ BitmapImageChannel.GREEN = 2;
 BitmapImageChannel.RED = 1;
 
 /**
+
+ */
+var ExternalImage2D = (function (_super) {
+    __extends(ExternalImage2D, _super);
+    /**
+     *
+     */
+    function ExternalImage2D(urlRequest) {
+        var _this = _super.call(this, 8, 8, true) || this;
+        _this._urlRequest = urlRequest;
+        return _this;
+    }
+    Object.defineProperty(ExternalImage2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return ExternalImage2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ExternalImage2D.prototype, "urlRequest", {
+        get: function () {
+            return this._urlRequest;
+        },
+        set: function (value) {
+            this._urlRequest = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns a new ExternalImage2D object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
+     *
+     * @return A new ExternalImage2D object that is identical to the original.
+     */
+    ExternalImage2D.prototype.clone = function () {
+        var t = new ExternalImage2D(this._urlRequest);
+        return t;
+    };
+    return ExternalImage2D;
+}(Image2D));
+ExternalImage2D.assetType = "[image ExternalImage2D]";
+
+/**
  * The Bitmap export class represents display objects that represent bitmap images.
  * These can be images that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes, or they can be images that you
@@ -19559,6 +19667,10 @@ var Image2DParser = (function (_super) {
             this._htmlImageElement.onload = function (event) { return _this.onLoadComplete(event); };
             this._loadingImage = true;
             return ParserBase.MORE_TO_PARSE;
+        }
+        else if (this.data instanceof URLRequest) {
+            asset = new ExternalImage2D(this.data);
+            this._pFinalizeAsset(asset, this._iFileName);
         }
         if (sizeError) {
         }
@@ -22502,169 +22614,127 @@ var GL_AttributesBuffer = (function (_super) {
     return GL_AttributesBuffer;
 }(AbstractionBase));
 
-var ContextGLBlendFactor = (function () {
-    function ContextGLBlendFactor() {
-    }
-    return ContextGLBlendFactor;
-}());
-ContextGLBlendFactor.DESTINATION_ALPHA = "destinationAlpha";
-ContextGLBlendFactor.DESTINATION_COLOR = "destinationColor";
-ContextGLBlendFactor.ONE = "one";
-ContextGLBlendFactor.ONE_MINUS_DESTINATION_ALPHA = "oneMinusDestinationAlpha";
-ContextGLBlendFactor.ONE_MINUS_DESTINATION_COLOR = "oneMinusDestinationColor";
-ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA = "oneMinusSourceAlpha";
-ContextGLBlendFactor.ONE_MINUS_SOURCE_COLOR = "oneMinusSourceColor";
-ContextGLBlendFactor.SOURCE_ALPHA = "sourceAlpha";
-ContextGLBlendFactor.SOURCE_COLOR = "sourceColor";
-ContextGLBlendFactor.ZERO = "zero";
+(function (ContextGLBlendFactor) {
+    ContextGLBlendFactor[ContextGLBlendFactor["DESTINATION_ALPHA"] = 0] = "DESTINATION_ALPHA";
+    ContextGLBlendFactor[ContextGLBlendFactor["DESTINATION_COLOR"] = 1] = "DESTINATION_COLOR";
+    ContextGLBlendFactor[ContextGLBlendFactor["ONE"] = 2] = "ONE";
+    ContextGLBlendFactor[ContextGLBlendFactor["ONE_MINUS_DESTINATION_ALPHA"] = 3] = "ONE_MINUS_DESTINATION_ALPHA";
+    ContextGLBlendFactor[ContextGLBlendFactor["ONE_MINUS_DESTINATION_COLOR"] = 4] = "ONE_MINUS_DESTINATION_COLOR";
+    ContextGLBlendFactor[ContextGLBlendFactor["ONE_MINUS_SOURCE_ALPHA"] = 5] = "ONE_MINUS_SOURCE_ALPHA";
+    ContextGLBlendFactor[ContextGLBlendFactor["ONE_MINUS_SOURCE_COLOR"] = 6] = "ONE_MINUS_SOURCE_COLOR";
+    ContextGLBlendFactor[ContextGLBlendFactor["SOURCE_ALPHA"] = 7] = "SOURCE_ALPHA";
+    ContextGLBlendFactor[ContextGLBlendFactor["SOURCE_COLOR"] = 8] = "SOURCE_COLOR";
+    ContextGLBlendFactor[ContextGLBlendFactor["ZERO"] = 9] = "ZERO";
+})(exports.ContextGLBlendFactor || (exports.ContextGLBlendFactor = {}));
 
-var ContextGLClearMask = (function () {
-    function ContextGLClearMask() {
-    }
-    return ContextGLClearMask;
-}());
-ContextGLClearMask.COLOR = 1;
-ContextGLClearMask.DEPTH = 2;
-ContextGLClearMask.STENCIL = 4;
-ContextGLClearMask.ALL = ContextGLClearMask.COLOR | ContextGLClearMask.DEPTH | ContextGLClearMask.STENCIL;
+(function (ContextGLClearMask) {
+    ContextGLClearMask[ContextGLClearMask["COLOR"] = 1] = "COLOR";
+    ContextGLClearMask[ContextGLClearMask["DEPTH"] = 2] = "DEPTH";
+    ContextGLClearMask[ContextGLClearMask["STENCIL"] = 4] = "STENCIL";
+    ContextGLClearMask[ContextGLClearMask["ALL"] = 7] = "ALL";
+})(exports.ContextGLClearMask || (exports.ContextGLClearMask = {}));
 
-var ContextGLCompareMode = (function () {
-    function ContextGLCompareMode() {
-    }
-    return ContextGLCompareMode;
-}());
-ContextGLCompareMode.ALWAYS = "always";
-ContextGLCompareMode.EQUAL = "equal";
-ContextGLCompareMode.GREATER = "greater";
-ContextGLCompareMode.GREATER_EQUAL = "greaterEqual";
-ContextGLCompareMode.LESS = "less";
-ContextGLCompareMode.LESS_EQUAL = "lessEqual";
-ContextGLCompareMode.NEVER = "never";
-ContextGLCompareMode.NOT_EQUAL = "notEqual";
+(function (ContextGLCompareMode) {
+    ContextGLCompareMode[ContextGLCompareMode["ALWAYS"] = 0] = "ALWAYS";
+    ContextGLCompareMode[ContextGLCompareMode["EQUAL"] = 1] = "EQUAL";
+    ContextGLCompareMode[ContextGLCompareMode["GREATER"] = 2] = "GREATER";
+    ContextGLCompareMode[ContextGLCompareMode["GREATER_EQUAL"] = 3] = "GREATER_EQUAL";
+    ContextGLCompareMode[ContextGLCompareMode["LESS"] = 4] = "LESS";
+    ContextGLCompareMode[ContextGLCompareMode["LESS_EQUAL"] = 5] = "LESS_EQUAL";
+    ContextGLCompareMode[ContextGLCompareMode["NEVER"] = 6] = "NEVER";
+    ContextGLCompareMode[ContextGLCompareMode["NOT_EQUAL"] = 7] = "NOT_EQUAL";
+})(exports.ContextGLCompareMode || (exports.ContextGLCompareMode = {}));
 
-var ContextGLDrawMode = (function () {
-    function ContextGLDrawMode() {
-    }
-    return ContextGLDrawMode;
-}());
-ContextGLDrawMode.TRIANGLES = "triangles";
-ContextGLDrawMode.LINES = "lines";
+(function (ContextGLDrawMode) {
+    ContextGLDrawMode[ContextGLDrawMode["TRIANGLES"] = 0] = "TRIANGLES";
+    ContextGLDrawMode[ContextGLDrawMode["LINES"] = 1] = "LINES";
+})(exports.ContextGLDrawMode || (exports.ContextGLDrawMode = {}));
 
-var ContextGLMipFilter = (function () {
-    function ContextGLMipFilter() {
-    }
-    return ContextGLMipFilter;
-}());
-ContextGLMipFilter.MIPLINEAR = "miplinear";
-ContextGLMipFilter.MIPNEAREST = "mipnearest";
-ContextGLMipFilter.MIPNONE = "mipnone";
+(function (ContextGLMipFilter) {
+    ContextGLMipFilter[ContextGLMipFilter["MIPLINEAR"] = 0] = "MIPLINEAR";
+    ContextGLMipFilter[ContextGLMipFilter["MIPNEAREST"] = 1] = "MIPNEAREST";
+    ContextGLMipFilter[ContextGLMipFilter["MIPNONE"] = 2] = "MIPNONE";
+})(exports.ContextGLMipFilter || (exports.ContextGLMipFilter = {}));
 
-var ContextGLProfile = (function () {
-    function ContextGLProfile() {
-    }
-    return ContextGLProfile;
-}());
-ContextGLProfile.BASELINE = "baseline";
-ContextGLProfile.BASELINE_CONSTRAINED = "baselineConstrained";
-ContextGLProfile.BASELINE_EXTENDED = "baselineExtended";
+(function (ContextGLProfile) {
+    ContextGLProfile[ContextGLProfile["BASELINE"] = 0] = "BASELINE";
+    ContextGLProfile[ContextGLProfile["BASELINE_CONSTRAINED"] = 1] = "BASELINE_CONSTRAINED";
+    ContextGLProfile[ContextGLProfile["BASELINE_EXTENDED"] = 2] = "BASELINE_EXTENDED";
+})(exports.ContextGLProfile || (exports.ContextGLProfile = {}));
 
-var ContextGLProgramType = (function () {
-    function ContextGLProgramType() {
-    }
-    return ContextGLProgramType;
-}());
-ContextGLProgramType.FRAGMENT = 0;
-ContextGLProgramType.SAMPLER = 1;
-ContextGLProgramType.VERTEX = 2;
+(function (ContextGLProgramType) {
+    ContextGLProgramType[ContextGLProgramType["FRAGMENT"] = 0] = "FRAGMENT";
+    ContextGLProgramType[ContextGLProgramType["SAMPLER"] = 1] = "SAMPLER";
+    ContextGLProgramType[ContextGLProgramType["VERTEX"] = 2] = "VERTEX";
+})(exports.ContextGLProgramType || (exports.ContextGLProgramType = {}));
 
-var ContextGLStencilAction = (function () {
-    function ContextGLStencilAction() {
-    }
-    return ContextGLStencilAction;
-}());
-ContextGLStencilAction.DECREMENT_SATURATE = "decrementSaturate";
-ContextGLStencilAction.DECREMENT_WRAP = "decrementWrap";
-ContextGLStencilAction.INCREMENT_SATURATE = "incrementSaturate";
-ContextGLStencilAction.INCREMENT_WRAP = "incrementWrap";
-ContextGLStencilAction.INVERT = "invert";
-ContextGLStencilAction.KEEP = "keep";
-ContextGLStencilAction.SET = "set";
-ContextGLStencilAction.ZERO = "zero";
+(function (ContextGLStencilAction) {
+    ContextGLStencilAction[ContextGLStencilAction["DECREMENT_SATURATE"] = 0] = "DECREMENT_SATURATE";
+    ContextGLStencilAction[ContextGLStencilAction["DECREMENT_WRAP"] = 1] = "DECREMENT_WRAP";
+    ContextGLStencilAction[ContextGLStencilAction["INCREMENT_SATURATE"] = 2] = "INCREMENT_SATURATE";
+    ContextGLStencilAction[ContextGLStencilAction["INCREMENT_WRAP"] = 3] = "INCREMENT_WRAP";
+    ContextGLStencilAction[ContextGLStencilAction["INVERT"] = 4] = "INVERT";
+    ContextGLStencilAction[ContextGLStencilAction["KEEP"] = 5] = "KEEP";
+    ContextGLStencilAction[ContextGLStencilAction["SET"] = 6] = "SET";
+    ContextGLStencilAction[ContextGLStencilAction["ZERO"] = 7] = "ZERO";
+})(exports.ContextGLStencilAction || (exports.ContextGLStencilAction = {}));
 
-var ContextGLTextureFilter = (function () {
-    function ContextGLTextureFilter() {
-    }
-    return ContextGLTextureFilter;
-}());
-ContextGLTextureFilter.LINEAR = "linear";
-ContextGLTextureFilter.NEAREST = "nearest";
+(function (ContextGLTextureFilter) {
+    ContextGLTextureFilter[ContextGLTextureFilter["LINEAR"] = 0] = "LINEAR";
+    ContextGLTextureFilter[ContextGLTextureFilter["NEAREST"] = 1] = "NEAREST";
+})(exports.ContextGLTextureFilter || (exports.ContextGLTextureFilter = {}));
 
-var ContextGLTextureFormat = (function () {
-    function ContextGLTextureFormat() {
-    }
-    return ContextGLTextureFormat;
-}());
-ContextGLTextureFormat.BGRA = "bgra";
-ContextGLTextureFormat.BGRA_PACKED = "bgraPacked4444";
-ContextGLTextureFormat.BGR_PACKED = "bgrPacked565";
-ContextGLTextureFormat.COMPRESSED = "compressed";
-ContextGLTextureFormat.COMPRESSED_ALPHA = "compressedAlpha";
+(function (ContextGLTextureFormat) {
+    ContextGLTextureFormat[ContextGLTextureFormat["BGRA"] = 0] = "BGRA";
+    ContextGLTextureFormat[ContextGLTextureFormat["BGRA_PACKED"] = 1] = "BGRA_PACKED";
+    ContextGLTextureFormat[ContextGLTextureFormat["BGR_PACKED"] = 2] = "BGR_PACKED";
+    ContextGLTextureFormat[ContextGLTextureFormat["COMPRESSED"] = 3] = "COMPRESSED";
+    ContextGLTextureFormat[ContextGLTextureFormat["COMPRESSED_ALPHA"] = 4] = "COMPRESSED_ALPHA";
+})(exports.ContextGLTextureFormat || (exports.ContextGLTextureFormat = {}));
 
-var ContextGLTriangleFace = (function () {
-    function ContextGLTriangleFace() {
-    }
-    return ContextGLTriangleFace;
-}());
-ContextGLTriangleFace.BACK = "back";
-ContextGLTriangleFace.FRONT = "front";
-ContextGLTriangleFace.FRONT_AND_BACK = "frontAndBack";
-ContextGLTriangleFace.NONE = "none";
+(function (ContextGLTriangleFace) {
+    ContextGLTriangleFace[ContextGLTriangleFace["BACK"] = 0] = "BACK";
+    ContextGLTriangleFace[ContextGLTriangleFace["FRONT"] = 1] = "FRONT";
+    ContextGLTriangleFace[ContextGLTriangleFace["FRONT_AND_BACK"] = 2] = "FRONT_AND_BACK";
+    ContextGLTriangleFace[ContextGLTriangleFace["NONE"] = 3] = "NONE";
+})(exports.ContextGLTriangleFace || (exports.ContextGLTriangleFace = {}));
 
-var ContextGLVertexBufferFormat = (function () {
-    function ContextGLVertexBufferFormat() {
-    }
-    return ContextGLVertexBufferFormat;
-}());
-ContextGLVertexBufferFormat.FLOAT_1 = 0;
-ContextGLVertexBufferFormat.FLOAT_2 = 1;
-ContextGLVertexBufferFormat.FLOAT_3 = 2;
-ContextGLVertexBufferFormat.FLOAT_4 = 3;
-ContextGLVertexBufferFormat.BYTE_1 = 4;
-ContextGLVertexBufferFormat.BYTE_2 = 5;
-ContextGLVertexBufferFormat.BYTE_3 = 6;
-ContextGLVertexBufferFormat.BYTE_4 = 7;
-ContextGLVertexBufferFormat.UNSIGNED_BYTE_1 = 8;
-ContextGLVertexBufferFormat.UNSIGNED_BYTE_2 = 9;
-ContextGLVertexBufferFormat.UNSIGNED_BYTE_3 = 10;
-ContextGLVertexBufferFormat.UNSIGNED_BYTE_4 = 11;
-ContextGLVertexBufferFormat.SHORT_1 = 12;
-ContextGLVertexBufferFormat.SHORT_2 = 13;
-ContextGLVertexBufferFormat.SHORT_3 = 14;
-ContextGLVertexBufferFormat.SHORT_4 = 15;
-ContextGLVertexBufferFormat.UNSIGNED_SHORT_1 = 16;
-ContextGLVertexBufferFormat.UNSIGNED_SHORT_2 = 17;
-ContextGLVertexBufferFormat.UNSIGNED_SHORT_3 = 18;
-ContextGLVertexBufferFormat.UNSIGNED_SHORT_4 = 19;
+(function (ContextGLVertexBufferFormat) {
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["FLOAT_1"] = 0] = "FLOAT_1";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["FLOAT_2"] = 1] = "FLOAT_2";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["FLOAT_3"] = 2] = "FLOAT_3";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["FLOAT_4"] = 3] = "FLOAT_4";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["BYTE_1"] = 4] = "BYTE_1";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["BYTE_2"] = 5] = "BYTE_2";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["BYTE_3"] = 6] = "BYTE_3";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["BYTE_4"] = 7] = "BYTE_4";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_BYTE_1"] = 8] = "UNSIGNED_BYTE_1";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_BYTE_2"] = 9] = "UNSIGNED_BYTE_2";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_BYTE_3"] = 10] = "UNSIGNED_BYTE_3";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_BYTE_4"] = 11] = "UNSIGNED_BYTE_4";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["SHORT_1"] = 12] = "SHORT_1";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["SHORT_2"] = 13] = "SHORT_2";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["SHORT_3"] = 14] = "SHORT_3";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["SHORT_4"] = 15] = "SHORT_4";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_SHORT_1"] = 16] = "UNSIGNED_SHORT_1";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_SHORT_2"] = 17] = "UNSIGNED_SHORT_2";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_SHORT_3"] = 18] = "UNSIGNED_SHORT_3";
+    ContextGLVertexBufferFormat[ContextGLVertexBufferFormat["UNSIGNED_SHORT_4"] = 19] = "UNSIGNED_SHORT_4";
+})(exports.ContextGLVertexBufferFormat || (exports.ContextGLVertexBufferFormat = {}));
 
-var ContextGLWrapMode = (function () {
-    function ContextGLWrapMode() {
-    }
-    return ContextGLWrapMode;
-}());
-ContextGLWrapMode.CLAMP = "clamp";
-ContextGLWrapMode.REPEAT = "repeat";
+(function (ContextGLWrapMode) {
+    ContextGLWrapMode[ContextGLWrapMode["CLAMP"] = 0] = "CLAMP";
+    ContextGLWrapMode[ContextGLWrapMode["REPEAT"] = 1] = "REPEAT";
+})(exports.ContextGLWrapMode || (exports.ContextGLWrapMode = {}));
 
-var ContextMode = (function () {
-    function ContextMode() {
-    }
-    return ContextMode;
-}());
-ContextMode.AUTO = "auto";
-ContextMode.WEBGL = "webgl";
-ContextMode.FLASH = "flash";
-ContextMode.GLES = "gles";
-ContextMode.NATIVE = "native";
-ContextMode.SOFTWARE = "software";
+(function (ContextMode) {
+    ContextMode[ContextMode["AUTO"] = 0] = "AUTO";
+    ContextMode[ContextMode["WEBGL"] = 1] = "WEBGL";
+    ContextMode[ContextMode["FLASH"] = 2] = "FLASH";
+    ContextMode[ContextMode["GLES"] = 3] = "GLES";
+    ContextMode[ContextMode["NATIVE"] = 4] = "NATIVE";
+    ContextMode[ContextMode["SOFTWARE"] = 5] = "SOFTWARE";
+})(exports.ContextMode || (exports.ContextMode = {}));
 
 var SamplerState = (function () {
     function SamplerState() {
@@ -22821,18 +22891,9 @@ var CubeTextureFlash = (function (_super) {
         this._context._iRemoveResource(this);
         this._context = null;
     };
-    CubeTextureFlash.prototype.uploadFromData = function (data, side, miplevel) {
+    CubeTextureFlash.prototype.uploadFromImage = function (imageCube, side, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
-        if (data instanceof HTMLImageElement) {
-            var can = document.createElement("canvas");
-            var w = data.width;
-            var h = data.height;
-            can.width = w;
-            can.height = h;
-            var ctx = can.getContext("2d");
-            ctx.drawImage(data, 0, 0);
-            data = ctx.getImageData(0, 0, w, h).data;
-        }
+        var data = imageCube.getImageData(side).data;
         var pos = 0;
         var bytes = ByteArrayBase.internalGetBase64String(data.length, function () {
             return data[pos++];
@@ -22936,24 +22997,18 @@ var TextureFlash = (function (_super) {
         this._context._iRemoveResource(this);
         this._context = null;
     };
-    TextureFlash.prototype.uploadFromData = function (data, miplevel) {
+    TextureFlash.prototype.uploadFromImage = function (image2D, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
-        if (data instanceof HTMLImageElement) {
-            var can = document.createElement("canvas");
-            var w = data.width;
-            var h = data.height;
-            can.width = w;
-            can.height = h;
-            var ctx = can.getContext("2d");
-            ctx.drawImage(data, 0, 0);
-            data = ctx.getImageData(0, 0, w, h).data;
-        }
+        var data = image2D.getImageData().data;
         var pos = 0;
         var bytes = ByteArrayBase.internalGetBase64String(data.length, function () {
             return data[pos++];
         }, null);
         this._context.addStream(String.fromCharCode(OpCodes.uploadBytesTexture) + this._pId + "," + miplevel + "," + (this._width >> miplevel) + "," + (this._height >> miplevel) + "," + bytes + "%");
         this._context.execute();
+    };
+    TextureFlash.prototype.uploadFromURL = function (urlRequest, miplevel) {
+        if (miplevel === void 0) { miplevel = 0; }
     };
     return TextureFlash;
 }(ResourceBaseFlash));
@@ -22999,7 +23054,6 @@ var VertexBufferFlash = (function (_super) {
     return VertexBufferFlash;
 }(ResourceBaseFlash));
 
-//import {swfobject} from "../swfobject";
 var ContextFlash = (function () {
     //TODO: get rid of hack that fixes including definition file
     function ContextFlash(container, callback) {
@@ -23039,13 +23093,6 @@ var ContextFlash = (function () {
     ContextFlash.prototype.enableStencil = function () {
     };
     ContextFlash.prototype.disableStencil = function () {
-    };
-    ContextFlash.prototype.setStencilActionsMasks = function (compareMode, referenceValue, writeMask, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail, coordinateSystem) {
-        if (compareMode === void 0) { compareMode = "always"; }
-        if (actionOnBothPass === void 0) { actionOnBothPass = "keep"; }
-        if (actionOnDepthFail === void 0) { actionOnDepthFail = "keep"; }
-        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = "keep"; }
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
     };
     Object.defineProperty(ContextFlash.prototype, "container", {
         get: function () {
@@ -23105,25 +23152,25 @@ var ContextFlash = (function () {
         //nothing to do here
     };
     ContextFlash.prototype.setStencilActions = function (triangleFace, compareMode, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail, coordinateSystem) {
-        if (triangleFace === void 0) { triangleFace = "frontAndBack"; }
-        if (compareMode === void 0) { compareMode = "always"; }
-        if (actionOnBothPass === void 0) { actionOnBothPass = "keep"; }
-        if (actionOnDepthFail === void 0) { actionOnDepthFail = "keep"; }
-        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = "keep"; }
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
+        if (triangleFace === void 0) { triangleFace = exports.ContextGLTriangleFace.FRONT_AND_BACK; }
+        if (compareMode === void 0) { compareMode = exports.ContextGLCompareMode.ALWAYS; }
+        if (actionOnBothPass === void 0) { actionOnBothPass = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthFail === void 0) { actionOnDepthFail = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = exports.ContextGLStencilAction.KEEP; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         this.addStream(String.fromCharCode(OpCodes.setStencilActions) + triangleFace + "$" + compareMode + "$" + actionOnBothPass + "$" + actionOnDepthFail + "$" + actionOnDepthPassStencilFail + "$");
         if (ContextFlash.debug)
             this.execute();
     };
     ContextFlash.prototype.setStencilReferenceValue = function (referenceValue, readMask, writeMask) {
-        if (readMask === void 0) { readMask = 255; }
-        if (writeMask === void 0) { writeMask = 255; }
+        if (readMask === void 0) { readMask = 0xFF; }
+        if (writeMask === void 0) { writeMask = 0xFF; }
         this.addStream(String.fromCharCode(OpCodes.setStencilReferenceValue, referenceValue + OpCodes.intMask, readMask + OpCodes.intMask, writeMask + OpCodes.intMask));
         if (ContextFlash.debug)
             this.execute();
     };
     ContextFlash.prototype.setCulling = function (triangleFaceToCull, coordinateSystem) {
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         //TODO implement coordinateSystem option
         this.addStream(String.fromCharCode(OpCodes.setCulling) + triangleFaceToCull + "$");
         if (ContextFlash.debug)
@@ -23148,7 +23195,7 @@ var ContextFlash = (function () {
     ContextFlash.prototype.setProgramConstantsFromArray = function (programType, data) {
         var startIndex;
         var numRegisters = data.length / 4;
-        var target = (programType == ContextGLProgramType.VERTEX) ? OpCodes.trueValue : OpCodes.falseValue;
+        var target = (programType == exports.ContextGLProgramType.VERTEX) ? OpCodes.trueValue : OpCodes.falseValue;
         for (var i = 0; i < numRegisters; i++) {
             startIndex = i * 4;
             this.addStream(String.fromCharCode(OpCodes.setProgramConstant, target, i + OpCodes.intMask) + data[startIndex] + "," + data[startIndex + 1] + "," + data[startIndex + 2] + "," + data[startIndex + 3] + ",");
@@ -23172,7 +23219,7 @@ var ContextFlash = (function () {
         if (alpha === void 0) { alpha = 1; }
         if (depth === void 0) { depth = 1; }
         if (stencil === void 0) { stencil = 0; }
-        if (mask === void 0) { mask = ContextGLClearMask.ALL; }
+        if (mask === void 0) { mask = exports.ContextGLClearMask.ALL; }
         this.addStream(String.fromCharCode(OpCodes.clear) + red + "," + green + "," + blue + "," + alpha + "," + depth + "," + stencil + "," + mask + ",");
         if (ContextFlash.debug)
             this.execute();
@@ -23312,7 +23359,7 @@ var TextureBaseGLES = (function (_super) {
         // this._gl = gl;
     }
     TextureBaseGLES.prototype.dispose = function () {
-        console.log("dispose texturedata " + this.id);
+        //console.log("dispose texturedata "+this.id);
         ///this._context.addStream(String.fromCharCode(OpCodes.disposeTexture) + this.id.toString() + "#END");
         this._context._createBytes.writeInt(OpCodes.disposeTexture);
         this._context._createBytes.writeInt(this.id);
@@ -23354,7 +23401,7 @@ var CubeTextureGLES = (function (_super) {
         // this._textureSelectorDictionary[4] = gl.TEXTURE_CUBE_MAP_POSITIVE_Z;
         // this._textureSelectorDictionary[5] = gl.TEXTURE_CUBE_MAP_NEGATIVE_Z;
     }
-    CubeTextureGLES.prototype.uploadFromData = function (data, side, miplevel) {
+    CubeTextureGLES.prototype.uploadFromImage = function (imageCube, side, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
         //todo
         // this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._glTexture);
@@ -23423,14 +23470,35 @@ var IndexBufferGLES = (function (_super) {
     return IndexBufferGLES;
 }(GLESAssetBase));
 
+var GLESConnector = (function () {
+    function GLESConnector() {
+    }
+    Object.defineProperty(GLESConnector, "gles", {
+        get: function () {
+            if (!GLESConnector._gles)
+                throw ("Error: Set GlesConnector.gles before calling methods on ContextGLES!");
+            return GLESConnector._gles;
+        },
+        set: function (value) {
+            GLESConnector._gles = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    
+    
+    return GLESConnector;
+}());
+GLESConnector._gles = null;
+
 var ProgramGLES = (function (_super) {
     __extends(ProgramGLES, _super);
     function ProgramGLES(context, gl, id) {
         var _this = _super.call(this, context, id) || this;
         _this._uniforms = [[], [], []];
         _this._attribs = [];
-        console.log("awayjs created program with id " + id);
         return _this;
+        //console.log("awayjs created program with id "+ id);
         // this._gl = gl;
         // this._program = this._gl.createProgram();
     }
@@ -23438,37 +23506,16 @@ var ProgramGLES = (function (_super) {
         var vertexString = ProgramGLES._aglslParser.parse(ProgramGLES._tokenizer.decribeAGALByteArray(vertexProgram));
         var fragmentString = ProgramGLES._aglslParser.parse(ProgramGLES._tokenizer.decribeAGALByteArray(fragmentProgram));
         //(String.fromCharCode(OpCodes.uploadProgram)+""+this.id + "###"+vertexString +  "###" + fragmentString + "#END");
-        this._context._createBytes.writeInt(OpCodes.uploadProgram);
-        this._context._createBytes.writeInt(this.id);
-        this._context._createBytes.writeUTFBytes(vertexString);
-        this._context._createBytes.writeUTFBytes(fragmentString);
-        //
-        // this._vertexShader = this._gl.createShader(this._gl.VERTEX_SHADER);
-        // this._fragmentShader = this._gl.createShader(this._gl.FRAGMENT_SHADER);
-        //
-        // this._gl.shaderSource(this._vertexShader, vertexString);
-        // this._gl.compileShader(this._vertexShader);
-        //
-        // if (!this._gl.getShaderParameter(this._vertexShader, this._gl.COMPILE_STATUS))
-        // 	throw new Error(this._gl.getShaderInfoLog(this._vertexShader));
-        //
-        // this._gl.shaderSource(this._fragmentShader, fragmentString);
-        // this._gl.compileShader(this._fragmentShader);
-        //
-        // if (!this._gl.getShaderParameter(this._fragmentShader, this._gl.COMPILE_STATUS))
-        // 	throw new Error(this._gl.getShaderInfoLog(this._fragmentShader));
-        //
-        // this._gl.attachShader(this._program, this._vertexShader);
-        // this._gl.attachShader(this._program, this._fragmentShader);
-        // this._gl.linkProgram(this._program);
-        //
-        // if (!this._gl.getProgramParameter(this._program, this._gl.LINK_STATUS))
-        // 	throw new Error(this._gl.getProgramInfoLog(this._program));
-        //
-        // this._uniforms[0].length = 0;
-        // this._uniforms[1].length = 0;
-        // this._uniforms[2].length = 0;
-        // this._attribs.length = 0;
+        var newSendbytes = new Byte32Array();
+        newSendbytes.writeInt(1); //tells cpp that this is a create-bytes chunk
+        newSendbytes.writeInt(OpCodes.uploadProgram);
+        newSendbytes.writeInt(this.id);
+        newSendbytes.writeUTFBytes(vertexString);
+        newSendbytes.writeUTFBytes(fragmentString);
+        newSendbytes.bytePosition = 0;
+        var localInt32View = new Int32Array(newSendbytes.byteLength / 4);
+        newSendbytes.readInt32Array(localInt32View);
+        GLESConnector.gles.sendGLESCommands(localInt32View.buffer);
     };
     ProgramGLES.prototype.getUniformLocation = function (programType, index) {
         if (index === void 0) { index = -1; }
@@ -23574,81 +23621,24 @@ var TextureGLES = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    TextureGLES.prototype.uploadFromData = function (data, miplevel) {
-        /*
-        var pos = 0;
-        var bytes = ByteArrayBase.internalGetBase64String(data.length, function () {
-            return data[pos++];
-        }, null);
-*/
+    TextureGLES.prototype.uploadFromImage = function (image2D, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
-        /*function base64ArrayBuffer(arrayBuffer) {
-            var start = new Date().getTime();
-            var base64    = ''
-            var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-
-            var bytes         = new Uint8Array(arrayBuffer)
-            var byteLength    = bytes.byteLength
-            var byteRemainder = byteLength % 3
-            var mainLength    = byteLength - byteRemainder
-
-            var a, b, c, d
-            var chunk
-
-            // Main loop deals with bytes in chunks of 3
-            for (var i = 0; i < mainLength; i = i + 3) {
-                // Combine the three bytes into a single integer
-                chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
-
-                // Use bitmasks to extract 6-bit segments from the triplet
-                a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
-                b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
-                c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
-                d = chunk & 63               // 63       = 2^6 - 1
-
-                // Convert the raw binary segments to the appropriate ASCII encoding
-                base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
-            }
-
-            // Deal with the remaining bytes and padding
-            if (byteRemainder == 1) {
-                chunk = bytes[mainLength]
-
-                a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
-
-                // Set the 4 least significant bits to zero
-                b = (chunk & 3)   << 4 // 3   = 2^2 - 1
-
-                base64 += encodings[a] + encodings[b] + '=='
-            } else if (byteRemainder == 2) {
-                chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
-
-                a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
-                b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
-
-                // Set the 2 least significant bits to zero
-                c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
-
-                base64 += encodings[a] + encodings[b] + encodings[c] + '='
-            }
-
-            var end = new Date().getTime();
-            var time = end - start;
-            console.log('Execution time for texture base64 encoding: ' + time);
-            return base64
-        }*/
-        //this._context.addCreateStream(String.fromCharCode(OpCodes.uploadBytesTexture) + this.id.toString() + "," + miplevel + "," + (this._width >> miplevel) + "," + (this._height >> miplevel) + "," +base64ArrayBuffer(data.data.buffer)+"#END");
-        console.log("upload texturedata " + this.id);
-        this._context._createBytes.writeInt(OpCodes.uploadBytesTexture | miplevel << 8);
-        this._context._createBytes.writeInt(this.id);
-        this._context._createBytes.writeFloat(this._width);
-        this._context._createBytes.writeFloat(this._height);
-        this._context._createBytes.writeInt(data.data.buffer.byteLength);
-        this._context._createBytes.writeInt32Array(new Int32Array(data.data.buffer));
-        //GLESConnector.gles.uploadTextureFromData(this.id, data, miplevel);
-        // this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
-        // this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
-        // this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+        var newSendbytes = new Byte32Array();
+        newSendbytes.writeInt(1); //tells cpp that this is a create-bytes chunk
+        newSendbytes.writeInt(OpCodes.uploadBytesTexture | miplevel << 8);
+        newSendbytes.writeInt(this.id);
+        newSendbytes.writeFloat(this._width);
+        newSendbytes.writeFloat(this._height);
+        newSendbytes.writeInt(image2D.getImageData().data.buffer.byteLength);
+        newSendbytes.writeInt32Array(new Int32Array(image2D.getImageData().data.buffer));
+        newSendbytes.bytePosition = 0;
+        var localInt32View = new Int32Array(newSendbytes.byteLength / 4);
+        newSendbytes.readInt32Array(localInt32View);
+        GLESConnector.gles.sendGLESCommands(localInt32View.buffer);
+    };
+    TextureGLES.prototype.uploadFromURL = function (urlRequest, miplevel) {
+        if (miplevel === void 0) { miplevel = 0; }
+        //TODO:
     };
     TextureGLES.prototype.uploadCompressedTextureFromByteArray = function (data, byteArrayOffset /*uint*/, async) {
         if (async === void 0) { async = false; }
@@ -23679,77 +23669,17 @@ var VertexBufferGLES = (function (_super) {
         // 	this._gl.bufferData(this._gl.ARRAY_BUFFER, new Float32Array(vertices), this._gl.STATIC_DRAW);
     };
     VertexBufferGLES.prototype.uploadFromByteArray = function (data, startVertex, numVertices) {
-        /*function base64ArrayBuffer(arrayBuffer) {
-            var start = new Date().getTime();
-            var base64    = ''
-            var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-
-            var bytes         = new Uint8Array(arrayBuffer)
-            var byteLength    = bytes.byteLength
-            var byteRemainder = byteLength % 3
-            var mainLength    = byteLength - byteRemainder
-
-            var a, b, c, d
-            var chunk
-
-            // Main loop deals with bytes in chunks of 3
-            for (var i = 0; i < mainLength; i = i + 3) {
-                // Combine the three bytes into a single integer
-                chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
-
-                // Use bitmasks to extract 6-bit segments from the triplet
-                a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
-                b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
-                c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
-                d = chunk & 63               // 63       = 2^6 - 1
-
-                // Convert the raw binary segments to the appropriate ASCII encoding
-                base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
-            }
-
-            // Deal with the remaining bytes and padding
-            if (byteRemainder == 1) {
-                chunk = bytes[mainLength]
-
-                a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
-
-                // Set the 4 least significant bits to zero
-                b = (chunk & 3)   << 4 // 3   = 2^2 - 1
-
-                base64 += encodings[a] + encodings[b] + '=='
-            } else if (byteRemainder == 2) {
-                chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
-
-                a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
-                b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
-
-                // Set the 2 least significant bits to zero
-                c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
-
-                base64 += encodings[a] + encodings[b] + encodings[c] + '='
-            }
-
-            var end = new Date().getTime();
-            var time = end - start;
-            console.log('Execution time for vertexdata base64 encoding: ' + time);
-            return base64
-        }
-        */
-        //this._context.addCreateStream(String.fromCharCode(OpCodes.uploadArrayVertexBuffer) + this.id + "," + startVertex +  "," + numVertices + ","+base64ArrayBuffer(data)+"#END");
-        console.log("upload vertexdata " + this.id);
-        this._context._createBytes.writeInt(OpCodes.uploadArrayVertexBuffer);
-        this._context._createBytes.writeInt(this.id);
-        this._context._createBytes.writeInt(startVertex);
-        this._context._createBytes.writeInt(data.byteLength);
-        this._context._createBytes.writeInt32Array(new Int32Array(data)); //TODO: cache the view on the attributebuffer
-        //this._context.execute();
-        //GLESConnector.gles.uploadVertexDataFromByteArray(this.id, data, startVertex, numVertices);
-        // this._gl.bindBuffer(this._gl.ARRAY_BUFFER, this._buffer);
-        //
-        // if (startVertex)
-        // 	this._gl.bufferSubData(this._gl.ARRAY_BUFFER, startVertex*this._dataPerVertex, data);
-        // else
-        // 	this._gl.bufferData(this._gl.ARRAY_BUFFER, data, this._gl.STATIC_DRAW);
+        var newSendbytes = new Byte32Array();
+        newSendbytes.writeInt(2); //send vertex_data
+        newSendbytes.writeInt(OpCodes.uploadArrayVertexBuffer);
+        newSendbytes.writeInt(this.id);
+        newSendbytes.writeInt(startVertex);
+        newSendbytes.writeInt(data.byteLength);
+        newSendbytes.writeInt32Array(new Int32Array(data)); //TODO: cache the view on the attributebuffer
+        newSendbytes.bytePosition = 0;
+        var localInt32View = new Int32Array(newSendbytes.byteLength / 4);
+        newSendbytes.readInt32Array(localInt32View);
+        GLESConnector.gles.sendGLESCommands(localInt32View.buffer);
     };
     Object.defineProperty(VertexBufferGLES.prototype, "numVertices", {
         get: function () {
@@ -23773,34 +23703,13 @@ var VertexBufferGLES = (function (_super) {
         configurable: true
     });
     VertexBufferGLES.prototype.dispose = function () {
-        console.log("dispose vertexdata " + this.id);
+        //console.log("dispose vertexdata "+this.id);
         //this._context.addCreateStream(String.fromCharCode(OpCodes.disposeVertexBuffer) + this.id+"#END");
         this._context._createBytes.writeInt(OpCodes.disposeVertexBuffer);
         this._context._createBytes.writeInt(this.id);
     };
     return VertexBufferGLES;
 }(GLESAssetBase));
-
-var GLESConnector = (function () {
-    function GLESConnector() {
-    }
-    Object.defineProperty(GLESConnector, "gles", {
-        get: function () {
-            if (!GLESConnector._gles)
-                throw ("Error: Set GlesConnector.gles before calling methods on ContextGLES!");
-            return GLESConnector._gles;
-        },
-        set: function (value) {
-            GLESConnector._gles = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    
-    
-    return GLESConnector;
-}());
-GLESConnector._gles = null;
 
 var ContextGLES = (function () {
     function ContextGLES(canvas) {
@@ -23827,53 +23736,54 @@ var ContextGLES = (function () {
         this._container = canvas;
         this._cmdBytes = new Byte32Array();
         this._createBytes = new Byte32Array();
-        this.sendBytes = new Byte32Array();
-        this._blendFactorDictionary[ContextGLBlendFactor.ONE] = 0;
-        this._blendFactorDictionary[ContextGLBlendFactor.DESTINATION_ALPHA] = 1;
-        this._blendFactorDictionary[ContextGLBlendFactor.DESTINATION_COLOR] = 2;
-        this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_DESTINATION_ALPHA] = 3;
-        this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_DESTINATION_COLOR] = 4;
-        this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA] = 5;
-        this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_SOURCE_COLOR] = 6;
-        this._blendFactorDictionary[ContextGLBlendFactor.SOURCE_ALPHA] = 7;
-        this._blendFactorDictionary[ContextGLBlendFactor.SOURCE_COLOR] = 8;
-        this._blendFactorDictionary[ContextGLBlendFactor.ZERO] = 9;
-        this._drawModeDictionary[ContextGLDrawMode.LINES] = 0;
-        this._drawModeDictionary[ContextGLDrawMode.TRIANGLES] = 1;
-        this._compareModeDictionary[ContextGLCompareMode.ALWAYS] = 0;
-        this._compareModeDictionary[ContextGLCompareMode.EQUAL] = 1;
-        this._compareModeDictionary[ContextGLCompareMode.GREATER] = 2;
-        this._compareModeDictionary[ContextGLCompareMode.GREATER_EQUAL] = 3;
-        this._compareModeDictionary[ContextGLCompareMode.LESS] = 4;
-        this._compareModeDictionary[ContextGLCompareMode.LESS_EQUAL] = 5;
-        this._compareModeDictionary[ContextGLCompareMode.NEVER] = 6;
-        this._compareModeDictionary[ContextGLCompareMode.NOT_EQUAL] = 7;
-        this.stencilTriangleFace["frontAndBack"] = 0;
-        this.stencilTriangleFace["front"] = 1;
-        this.stencilTriangleFace["back"] = 2;
+        this._cmdBytes.writeUnsignedInt(0); //id for sending cmd data
+        this._createBytes.writeUnsignedInt(1); //id for sending create data
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE] = 0;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.DESTINATION_ALPHA] = 1;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.DESTINATION_COLOR] = 2;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_DESTINATION_ALPHA] = 3;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_DESTINATION_COLOR] = 4;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA] = 5;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_COLOR] = 6;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.SOURCE_ALPHA] = 7;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.SOURCE_COLOR] = 8;
+        this._blendFactorDictionary[exports.ContextGLBlendFactor.ZERO] = 9;
+        this._drawModeDictionary[exports.ContextGLDrawMode.LINES] = 0;
+        this._drawModeDictionary[exports.ContextGLDrawMode.TRIANGLES] = 1;
+        this._compareModeDictionary[exports.ContextGLCompareMode.ALWAYS] = 0;
+        this._compareModeDictionary[exports.ContextGLCompareMode.EQUAL] = 1;
+        this._compareModeDictionary[exports.ContextGLCompareMode.GREATER] = 2;
+        this._compareModeDictionary[exports.ContextGLCompareMode.GREATER_EQUAL] = 3;
+        this._compareModeDictionary[exports.ContextGLCompareMode.LESS] = 4;
+        this._compareModeDictionary[exports.ContextGLCompareMode.LESS_EQUAL] = 5;
+        this._compareModeDictionary[exports.ContextGLCompareMode.NEVER] = 6;
+        this._compareModeDictionary[exports.ContextGLCompareMode.NOT_EQUAL] = 7;
+        this.stencilTriangleFace[exports.ContextGLTriangleFace.BACK] = 2;
+        this.stencilTriangleFace[exports.ContextGLTriangleFace.FRONT] = 1;
+        this.stencilTriangleFace[exports.ContextGLTriangleFace.FRONT_AND_BACK] = 0;
         //
-        this._stencilActionDictionary[ContextGLStencilAction.DECREMENT_SATURATE] = 0;
-        this._stencilActionDictionary[ContextGLStencilAction.DECREMENT_WRAP] = 1;
-        this._stencilActionDictionary[ContextGLStencilAction.INCREMENT_SATURATE] = 2;
-        this._stencilActionDictionary[ContextGLStencilAction.INCREMENT_WRAP] = 3;
-        this._stencilActionDictionary[ContextGLStencilAction.INVERT] = 4;
-        this._stencilActionDictionary[ContextGLStencilAction.KEEP] = 5;
-        this._stencilActionDictionary[ContextGLStencilAction.SET] = 6;
-        this._stencilActionDictionary[ContextGLStencilAction.ZERO] = 7;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.DECREMENT_SATURATE] = 0;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.DECREMENT_WRAP] = 1;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.INCREMENT_SATURATE] = 2;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.INCREMENT_WRAP] = 3;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.INVERT] = 4;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.KEEP] = 5;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.SET] = 6;
+        this._stencilActionDictionary[exports.ContextGLStencilAction.ZERO] = 7;
         this._textureTypeDictionary["texture2d"] = 0;
         this._textureTypeDictionary["textureCube"] = 1;
-        this._wrapDictionary[ContextGLWrapMode.REPEAT] = 0;
-        this._wrapDictionary[ContextGLWrapMode.CLAMP] = 1;
-        this._filterDictionary[ContextGLTextureFilter.LINEAR] = 0;
-        this._filterDictionary[ContextGLTextureFilter.NEAREST] = 1;
-        this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR] = new Object();
-        this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR][ContextGLMipFilter.MIPNEAREST] = 2;
-        this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR][ContextGLMipFilter.MIPLINEAR] = 3;
-        this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR][ContextGLMipFilter.MIPNONE] = 0;
-        this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST] = new Object();
-        this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST][ContextGLMipFilter.MIPNEAREST] = 4;
-        this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST][ContextGLMipFilter.MIPLINEAR] = 5;
-        this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST][ContextGLMipFilter.MIPNONE] = 1;
+        this._wrapDictionary[exports.ContextGLWrapMode.REPEAT] = 0;
+        this._wrapDictionary[exports.ContextGLWrapMode.CLAMP] = 1;
+        this._filterDictionary[exports.ContextGLTextureFilter.LINEAR] = 0;
+        this._filterDictionary[exports.ContextGLTextureFilter.NEAREST] = 1;
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR] = new Object();
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR][exports.ContextGLMipFilter.MIPNEAREST] = 2;
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR][exports.ContextGLMipFilter.MIPLINEAR] = 3;
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR][exports.ContextGLMipFilter.MIPNONE] = 0;
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST] = new Object();
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPNEAREST] = 4;
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPLINEAR] = 5;
+        this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPNONE] = 1;
     }
     Object.defineProperty(ContextGLES.prototype, "container", {
         get: function () {
@@ -23905,7 +23815,7 @@ var ContextGLES = (function () {
         if (alpha === void 0) { alpha = 1; }
         if (depth === void 0) { depth = 1; }
         if (stencil === void 0) { stencil = 0; }
-        if (mask === void 0) { mask = ContextGLClearMask.ALL; }
+        if (mask === void 0) { mask = exports.ContextGLClearMask.ALL; }
         this._cmdBytes.writeInt(OpCodes.clear);
         this._cmdBytes.writeFloat(red);
         this._cmdBytes.writeFloat(green);
@@ -23990,8 +23900,8 @@ var ContextGLES = (function () {
         this._cmdBytes.writeInt((red ? 1 : 0) | (green ? 1 : 0) << 8 | (blue ? 1 : 0) << 16 | (alpha ? 1 : 0) << 24);
     };
     ContextGLES.prototype.setCulling = function (triangleFaceToCull, coordinateSystem) {
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
-        if (triangleFaceToCull == ContextGLTriangleFace.NONE) {
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
+        if (triangleFaceToCull == exports.ContextGLTriangleFace.NONE) {
             //this.addStream(String.fromCharCode(OpCodes.disableCulling) + "#END");
             this._cmdBytes.writeInt(OpCodes.disableCulling);
             return;
@@ -24016,12 +23926,12 @@ var ContextGLES = (function () {
         this._cmdBytes.writeInt(writeMask | fail << 8 | zFail << 16 | pass << 24);
     };
     ContextGLES.prototype.setStencilActions = function (triangleFace, compareMode, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail, coordinateSystem) {
-        if (triangleFace === void 0) { triangleFace = "frontAndBack"; }
-        if (compareMode === void 0) { compareMode = "always"; }
-        if (actionOnBothPass === void 0) { actionOnBothPass = "keep"; }
-        if (actionOnDepthFail === void 0) { actionOnDepthFail = "keep"; }
-        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = "keep"; }
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
+        if (triangleFace === void 0) { triangleFace = exports.ContextGLTriangleFace.FRONT_AND_BACK; }
+        if (compareMode === void 0) { compareMode = exports.ContextGLCompareMode.ALWAYS; }
+        if (actionOnBothPass === void 0) { actionOnBothPass = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthFail === void 0) { actionOnDepthFail = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = exports.ContextGLStencilAction.KEEP; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         var compareModeGL = this._compareModeDictionary[compareMode];
         var triangleFaceGL = this.stencilTriangleFace[triangleFace];
         var fail = this._stencilActionDictionary[actionOnDepthPassStencilFail];
@@ -24031,6 +23941,8 @@ var ContextGLES = (function () {
         this._cmdBytes.writeInt(compareModeGL | fail << 8 | zFail << 16 | pass << 24);
     };
     ContextGLES.prototype.setStencilReferenceValue = function (referenceValue, readMask, writeMask) {
+        if (readMask === void 0) { readMask = 0xFF; }
+        if (writeMask === void 0) { writeMask = 0xFF; }
         this._cmdBytes.writeInt(OpCodes.setStencilReferenceValue);
         this._cmdBytes.writeInt(referenceValue);
         this._cmdBytes.writeInt(readMask);
@@ -24119,41 +24031,35 @@ var ContextGLES = (function () {
     };
     ContextGLES.prototype.translateTriangleFace = function (triangleFace, coordinateSystem) {
         switch (triangleFace) {
-            case ContextGLTriangleFace.BACK:
-                return (coordinateSystem == "leftHanded") ? 2 : 1;
-            case ContextGLTriangleFace.FRONT:
-                return (coordinateSystem == "leftHanded") ? 1 : 2;
-            case ContextGLTriangleFace.FRONT_AND_BACK:
+            case exports.ContextGLTriangleFace.BACK:
+                return (coordinateSystem == exports.CoordinateSystem.LEFT_HANDED) ? 2 : 1;
+            case exports.ContextGLTriangleFace.FRONT:
+                return (coordinateSystem == exports.CoordinateSystem.LEFT_HANDED) ? 1 : 2;
+            case exports.ContextGLTriangleFace.FRONT_AND_BACK:
                 return 0;
             default:
                 throw "Unknown ContextGLTriangleFace type."; // TODO error
         }
     };
     ContextGLES.prototype.execute = function () {
-        this.sendBytes.byteLength = 0;
-        this.sendBytes.bytePosition = 0;
         if (this._createBytes.byteLength > 0) {
-            this.sendBytes.writeUnsignedInt(this._createBytes.byteLength);
-            this.sendBytes.writeByte32Array(this._createBytes);
+            this._createBytes.bytePosition = 0;
+            var localInt32View1 = new Int32Array(this._createBytes.byteLength / 4);
+            this._createBytes.readInt32Array(localInt32View1);
+            GLESConnector.gles.sendGLESCommands(localInt32View1.buffer);
             this._createBytes.byteLength = 0;
             this._createBytes.bytePosition = 0;
-        }
-        else {
-            this.sendBytes.writeUnsignedInt(0);
+            this._createBytes.writeUnsignedInt(1); // make sure first int in bytearray is the id (1 for create bytes)
         }
         if (this._cmdBytes.byteLength > 0) {
-            this.sendBytes.writeUnsignedInt(this._cmdBytes.byteLength);
-            this.sendBytes.writeByte32Array(this._cmdBytes);
+            this._cmdBytes.bytePosition = 0;
+            var localInt32View = new Int32Array(this._cmdBytes.byteLength / 4);
+            this._cmdBytes.readInt32Array(localInt32View);
+            GLESConnector.gles.sendGLESCommands(localInt32View.buffer);
             this._cmdBytes.byteLength = 0;
             this._cmdBytes.bytePosition = 0;
+            this._cmdBytes.writeUnsignedInt(0); // make sure first int in bytearray is the id (0 for cmd bytes)
         }
-        else {
-            this.sendBytes.writeUnsignedInt(0);
-        }
-        this.sendBytes.bytePosition = 0;
-        var localInt32View = new Int32Array(this.sendBytes.byteLength / 4);
-        this.sendBytes.readInt32Array(localInt32View);
-        GLESConnector.gles.sendGLESCommands(localInt32View.buffer);
     };
     return ContextGLES;
 }());
@@ -24218,7 +24124,7 @@ var GL_Image2D = (function (_super) {
      * @returns {ITexture}
      */
     GL_Image2D.prototype._createTexture = function () {
-        this._texture = this._stage.context.createTexture(this._asset.width, this._asset.height, ContextGLTextureFormat.BGRA, true);
+        this._texture = this._stage.context.createTexture(this._asset.width, this._asset.height, exports.ContextGLTextureFormat.BGRA, true);
     };
     return GL_Image2D;
 }(GL_ImageBase));
@@ -24245,7 +24151,7 @@ var GL_BitmapImage2D = (function (_super) {
         }
         if (this._invalid) {
             this._invalid = false;
-            this._texture.uploadFromData(this._asset.getImageData(), 0);
+            this._texture.uploadFromImage(this._asset, 0);
             if (mipmap)
                 this._texture.generateMipmaps();
         }
@@ -24280,6 +24186,41 @@ var GL_BitmapImage2D = (function (_super) {
 
 /**
  *
+ * @class away.pool.ImageObjectBase
+ */
+var GL_ExternalImage2D = (function (_super) {
+    __extends(GL_ExternalImage2D, _super);
+    function GL_ExternalImage2D() {
+        return _super.apply(this, arguments) || this;
+    }
+    GL_ExternalImage2D.prototype.activate = function (index, mipmap) {
+        if (mipmap && this._stage.globalDisableMipmap)
+            mipmap = false;
+        if (!this._texture) {
+            this._createTexture();
+            this._invalid = true;
+        }
+        if (!this._mipmap && mipmap) {
+            this._mipmap = true;
+            this._invalid = true;
+        }
+        if (this._invalid) {
+            this._invalid = false;
+            this._texture.uploadFromURL(this._asset.urlRequest, 0);
+        }
+        _super.prototype.activate.call(this, index, mipmap);
+    };
+    /**
+     *
+     */
+    GL_ExternalImage2D.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+    };
+    return GL_ExternalImage2D;
+}(GL_Image2D));
+
+/**
+ *
  * @class away.pool.GL_ImageCubeBase
  */
 var GL_ImageCube = (function (_super) {
@@ -24293,7 +24234,7 @@ var GL_ImageCube = (function (_super) {
      * @returns {ITexture}
      */
     GL_ImageCube.prototype._createTexture = function () {
-        this._texture = this._stage.context.createCubeTexture(this._asset.size, ContextGLTextureFormat.BGRA, false);
+        this._texture = this._stage.context.createCubeTexture(this._asset.size, exports.ContextGLTextureFormat.BGRA, false);
     };
     return GL_ImageCube;
 }(GL_ImageBase));
@@ -24322,19 +24263,26 @@ var GL_BitmapImageCube = (function (_super) {
         }
         if (this._invalid) {
             this._invalid = false;
-            for (var i = 0; i < 6; ++i) {
-                if (mipmap) {
-                    var mipmapData = this._mipmapDataArray[i] || (this._mipmapDataArray[i] = new Array());
-                    MipmapGenerator._generateMipMaps(this._asset.getCanvas(i), mipmapData, true);
-                    var len = mipmapData.length;
-                    for (var j = 0; j < len; j++)
-                        this._texture.uploadFromData(mipmapData[j].getImageData(), i, j);
-                }
-                else {
-                    this._texture.uploadFromData(this._asset.getImageData(i), i, 0);
-                }
-            }
+            for (var i = 0; i < 6; ++i)
+                this._texture.uploadFromImage(this._asset, i, 0);
+            if (mipmap)
+                this._texture.generateMipmaps();
         }
+        // if (this._invalid) {
+        // 	this._invalid = false;
+        // 	for (var i:number = 0; i < 6; ++i) {
+        // 		if (mipmap) {
+        // 			var mipmapData:Array<BitmapImage2D> = this._mipmapDataArray[i] || (this._mipmapDataArray[i] = new Array<BitmapImage2D>());
+        //
+        // 			MipmapGenerator._generateMipMaps((<BitmapImageCube> this._asset).getCanvas(i), mipmapData, true);
+        // 			var len:number = mipmapData.length;
+        // 			for (var j:number = 0; j < len; j++)
+        // 				(<ICubeTexture> this._texture).uploadFromImage(mipmapData[j], i, j);
+        // 		} else {
+        // 			(<ICubeTexture> this._texture).uploadFromImage(<BitmapImageCube> this._asset, i, 0);
+        // 		}
+        // 	}
+        // }
         _super.prototype.activate.call(this, index, mipmap);
     };
     /**
@@ -24638,9 +24586,12 @@ var TextureSoftware = (function () {
     TextureSoftware.prototype.isTexture = function (textureClass) {
         return this.textureType == textureClass.textureType;
     };
-    TextureSoftware.prototype.uploadFromData = function (data, miplevel) {
+    TextureSoftware.prototype.uploadFromImage = function (image2D, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
-        this._mipLevels[miplevel] = data.data;
+        this._mipLevels[miplevel] = image2D.getImageData().data;
+    };
+    TextureSoftware.prototype.uploadFromURL = function (urlRequest, miplevel) {
+        if (miplevel === void 0) { miplevel = 0; }
     };
     TextureSoftware.prototype.getData = function (miplevel) {
         return this._mipLevels[miplevel];
@@ -24657,7 +24608,7 @@ TextureSoftware.textureType = "texture2d";
 
 var CubeTextureSoftware = (function () {
     function CubeTextureSoftware(size) {
-        this._textureSelectorDictionary = [];
+        this._textureSelectorDictionary = [[], [], [], [], [], []];
         this._size = size;
     }
     Object.defineProperty(CubeTextureSoftware.prototype, "textureType", {
@@ -24680,12 +24631,13 @@ var CubeTextureSoftware = (function () {
     CubeTextureSoftware.prototype.isTexture = function (textureClass) {
         return this.textureType == textureClass.textureType;
     };
-    CubeTextureSoftware.prototype.uploadFromData = function (data, side, miplevel) {
+    CubeTextureSoftware.prototype.uploadFromImage = function (imageCube, side, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
-        this._textureSelectorDictionary[side] = data.data;
+        this._textureSelectorDictionary[side][miplevel] = imageCube.getImageData(side).data;
     };
-    CubeTextureSoftware.prototype.getData = function (side) {
-        return this._textureSelectorDictionary[side];
+    CubeTextureSoftware.prototype.getData = function (side, miplevel) {
+        if (miplevel === void 0) { miplevel = 0; }
+        return this._textureSelectorDictionary[side][miplevel];
     };
     CubeTextureSoftware.prototype.getMipLevelsCount = function () {
         return 1;
@@ -24714,9 +24666,9 @@ var ProgramVOSoftware = (function () {
  */
 var SoftwareSamplerState = (function () {
     function SoftwareSamplerState() {
-        this.wrap = ContextGLWrapMode.REPEAT;
-        this.filter = ContextGLTextureFilter.LINEAR;
-        this.mipfilter = ContextGLMipFilter.MIPLINEAR;
+        this.wrap = exports.ContextGLWrapMode.REPEAT;
+        this.filter = exports.ContextGLTextureFilter.LINEAR;
+        this.mipfilter = exports.ContextGLMipFilter.MIPLINEAR;
     }
     return SoftwareSamplerState;
 }());
@@ -24760,31 +24712,31 @@ var ProgramSoftware = (function () {
             if (!buffer)
                 continue;
             var index = context._vertexBufferOffsets[i] / 4 + vertexIndex * buffer.attributesPerVertex;
-            if (context._vertexBufferFormats[i] == ContextGLVertexBufferFormat.UNSIGNED_BYTE_4) {
+            if (context._vertexBufferFormats[i] == exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_4) {
                 attributes[j++] = buffer.uintData[index * 4];
                 attributes[j++] = buffer.uintData[index * 4 + 1];
                 attributes[j++] = buffer.uintData[index * 4 + 2];
                 attributes[j++] = buffer.uintData[index * 4 + 3];
             }
-            else if (context._vertexBufferFormats[i] == ContextGLVertexBufferFormat.FLOAT_4) {
+            else if (context._vertexBufferFormats[i] == exports.ContextGLVertexBufferFormat.FLOAT_4) {
                 attributes[j++] = buffer.data[index];
                 attributes[j++] = buffer.data[index + 1];
                 attributes[j++] = buffer.data[index + 2];
                 attributes[j++] = buffer.data[index + 3];
             }
-            else if (context._vertexBufferFormats[i] == ContextGLVertexBufferFormat.FLOAT_3) {
+            else if (context._vertexBufferFormats[i] == exports.ContextGLVertexBufferFormat.FLOAT_3) {
                 attributes[j++] = buffer.data[index];
                 attributes[j++] = buffer.data[index + 1];
                 attributes[j++] = buffer.data[index + 2];
                 attributes[j++] = 1;
             }
-            else if (context._vertexBufferFormats[i] == ContextGLVertexBufferFormat.FLOAT_2) {
+            else if (context._vertexBufferFormats[i] == exports.ContextGLVertexBufferFormat.FLOAT_2) {
                 attributes[j++] = buffer.data[index];
                 attributes[j++] = buffer.data[index + 1];
                 attributes[j++] = 0;
                 attributes[j++] = 1;
             }
-            else if (context._vertexBufferFormats[i] == ContextGLVertexBufferFormat.FLOAT_1) {
+            else if (context._vertexBufferFormats[i] == exports.ContextGLVertexBufferFormat.FLOAT_1) {
                 attributes[j++] = buffer.data[index];
                 attributes[j++] = 0;
                 attributes[j++] = 0;
@@ -24824,7 +24776,7 @@ var ProgramSoftware = (function () {
         var len = this._fragmentDescr.tokens.length;
         for (var i = 0; i < len; i++) {
             var token = this._fragmentDescr.tokens[i];
-            if (token.opcode == 0x28 && context._samplerStates[token.b.regnum] && context._samplerStates[token.b.regnum].mipfilter == ContextGLMipFilter.MIPLINEAR && context._textures[token.b.regnum].getMipLevelsCount() > 1)
+            if (token.opcode == 0x28 && context._samplerStates[token.b.regnum] && context._samplerStates[token.b.regnum].mipfilter == exports.ContextGLMipFilter.MIPLINEAR && context._textures[token.b.regnum].getMipLevelsCount() > 1)
                 varyingDerivatives.push(token.a.regnum);
         }
         var derivativeX = this._fragmentVO.derivativeX;
@@ -24935,15 +24887,11 @@ var ProgramSoftware = (function () {
     };
     ProgramSoftware.sample = function (vo, desc, context, source1, textureIndex) {
         var texture = context._textures[textureIndex];
-        if (texture.isTexture(TextureSoftware)) {
+        if (texture.isTexture(TextureSoftware))
             return ProgramSoftware.sampleSimpleTexture(vo, desc, context, source1, textureIndex);
-        }
-        else if (texture.isTexture(CubeTextureSoftware)) {
+        if (texture.isTexture(CubeTextureSoftware))
             return ProgramSoftware.sampleCubeTexture(vo, desc, context, source1, textureIndex);
-        }
-        else {
-            throw new ArgumentError("ArgumentError, cannot sample provided texture.");
-        }
+        throw new ArgumentError("Cannot sample provided texture type");
     };
     ProgramSoftware.sampleCubeTexture = function (vo, desc, context, source1, textureIndex) {
         var source1Reg = 4 * source1.regnum;
@@ -24955,7 +24903,7 @@ var ProgramSoftware = (function () {
         // Determine which of the 6 cube sides to sample,
         // depending on the largest abs value of the direction vector.
         // Once determined, translate to uv within this side.
-        var texIndex = 0;
+        var side = 0;
         var u = 0;
         var v = 0;
         var absx = Math.abs(x);
@@ -24964,54 +24912,48 @@ var ProgramSoftware = (function () {
         var absmax = Math.max(absx, absy, absz);
         if (absmax == absx) {
             if (x >= 0) {
-                texIndex = 0;
+                side = 0;
                 u = 0.5 - 0.5 * (z / x);
                 v = 0.5 - 0.5 * (y / x);
             }
             else {
-                texIndex = 1;
+                side = 1;
                 u = 0.5 - 0.5 * (z / x);
                 v = 0.5 + 0.5 * (y / x);
             }
         }
         else if (absmax == absy) {
             if (y >= 0) {
-                texIndex = 2;
+                side = 2;
                 u = 0.5 + 0.5 * (x / y);
                 v = 0.5 + 0.5 * (z / y);
             }
             else {
-                texIndex = 3;
+                side = 3;
                 u = 0.5 - 0.5 * (x / y);
                 v = 0.5 + 0.5 * (z / y);
             }
         }
         else if (absmax == absz) {
             if (z >= 0) {
-                texIndex = 4;
+                side = 4;
                 u = 0.5 + 0.5 * (x / z);
                 v = 0.5 - 0.5 * (y / z);
             }
             else {
-                texIndex = 5;
+                side = 5;
                 u = 0.5 + 0.5 * (x / z);
                 v = 0.5 + 0.5 * (y / z);
             }
         }
         var texture = context._textures[textureIndex];
         var state = context._samplerStates[textureIndex] || this._defaultSamplerState;
-        var repeat = state.wrap == ContextGLWrapMode.REPEAT;
-        var mipmap = state.mipfilter == ContextGLMipFilter.MIPLINEAR;
+        var repeat = state.wrap == exports.ContextGLWrapMode.REPEAT;
+        var mipmap = state.mipfilter == exports.ContextGLMipFilter.MIPLINEAR;
         // TODO: implement mip mapping?
-        var result;
-        var data = texture.getData(texIndex);
-        if (state.filter == ContextGLTextureFilter.LINEAR) {
-            result = ProgramSoftware.sampleBilinear(u, v, data, texture.size, texture.size, repeat);
-        }
-        else {
-            result = ProgramSoftware.sampleNearest(u, v, data, texture.size, texture.size, repeat);
-        }
-        return result;
+        if (state.filter == exports.ContextGLTextureFilter.LINEAR)
+            return ProgramSoftware.sampleBilinear(u, v, texture.getData(side), texture.size, texture.size, repeat, ProgramSoftware._colorValue0);
+        return ProgramSoftware.sampleNearest(u, v, texture.getData(side), texture.size, texture.size, repeat, ProgramSoftware._colorValue0);
     };
     ProgramSoftware.sampleSimpleTexture = function (vo, desc, context, source1, textureIndex) {
         var source1Reg = 4 * source1.regnum;
@@ -25019,11 +24961,11 @@ var ProgramSoftware = (function () {
         var u = source1Target[source1Reg + ((source1.swizzle >> 0) & 3)];
         var v = source1Target[source1Reg + ((source1.swizzle >> 2) & 3)];
         if (textureIndex >= context._textures.length || context._textures[textureIndex] == null)
-            return new Float32Array([1, u, v, 0]);
+            throw new ArgumentError("textureIndex contains no texture");
         var texture = context._textures[textureIndex];
         var state = context._samplerStates[textureIndex] || this._defaultSamplerState;
-        var repeat = state.wrap == ContextGLWrapMode.REPEAT;
-        var mipmap = state.mipfilter == ContextGLMipFilter.MIPLINEAR;
+        var repeat = state.wrap == exports.ContextGLWrapMode.REPEAT;
+        var mipmap = state.mipfilter == exports.ContextGLMipFilter.MIPLINEAR;
         if (mipmap && texture.getMipLevelsCount() > 1) {
             var dux = Math.abs(vo.derivativeX[source1Reg + ((source1.swizzle >> 0) & 3)]);
             var dvx = Math.abs(vo.derivativeX[source1Reg + ((source1.swizzle >> 2) & 3)]);
@@ -25039,36 +24981,28 @@ var ProgramSoftware = (function () {
                 if (miplevelLow > maxmiplevel)
                     miplevelLow = maxmiplevel;
                 var mipblend = lambda - Math.floor(lambda);
-                var resultLow;
-                var resultHigh;
                 var dataLow = texture.getData(miplevelLow);
                 var dataLowWidth = texture.width / Math.pow(2, miplevelLow);
                 var dataLowHeight = texture.height / Math.pow(2, miplevelLow);
                 var dataHigh = texture.getData(miplevelHigh);
                 var dataHighWidth = texture.width / Math.pow(2, miplevelHigh);
                 var dataHighHeight = texture.height / Math.pow(2, miplevelHigh);
-                if (state.filter == ContextGLTextureFilter.LINEAR) {
-                    resultLow = ProgramSoftware.sampleBilinear(u, v, dataLow, dataLowWidth, dataLowHeight, repeat);
-                    resultHigh = ProgramSoftware.sampleBilinear(u, v, dataHigh, dataHighWidth, dataHighHeight, repeat);
+                if (state.filter == exports.ContextGLTextureFilter.LINEAR) {
+                    ProgramSoftware.sampleBilinear(u, v, dataLow, dataLowWidth, dataLowHeight, repeat, ProgramSoftware._colorValue0);
+                    ProgramSoftware.sampleBilinear(u, v, dataHigh, dataHighWidth, dataHighHeight, repeat, ProgramSoftware._colorValue1);
                 }
                 else {
-                    resultLow = ProgramSoftware.sampleNearest(u, v, dataLow, dataLowWidth, dataLowHeight, repeat);
-                    resultHigh = ProgramSoftware.sampleNearest(u, v, dataHigh, dataHighWidth, dataHighHeight, repeat);
+                    ProgramSoftware.sampleNearest(u, v, dataLow, dataLowWidth, dataLowHeight, repeat, ProgramSoftware._colorValue0);
+                    ProgramSoftware.sampleNearest(u, v, dataHigh, dataHighWidth, dataHighHeight, repeat, ProgramSoftware._colorValue1);
                 }
-                return ProgramSoftware.interpolateColor(resultLow, resultHigh, mipblend);
+                return ProgramSoftware.interpolateColor(ProgramSoftware._colorValue0, ProgramSoftware._colorValue1, mipblend, ProgramSoftware._colorValue0);
             }
         }
-        var result;
-        var data = texture.getData(0);
-        if (state.filter == ContextGLTextureFilter.LINEAR) {
-            result = ProgramSoftware.sampleBilinear(u, v, data, texture.width, texture.height, repeat);
-        }
-        else {
-            result = ProgramSoftware.sampleNearest(u, v, data, texture.width, texture.height, repeat);
-        }
-        return result;
+        if (state.filter == exports.ContextGLTextureFilter.LINEAR)
+            return ProgramSoftware.sampleBilinear(u, v, texture.getData(0), texture.width, texture.height, repeat, ProgramSoftware._colorValue0);
+        return ProgramSoftware.sampleNearest(u, v, texture.getData(0), texture.width, texture.height, repeat, ProgramSoftware._colorValue0);
     };
-    ProgramSoftware.sampleNearest = function (u, v, textureData, textureWidth, textureHeight, repeat) {
+    ProgramSoftware.sampleNearest = function (u, v, textureData, textureWidth, textureHeight, repeat, output) {
         u *= textureWidth;
         v *= textureHeight;
         if (repeat) {
@@ -25088,36 +25022,29 @@ var ProgramSoftware = (function () {
         u = Math.floor(u);
         v = Math.floor(v);
         var pos = (u + v * textureWidth) * 4;
-        var r = textureData[pos] / 255;
-        var g = textureData[pos + 1] / 255;
-        var b = textureData[pos + 2] / 255;
-        var a = textureData[pos + 3] / 255;
-        return new Float32Array([a, r, g, b]);
+        output[0] = textureData[pos] / 255;
+        output[1] = textureData[pos + 1] / 255;
+        output[2] = textureData[pos + 2] / 255;
+        output[3] = textureData[pos + 3] / 255;
+        return output;
     };
-    ProgramSoftware.sampleBilinear = function (u, v, textureData, textureWidth, textureHeight, repeat) {
+    ProgramSoftware.sampleBilinear = function (u, v, textureData, textureWidth, textureHeight, repeat, output) {
         var texelSizeX = 1 / textureWidth;
         var texelSizeY = 1 / textureHeight;
         u -= texelSizeX / 2;
         v -= texelSizeY / 2;
-        var color00 = ProgramSoftware.sampleNearest(u, v, textureData, textureWidth, textureHeight, repeat);
-        var color10 = ProgramSoftware.sampleNearest(u + texelSizeX, v, textureData, textureWidth, textureHeight, repeat);
-        var color01 = ProgramSoftware.sampleNearest(u, v + texelSizeY, textureData, textureWidth, textureHeight, repeat);
-        var color11 = ProgramSoftware.sampleNearest(u + texelSizeX, v + texelSizeY, textureData, textureWidth, textureHeight, repeat);
         var a = u * textureWidth;
         a = a - Math.floor(a);
-        var interColor0 = ProgramSoftware.interpolateColor(color00, color10, a);
-        var interColor1 = ProgramSoftware.interpolateColor(color01, color11, a);
         var b = v * textureHeight;
         b = b - Math.floor(b);
-        return ProgramSoftware.interpolateColor(interColor0, interColor1, b);
+        return ProgramSoftware.interpolateColor(ProgramSoftware.interpolateColor(ProgramSoftware.sampleNearest(u, v, textureData, textureWidth, textureHeight, repeat, ProgramSoftware._colorInterpolated0), ProgramSoftware.sampleNearest(u + texelSizeX, v, textureData, textureWidth, textureHeight, repeat, ProgramSoftware._colorValue0), a, ProgramSoftware._colorInterpolated0), ProgramSoftware.interpolateColor(ProgramSoftware.sampleNearest(u, v + texelSizeY, textureData, textureWidth, textureHeight, repeat, ProgramSoftware._colorInterpolated1), ProgramSoftware.sampleNearest(u + texelSizeX, v + texelSizeY, textureData, textureWidth, textureHeight, repeat, ProgramSoftware._colorValue0), a, ProgramSoftware._colorInterpolated1), b, output);
     };
-    ProgramSoftware.interpolateColor = function (source, target, a) {
-        var result = new Float32Array(4);
-        result[0] = source[0] + (target[0] - source[0]) * a;
-        result[1] = source[1] + (target[1] - source[1]) * a;
-        result[2] = source[2] + (target[2] - source[2]) * a;
-        result[3] = source[3] + (target[3] - source[3]) * a;
-        return result;
+    ProgramSoftware.interpolateColor = function (source, target, a, output) {
+        output[0] = source[0] + (target[0] - source[0]) * a;
+        output[1] = source[1] + (target[1] - source[1]) * a;
+        output[2] = source[2] + (target[2] - source[2]) * a;
+        output[3] = source[3] + (target[3] - source[3]) * a;
+        return output;
     };
     ProgramSoftware.tex = function (vo, desc, dest, source1, source2, context) {
         var targetReg = 4 * dest.regnum;
@@ -25125,13 +25052,13 @@ var ProgramSoftware = (function () {
         var color = ProgramSoftware.sample(vo, desc, context, source1, source2.regnum);
         var mask = dest.mask;
         if (mask & 1)
-            target[targetReg] = color[1];
+            target[targetReg] = color[0];
         if (mask & 2)
-            target[targetReg + 1] = color[2];
+            target[targetReg + 1] = color[1];
         if (mask & 4)
-            target[targetReg + 2] = color[3];
+            target[targetReg + 2] = color[2];
         if (mask & 8)
-            target[targetReg + 3] = color[0];
+            target[targetReg + 3] = color[3];
     };
     ProgramSoftware.add = function (vo, desc, dest, source1, source2, context) {
         var targetReg = 4 * dest.regnum;
@@ -25603,7 +25530,7 @@ var ProgramSoftware = (function () {
     ProgramSoftware.sge = function (vo, desc, dest, source1, source2, context) {
         var targetReg = 4 * dest.regnum;
         var source1Reg = 4 * source1.regnum;
-        var source2Reg = 4 * source1.regnum;
+        var source2Reg = 4 * source2.regnum;
         var target = ProgramSoftware.getDestTarget(vo, desc, dest);
         var mask = dest.mask;
         var source1Swizzle = source1.swizzle;
@@ -25630,7 +25557,7 @@ var ProgramSoftware = (function () {
     ProgramSoftware.slt = function (vo, desc, dest, source1, source2, context) {
         var targetReg = 4 * dest.regnum;
         var source1Reg = 4 * source1.regnum;
-        var source2Reg = 4 * source1.regnum;
+        var source2Reg = 4 * source2.regnum;
         var target = ProgramSoftware.getDestTarget(vo, desc, dest);
         var mask = dest.mask;
         var source1Swizzle = source1.swizzle;
@@ -25646,13 +25573,13 @@ var ProgramSoftware = (function () {
         var source2TargetZ = source2Target[source2Reg + ((source2Swizzle >> 4) & 3)];
         var source2TargetW = source2Target[source2Reg + ((source2Swizzle >> 6) & 3)];
         if (mask & 1)
-            target[targetReg] = source1TargetX < source2TargetX ? 0xFF : 0;
+            target[targetReg] = source1TargetX < source2TargetX ? 1 : 0;
         if (mask & 2)
-            target[targetReg + 1] = source1TargetY < source2TargetY ? 0xFF : 0;
+            target[targetReg + 1] = source1TargetY < source2TargetY ? 1 : 0;
         if (mask & 4)
-            target[targetReg + 2] = source1TargetZ < source2TargetZ ? 0xFF : 0;
+            target[targetReg + 2] = source1TargetZ < source2TargetZ ? 1 : 0;
         if (mask & 8)
-            target[targetReg + 3] = source1TargetW < source2TargetW ? 0xFF : 0;
+            target[targetReg + 3] = source1TargetW < source2TargetW ? 1 : 0;
     };
     ProgramSoftware.seq = function (vo, desc, dest, source1, source2, context) {
         var targetReg = 4 * dest.regnum;
@@ -25788,65 +25715,69 @@ ProgramSoftware._opCodeFunc = [
     ProgramSoftware.seq,
     ProgramSoftware.sne
 ];
+ProgramSoftware._colorValue0 = new Float32Array(4);
+ProgramSoftware._colorValue1 = new Float32Array(4);
+ProgramSoftware._colorInterpolated0 = new Float32Array(4);
+ProgramSoftware._colorInterpolated1 = new Float32Array(4);
 
 var BlendModeSoftware = (function () {
     function BlendModeSoftware() {
     }
-    BlendModeSoftware.destinationAlpha = function (result, dest, source) {
-        result[0] += source[0] * dest[3] / 0xFF;
-        result[1] += source[1] * dest[3] / 0xFF;
-        result[2] += source[2] * dest[3] / 0xFF;
-        result[3] += source[3] * dest[3] / 0xFF;
+    BlendModeSoftware.destinationAlpha = function (result, target, dest, source) {
+        result[0] = target[0] * dest[3] / 0xFF;
+        result[1] = target[1] * dest[3] / 0xFF;
+        result[2] = target[2] * dest[3] / 0xFF;
+        result[3] = target[3] * dest[3] / 0xFF;
     };
-    BlendModeSoftware.destinationColor = function (result, dest, source) {
-        result[0] += source[0] * dest[0] / 0xFF;
-        result[1] += source[1] * dest[1] / 0xFF;
-        result[2] += source[2] * dest[2] / 0xFF;
-        result[3] += source[3] * dest[3] / 0xFF;
+    BlendModeSoftware.destinationColor = function (result, target, dest, source) {
+        result[0] = target[0] * dest[0] / 0xFF;
+        result[1] = target[1] * dest[1] / 0xFF;
+        result[2] = target[2] * dest[2] / 0xFF;
+        result[3] = target[3] * dest[3] / 0xFF;
     };
-    BlendModeSoftware.zero = function (result, dest, source) {
+    BlendModeSoftware.one = function (result, target, dest, source) {
+        result[0] = target[0];
+        result[1] = target[1];
+        result[2] = target[2];
+        result[3] = target[3];
     };
-    BlendModeSoftware.one = function (result, dest, source) {
-        result[0] += source[0];
-        result[1] += source[1];
-        result[2] += source[2];
-        result[3] += source[3];
+    BlendModeSoftware.oneMinusDestinationAlpha = function (result, target, dest, source) {
+        result[0] = target[0] * (1 - dest[3] / 0xFF);
+        result[1] = target[1] * (1 - dest[3] / 0xFF);
+        result[2] = target[2] * (1 - dest[3] / 0xFF);
+        result[3] = target[3] * (1 - dest[3] / 0xFF);
     };
-    BlendModeSoftware.oneMinusDestinationAlpha = function (result, dest, source) {
-        result[0] += source[0] * (1 - dest[3] / 0xFF);
-        result[1] += source[1] * (1 - dest[3] / 0xFF);
-        result[2] += source[2] * (1 - dest[3] / 0xFF);
-        result[3] += source[3] * (1 - dest[3] / 0xFF);
+    BlendModeSoftware.oneMinusDestinationColor = function (result, target, dest, source) {
+        result[0] = target[0] * (1 - dest[0] / 0xFF);
+        result[1] = target[1] * (1 - dest[1] / 0xFF);
+        result[2] = target[2] * (1 - dest[2] / 0xFF);
+        result[3] = target[3] * (1 - dest[3] / 0xFF);
     };
-    BlendModeSoftware.oneMinusDestinationColor = function (result, dest, source) {
-        result[0] += source[0] * (1 - dest[0] / 0xFF);
-        result[1] += source[1] * (1 - dest[1] / 0xFF);
-        result[2] += source[2] * (1 - dest[2] / 0xFF);
-        result[3] += source[3] * (1 - dest[3] / 0xFF);
+    BlendModeSoftware.oneMinusSourceAlpha = function (result, target, dest, source) {
+        result[0] = target[0] * (1 - source[3] / 0xFF);
+        result[1] = target[1] * (1 - source[3] / 0xFF);
+        result[2] = target[2] * (1 - source[3] / 0xFF);
+        result[3] = target[3] * (1 - source[3] / 0xFF);
     };
-    BlendModeSoftware.oneMinusSourceAlpha = function (result, dest, source) {
-        result[0] += dest[0] * (1 - source[3] / 0xFF);
-        result[1] += dest[1] * (1 - source[3] / 0xFF);
-        result[2] += dest[2] * (1 - source[3] / 0xFF);
-        result[3] += dest[3] * (1 - source[3] / 0xFF);
+    BlendModeSoftware.oneMinusSourceColor = function (result, target, dest, source) {
+        result[0] = target[0] * (1 - source[0] / 0xFF);
+        result[1] = target[1] * (1 - source[1] / 0xFF);
+        result[2] = target[2] * (1 - source[2] / 0xFF);
+        result[3] = target[3] * (1 - source[3] / 0xFF);
     };
-    BlendModeSoftware.oneMinusSourceColor = function (result, dest, source) {
-        result[0] += dest[0] * (1 - source[0] / 0xFF);
-        result[1] += dest[1] * (1 - source[1] / 0xFF);
-        result[2] += dest[2] * (1 - source[2] / 0xFF);
-        result[3] += dest[3] * (1 - source[3] / 0xFF);
+    BlendModeSoftware.sourceAlpha = function (result, target, dest, source) {
+        result[0] = target[0] * source[3] / 0xFF;
+        result[1] = target[1] * source[3] / 0xFF;
+        result[2] = target[2] * source[3] / 0xFF;
+        result[3] = target[3] * source[3] / 0xFF;
     };
-    BlendModeSoftware.sourceAlpha = function (result, dest, source) {
-        result[0] += dest[0] * source[3] / 0xFF;
-        result[1] += dest[1] * source[3] / 0xFF;
-        result[2] += dest[2] * source[3] / 0xFF;
-        result[3] += dest[3] * source[3] / 0xFF;
+    BlendModeSoftware.sourceColor = function (result, target, dest, source) {
+        result[0] = target[0] * source[0] / 0xFF;
+        result[1] = target[1] * source[1] / 0xFF;
+        result[2] = target[2] * source[2] / 0xFF;
+        result[3] = target[3] * source[3] / 0xFF;
     };
-    BlendModeSoftware.sourceColor = function (result, dest, source) {
-        result[0] += dest[0] * source[0] / 0xFF;
-        result[1] += dest[1] * source[1] / 0xFF;
-        result[2] += dest[2] * source[2] / 0xFF;
-        result[3] += dest[3] * source[3] / 0xFF;
+    BlendModeSoftware.zero = function (result, target, dest, source) {
     };
     return BlendModeSoftware;
 }());
@@ -25884,15 +25815,17 @@ var DepthCompareModeSoftware = (function () {
 var ContextSoftware = (function () {
     function ContextSoftware(canvas) {
         this._backBufferRect = new Rectangle();
-        this._cullingMode = ContextGLTriangleFace.BACK;
-        this._blendSource = ContextGLBlendFactor.ONE;
-        this._blendDestination = ContextGLBlendFactor.ZERO;
+        this._cullingMode = exports.ContextGLTriangleFace.BACK;
+        this._blendSource = exports.ContextGLBlendFactor.ONE;
+        this._blendDestination = exports.ContextGLBlendFactor.ZERO;
         this._colorMaskR = true;
         this._colorMaskG = true;
         this._colorMaskB = true;
         this._colorMaskA = true;
         this._writeDepth = true;
-        this._depthCompareMode = ContextGLCompareMode.LESS;
+        this._depthCompareMode = exports.ContextGLCompareMode.LESS;
+        this._depthCompareModeSoftware = function (fragDepth, currentDepth) { return void []; };
+        this._blendModeSoftware = function (result, dest, source) { return void []; };
         this._screenMatrix = new Matrix3D();
         this._frontBufferMatrix = new Matrix();
         this._bboxMin = new Point();
@@ -25900,12 +25833,17 @@ var ContextSoftware = (function () {
         this._clamp = new Point();
         this._samplerStates = [];
         this._textures = [];
+        this.textureBuffersColor = [];
+        this.textureBuffersZ = [];
+        this.textureBuffersZClear = [];
         this._vertexBuffers = [];
         this._vertexBufferOffsets = [];
         this._vertexBufferFormats = [];
         this._rgba = new Uint8ClampedArray(4);
         this._source = new Uint8ClampedArray(4);
         this._dest = new Uint8ClampedArray(4);
+        this._destComp = new Uint8ClampedArray(4);
+        this._sourceComp = new Uint8ClampedArray(4);
         //public static _drawCallback:Function = null;
         this._antialias = 0;
         this._p0 = new Vector3D();
@@ -25917,15 +25855,39 @@ var ContextSoftware = (function () {
         this._barycentricBottom = new Vector3D();
         this._canvas = canvas;
         this._backBufferColor = new BitmapImage2D(100, 100, false, 0, false);
-        this._frontBuffer = new BitmapImage2D(100, 100, true, 0, false);
-        this._activeBuffer = this._backBufferColor;
-        this._textureBuffers = new Array();
+        this._frontBuffer = new BitmapImage2D(100, 100, false, 0, false);
+        this._activeBufferColor = this._backBufferColor;
+        var len = 100 * 100;
+        var zbufferBytes = new ArrayBuffer(len * 8);
+        this._backBufferZ = new Float32Array(zbufferBytes, 0, len);
+        this._backBufferZClear = new Float32Array(zbufferBytes, len * 4, len);
+        for (var i = 0; i < len; i++)
+            this._backBufferZClear[i] = 10000000;
+        this._activeBufferZ = this._backBufferZ;
         if (document && document.body) {
             var frontCanvas = this._frontBuffer.getCanvas();
             // TODO: remove software renderToTexture
             frontCanvas.style.position = "absolute";
             document.body.appendChild(frontCanvas);
         }
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.ALWAYS] = DepthCompareModeSoftware.always;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.EQUAL] = DepthCompareModeSoftware.equal;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.GREATER] = DepthCompareModeSoftware.greaterEqual;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.GREATER_EQUAL] = DepthCompareModeSoftware.greater;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.LESS] = DepthCompareModeSoftware.less;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.LESS_EQUAL] = DepthCompareModeSoftware.lessEqual;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.NEVER] = DepthCompareModeSoftware.never;
+        this._depthCompareModeSoftware[exports.ContextGLCompareMode.NOT_EQUAL] = DepthCompareModeSoftware.notEqual;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.DESTINATION_ALPHA] = BlendModeSoftware.destinationAlpha;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.DESTINATION_COLOR] = BlendModeSoftware.destinationColor;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.ONE] = BlendModeSoftware.one;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.ONE_MINUS_DESTINATION_ALPHA] = BlendModeSoftware.oneMinusDestinationAlpha;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.ONE_MINUS_DESTINATION_COLOR] = BlendModeSoftware.oneMinusDestinationColor;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA] = BlendModeSoftware.oneMinusSourceAlpha;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_COLOR] = BlendModeSoftware.oneMinusSourceColor;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.SOURCE_ALPHA] = BlendModeSoftware.sourceAlpha;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.SOURCE_COLOR] = BlendModeSoftware.sourceColor;
+        this._blendModeSoftware[exports.ContextGLBlendFactor.ZERO] = BlendModeSoftware.zero;
     }
     ContextSoftware.prototype.configureBackBuffer = function (width, height, antiAlias, enableDepthAndStencil) {
         this._antialias = antiAlias;
@@ -25939,13 +25901,12 @@ var ContextSoftware = (function () {
         //double buffer for fast clearing
         var len = backBufferWidth * backBufferHeight;
         var zbufferBytes = new ArrayBuffer(len * 8);
-        this._zbuffer = new Float32Array(zbufferBytes, 0, len);
-        this._zbufferClear = new Float32Array(zbufferBytes, len * 4, len);
+        this._backBufferZ = new Float32Array(zbufferBytes, 0, len);
+        this._backBufferZClear = new Float32Array(zbufferBytes, len * 4, len);
         for (var i = 0; i < len; i++)
-            this._zbufferClear[i] = 10000000;
-        var colorClearBuffer = new ArrayBuffer(len * 4);
-        this._colorClearUint8 = new Uint8ClampedArray(colorClearBuffer);
-        this._colorClearUint32 = new Uint32Array(colorClearBuffer);
+            this._backBufferZClear[i] = 10000000;
+        if (this._activeBufferColor == this._backBufferColor)
+            this._activeBufferZ = this._backBufferZ;
         this._backBufferRect.width = backBufferWidth;
         this._backBufferRect.height = backBufferHeight;
         this._backBufferColor._setSize(backBufferWidth, backBufferHeight);
@@ -25958,43 +25919,56 @@ var ContextSoftware = (function () {
         raw[0] = width / 2;
         raw[1] = 0;
         raw[2] = 0;
-        raw[3] = width / 2;
+        raw[3] = 0;
         raw[4] = 0;
         raw[5] = yflip ? -height / 2 : height / 2;
         raw[6] = 0;
-        raw[7] = height / 2;
+        raw[7] = 0;
         raw[8] = 0;
         raw[9] = 0;
         raw[10] = 1;
         raw[11] = 0;
-        raw[12] = 0;
-        raw[13] = 0;
+        raw[12] = width / 2;
+        raw[13] = height / 2;
         raw[14] = 0;
         raw[15] = 0;
-        this._screenMatrix.transpose();
+        this._yflip = yflip;
     };
     ContextSoftware.prototype.setRenderToTexture = function (target, enableDepthAndStencil, antiAlias, surfaceSelector) {
         // Create texture buffer and screen matrix if needed.
-        var textureBuffer = this._textureBuffers[surfaceSelector];
-        if (textureBuffer == null) {
+        var textureBufferColor = this.textureBuffersColor[surfaceSelector];
+        if (textureBufferColor == null) {
             // TODO: consider transparency prop
             // TODO: consider fill color prop
             // TODO: consider powerOfTwo prop
-            var textureBuffer = new BitmapImage2D(target.width, target.height, false, 0xFFFFFF, true);
-            this._textureBuffers[surfaceSelector] = textureBuffer;
+            textureBufferColor = this.textureBuffersColor[surfaceSelector] = new BitmapImage2D(target.width, target.height, false, 0xFFFFFF, true);
             // TODO: transfer the initial image2D data from the texture to the BitmapImage2D object.
-            target.uploadFromData(textureBuffer.getImageData());
+            target.uploadFromImage(textureBufferColor);
         }
         else {
-            textureBuffer.fillRect(textureBuffer.rect, 0xFFFFFF);
+            textureBufferColor.fillRect(textureBufferColor.rect, 0xFFFFFF);
         }
-        this.activateScreenMatrix(target.width, target.height, true);
+        this._activeBufferColor = textureBufferColor;
+        this._activeBufferColor.lock();
+        var textureBufferZ = this.textureBuffersZ[surfaceSelector];
+        var textureBufferZClear = this.textureBuffersZClear[surfaceSelector];
+        if (textureBufferZ == null) {
+            //double buffer for fast clearing
+            var len = target.width * target.height;
+            var zbufferBytes = new ArrayBuffer(len * 8);
+            textureBufferZ = this.textureBuffersZ[surfaceSelector] = new Float32Array(zbufferBytes, 0, len);
+            textureBufferZClear = this.textureBuffersZClear[surfaceSelector] = new Float32Array(zbufferBytes, len * 4, len);
+            for (var i = 0; i < len; i++)
+                textureBufferZClear[i] = 10000000;
+        }
+        textureBufferZ.set(textureBufferZClear); //fast memcpy
+        this._activeBufferZ = textureBufferZ;
+        this.activateScreenMatrix(target.width, target.height, false);
         this._activeTexture = target;
-        this._activeBuffer = textureBuffer;
-        this._activeBuffer.lock();
     };
     ContextSoftware.prototype.setRenderToBackBuffer = function () {
-        this._activeBuffer = this._backBufferColor;
+        this._activeBufferColor = this._backBufferColor;
+        this._activeBufferZ = this._backBufferZ;
         this.activateScreenMatrix(this._backBufferColor.width, this._backBufferColor.height, true);
     };
     ContextSoftware.prototype.drawIndices = function (mode, indexBuffer, firstIndex, numIndices) {
@@ -26028,7 +26002,7 @@ var ContextSoftware = (function () {
         incomingVaryings[3] = varying3;
         incomingVaryings[4] = varying4;
         // Sweep triangles according to culling mode and process thru vertex shader.
-        if (this._cullingMode == ContextGLTriangleFace.BACK) {
+        if (this._yflip && this._cullingMode == exports.ContextGLTriangleFace.BACK || !this._yflip && this._cullingMode == exports.ContextGLTriangleFace.FRONT) {
             for (var i = firstIndex; i < numIndices; i += 3) {
                 this._program.vertex(this, indexBuffer.data[indexBuffer.startOffset + i], position0, varying0);
                 this._program.vertex(this, indexBuffer.data[indexBuffer.startOffset + i + 1], position1, varying1);
@@ -26036,7 +26010,7 @@ var ContextSoftware = (function () {
                 this._triangle(incomingVertices, outgoingVertices, incomingVaryings, outgoingVaryings);
             }
         }
-        else if (this._cullingMode == ContextGLTriangleFace.FRONT) {
+        else if (this._yflip && this._cullingMode == exports.ContextGLTriangleFace.FRONT || !this._yflip && this._cullingMode == exports.ContextGLTriangleFace.BACK) {
             for (var i = firstIndex; i < numIndices; i += 3) {
                 this._program.vertex(this, indexBuffer.data[indexBuffer.startOffset + i + 2], position0, varying0);
                 this._program.vertex(this, indexBuffer.data[indexBuffer.startOffset + i + 1], position1, varying1);
@@ -26044,7 +26018,7 @@ var ContextSoftware = (function () {
                 this._triangle(incomingVertices, outgoingVertices, incomingVaryings, outgoingVaryings);
             }
         }
-        else if (this._cullingMode == ContextGLTriangleFace.FRONT_AND_BACK || this._cullingMode == ContextGLTriangleFace.NONE) {
+        else if (this._cullingMode == exports.ContextGLTriangleFace.FRONT_AND_BACK || this._cullingMode == exports.ContextGLTriangleFace.NONE) {
             for (var i = firstIndex; i < numIndices; i += 3) {
                 this._program.vertex(this, indexBuffer.data[indexBuffer.startOffset + i + 2], position0, varying0);
                 this._program.vertex(this, indexBuffer.data[indexBuffer.startOffset + i + 1], position1, varying1);
@@ -26057,9 +26031,9 @@ var ContextSoftware = (function () {
             }
         }
         // Transfer buffer data to texture.
-        if (this._activeBuffer != this._backBufferColor) {
-            this._activeBuffer.unlock();
-            this._activeTexture.uploadFromData(this._activeBuffer.getImageData());
+        if (this._activeBufferColor != this._backBufferColor) {
+            this._activeBufferColor.unlock();
+            this._activeTexture.uploadFromImage(this._activeBufferColor);
         }
     };
     ContextSoftware.prototype._triangle = function (incomingVertices, outgoingVertices, incomingVaryings, outgoingVaryings) {
@@ -26159,16 +26133,16 @@ var ContextSoftware = (function () {
         this._project.x = this._p0.w;
         this._project.y = this._p1.w;
         this._project.z = this._p2.w;
-        this._p0 = this._screenMatrix.transformVector(this._p0);
-        this._p1 = this._screenMatrix.transformVector(this._p1);
-        this._p2 = this._screenMatrix.transformVector(this._p2);
+        this._p0 = this._screenMatrix.transformVector(this._p0, this._p0);
+        this._p1 = this._screenMatrix.transformVector(this._p1, this._p1);
+        this._p2 = this._screenMatrix.transformVector(this._p2, this._p2);
         // Prepare rasterization bounds.
         this._bboxMin.x = 1000000;
         this._bboxMin.y = 1000000;
         this._bboxMax.x = -1000000;
         this._bboxMax.y = -1000000;
-        this._clamp.x = this._activeBuffer.width - 1;
-        this._clamp.y = this._activeBuffer.height - 1;
+        this._clamp.x = this._activeBufferColor.width - 1;
+        this._clamp.y = this._activeBufferColor.height - 1;
         this._bboxMin.x = Math.max(0, Math.min(this._bboxMin.x, this._p0.x));
         this._bboxMin.y = Math.max(0, Math.min(this._bboxMin.y, this._p0.y));
         this._bboxMin.x = Math.max(0, Math.min(this._bboxMin.x, this._p1.x));
@@ -26244,46 +26218,46 @@ var ContextSoftware = (function () {
                     this._barycentricBottom.z /= this._project.z;
                     this._barycentricBottom.scaleBy(1 / (this._barycentricBottom.x + this._barycentricBottom.y + this._barycentricBottom.z));
                 }
+                // Interpolate frag depth.
+                var index = (x % this._activeBufferColor.width) + y * this._activeBufferColor.width;
+                var fragDepth = (this._barycentric.x * this._p0.z + this._barycentric.y * this._p1.z + this._barycentric.z * this._p2.z) / (this._barycentric.x + this._barycentric.y + this._barycentric.z);
                 this._barycentric.x /= this._project.x;
                 this._barycentric.y /= this._project.y;
                 this._barycentric.z /= this._project.z;
                 this._barycentric.scaleBy(1 / (this._barycentric.x + this._barycentric.y + this._barycentric.z));
-                // Interpolate frag depth.
-                var index = (x % this._activeBuffer.width) + y * this._activeBuffer.width;
-                var fragDepth = this._barycentric.x * this._p0.z + this._barycentric.y * this._p1.z + this._barycentric.z * this._p2.z;
                 // Depth test.
-                if (this._activeBuffer == this._backBufferColor && !DepthCompareModeSoftware[this._depthCompareMode](fragDepth, this._zbuffer[index]))
+                if (!this._depthCompareModeSoftware[this._depthCompareMode](fragDepth, this._activeBufferZ[index]))
                     continue;
                 // Write z buffer.
                 if (this._writeDepth)
-                    this._zbuffer[index] = fragDepth; // TODO: fragmentVO.outputDepth?
+                    this._activeBufferZ[index] = fragDepth; // TODO: fragmentVO.outputDepth?
                 // Process fragment shader.
                 var fragmentVO = this._program.fragment(this, this._barycentric, this._barycentricRight, this._barycentricBottom, varying0, varying1, varying2, fragDepth);
                 if (fragmentVO.discard)
                     continue;
                 // Write to source and transform color space.
-                this._source[0] = fragmentVO.outputColor[0] * 255;
-                this._source[1] = fragmentVO.outputColor[1] * 255;
-                this._source[2] = fragmentVO.outputColor[2] * 255;
-                this._source[3] = fragmentVO.outputColor[3] * 255;
+                this._source[0] = fragmentVO.outputColor[0] * 0xFF;
+                this._source[1] = fragmentVO.outputColor[1] * 0xFF;
+                this._source[2] = fragmentVO.outputColor[2] * 0xFF;
+                this._source[3] = fragmentVO.outputColor[3] * 0xFF;
                 // Read dest.
-                this._activeBuffer.getPixelData(x, y, this._dest);
+                this._activeBufferColor.getPixelData(x, y, this._dest);
                 // Write to color buffer.
-                this._putPixel(x, y, this._source, this._dest);
+                this._putPixel(x, y);
             }
             // Step x.
             cy = 0;
             cx += 1;
         }
     };
-    ContextSoftware.prototype._putPixel = function (x, y, source, dest) {
-        this._rgba[0] = 0;
-        this._rgba[1] = 0;
-        this._rgba[2] = 0;
-        this._rgba[3] = 0;
-        BlendModeSoftware[this._blendDestination](dest, dest, source);
-        BlendModeSoftware[this._blendSource](this._rgba, dest, source);
-        this._activeBuffer.setPixelData(x, y, this._rgba);
+    ContextSoftware.prototype._putPixel = function (x, y) {
+        this._blendModeSoftware[this._blendDestination](this._destComp, this._dest, this._dest, this._source);
+        this._blendModeSoftware[this._blendSource](this._sourceComp, this._source, this._dest, this._source);
+        this._rgba[0] = this._sourceComp[0] + this._destComp[0];
+        this._rgba[1] = this._sourceComp[1] + this._destComp[1];
+        this._rgba[2] = this._sourceComp[2] + this._destComp[2];
+        this._rgba[3] = this._sourceComp[3] + this._destComp[3];
+        this._activeBufferColor.setPixelData(x, y, this._rgba);
     };
     ContextSoftware.prototype.createCubeTexture = function (size, format, optimizeForRenderToTexture, streamingLevels) {
         return new CubeTextureSoftware(size);
@@ -26313,6 +26287,12 @@ var ContextSoftware = (function () {
         this._colorMaskA = alpha;
     };
     ContextSoftware.prototype.setStencilActions = function (triangleFace, compareMode, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail, coordinateSystem) {
+        if (triangleFace === void 0) { triangleFace = exports.ContextGLTriangleFace.FRONT_AND_BACK; }
+        if (compareMode === void 0) { compareMode = exports.ContextGLCompareMode.ALWAYS; }
+        if (actionOnBothPass === void 0) { actionOnBothPass = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthFail === void 0) { actionOnDepthFail = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = exports.ContextGLStencilAction.KEEP; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         //TODO:
     };
     ContextSoftware.prototype.setStencilReferenceValue = function (referenceValue, readMask, writeMask) {
@@ -26331,9 +26311,9 @@ var ContextSoftware = (function () {
     };
     ContextSoftware.prototype.setProgramConstantsFromArray = function (programType, data) {
         var target;
-        if (programType == ContextGLProgramType.VERTEX)
+        if (programType == exports.ContextGLProgramType.VERTEX)
             target = this._vertexConstants = new Float32Array(data.length);
-        else if (programType == ContextGLProgramType.FRAGMENT)
+        else if (programType == exports.ContextGLProgramType.FRAGMENT)
             target = this._fragmentConstants = new Float32Array(data.length);
         target.set(data);
     };
@@ -26347,15 +26327,11 @@ var ContextSoftware = (function () {
     };
     ContextSoftware.prototype.present = function () {
         this._backBufferColor.unlock();
-        this._frontBuffer.fillRect(this._frontBuffer.rect, ColorUtils.ARGBtoFloat32(0, 0, 0, 0));
+        this._frontBuffer.fillRect(this._frontBuffer.rect, 0);
         this._frontBuffer.draw(this._backBufferColor, this._frontBufferMatrix);
     };
     ContextSoftware.prototype.drawToBitmapImage2D = function (destination) {
-        // TODO: remove software renderToTexture
-        // This is just a hack used to debug depth maps.
-        //if (this._activeBuffer != this._backBufferColor) {
-        destination.setPixels(this._activeBuffer.rect, this._activeBuffer.getImageData().data);
-        //}
+        destination.setPixels(this._activeBufferColor.rect, this._activeBufferColor.getImageData().data);
     };
     ContextSoftware.prototype._interpolateVertexPair = function (factor, v0, v1, result) {
         for (var i = 0; i < v0.length; i++) {
@@ -26389,13 +26365,6 @@ var ContextSoftware = (function () {
     };
     ContextSoftware.prototype.disableStencil = function () {
     };
-    ContextSoftware.prototype.setStencilActionsMasks = function (compareMode, referenceValue, writeMask, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail, coordinateSystem) {
-        if (compareMode === void 0) { compareMode = "always"; }
-        if (actionOnBothPass === void 0) { actionOnBothPass = "keep"; }
-        if (actionOnDepthFail === void 0) { actionOnDepthFail = "keep"; }
-        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = "keep"; }
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
-    };
     Object.defineProperty(ContextSoftware.prototype, "frontBuffer", {
         get: function () {
             return this._frontBuffer;
@@ -26417,15 +26386,13 @@ var ContextSoftware = (function () {
         if (alpha === void 0) { alpha = 1; }
         if (depth === void 0) { depth = 1; }
         if (stencil === void 0) { stencil = 0; }
-        if (mask === void 0) { mask = ContextGLClearMask.ALL; }
+        if (mask === void 0) { mask = exports.ContextGLClearMask.ALL; }
         this._backBufferColor.lock();
-        if (mask & ContextGLClearMask.COLOR) {
-            this._colorClearUint32.fill(((alpha * 0xFF << 24) | (red * 0xFF << 16) | (green * 0xFF << 8) | blue * 0xFF));
-            this._backBufferColor.setPixels(this._backBufferRect, this._colorClearUint8);
-        }
+        if (mask & exports.ContextGLClearMask.COLOR)
+            this._backBufferColor.fillRect(this._backBufferRect, ColorUtils.ARGBtoFloat32(alpha * 0xFF, red * 0xFF, green * 0xFF, blue * 0xFF));
         //TODO: mask & ContextGLClearMask.STENCIL
-        if (mask & ContextGLClearMask.DEPTH)
-            this._zbuffer.set(this._zbufferClear); //fast memcpy
+        if (mask & exports.ContextGLClearMask.DEPTH)
+            this._backBufferZ.set(this._backBufferZClear); //fast memcpy
     };
     return ContextSoftware;
 }());
@@ -26447,9 +26414,7 @@ var TextureBaseWebGL = (function () {
         configurable: true
     });
     TextureBaseWebGL.prototype.generateMipmaps = function () {
-        this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
-        this._gl.generateMipmap(this._gl.TEXTURE_2D);
-        //this._gl.bindTexture( this._gl.TEXTURE_2D, null );
+        throw new AbstractMethodError();
     };
     return TextureBaseWebGL;
 }());
@@ -26470,10 +26435,10 @@ var CubeTextureWebGL = (function (_super) {
         _this._textureSelectorDictionary[5] = gl.TEXTURE_CUBE_MAP_NEGATIVE_Z;
         return _this;
     }
-    CubeTextureWebGL.prototype.uploadFromData = function (data, side, miplevel) {
+    CubeTextureWebGL.prototype.uploadFromImage = function (imageCube, side, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
         this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._glTexture);
-        this._gl.texImage2D(this._textureSelectorDictionary[side], miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
+        this._gl.texImage2D(this._textureSelectorDictionary[side], miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, imageCube.getImageData(side));
         this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
     };
     CubeTextureWebGL.prototype.uploadCompressedTextureFromByteArray = function (data, byteArrayOffset /*uint*/, async) {
@@ -26486,6 +26451,11 @@ var CubeTextureWebGL = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    CubeTextureWebGL.prototype.generateMipmaps = function () {
+        this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._glTexture);
+        this._gl.generateMipmap(this._gl.TEXTURE_CUBE_MAP);
+        //this._gl.bindTexture( this._gl.TEXTURE_CUBE_MAP, null );
+    };
     return CubeTextureWebGL;
 }(TextureBaseWebGL));
 
@@ -26643,16 +26613,28 @@ var TextureWebGL = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    TextureWebGL.prototype.uploadFromData = function (data, miplevel) {
+    TextureWebGL.prototype.uploadFromImage = function (imageData, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
         this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
-        this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
+        this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, imageData.getImageData());
+        this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+    };
+    TextureWebGL.prototype.uploadFromURL = function (urlRequest, miplevel) {
+        if (miplevel === void 0) { miplevel = 0; }
+        //dummy code for testing
+        this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
+        this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, DefaultMaterialManager.getDefaultImage2D().getImageData());
         this._gl.bindTexture(this._gl.TEXTURE_2D, null);
     };
     TextureWebGL.prototype.uploadCompressedTextureFromByteArray = function (data, byteArrayOffset /*uint*/, async) {
         if (async === void 0) { async = false; }
         var ext = this._gl.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc");
         //this._gl.compressedTexImage2D(this._gl.TEXTURE_2D, 0, this)
+    };
+    TextureWebGL.prototype.generateMipmaps = function () {
+        this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
+        this._gl.generateMipmap(this._gl.TEXTURE_2D);
+        //this._gl.bindTexture( this._gl.TEXTURE_2D, null );
     };
     return TextureWebGL;
 }(TextureBaseWebGL));
@@ -26722,10 +26704,15 @@ var ContextWebGL = (function () {
         this._stencilReadMask = 0xff;
         this._separateStencil = false;
         this._container = canvas;
+        var props = {
+            premultipliedAlpha: false,
+            alpha: false,
+            stencil: true
+        };
         try {
-            this._gl = canvas.getContext("experimental-webgl", { premultipliedAlpha: false, alpha: false, stencil: true });
+            this._gl = canvas.getContext("experimental-webgl", props);
             if (!this._gl)
-                this._gl = canvas.getContext("webgl", { premultipliedAlpha: false, alpha: false, stencil: true });
+                this._gl = canvas.getContext("webgl", props);
         }
         catch (e) {
         }
@@ -26738,35 +26725,35 @@ var ContextWebGL = (function () {
                 this._standardDerivatives = false;
             }
             //setup shortcut dictionaries
-            this._blendFactorDictionary[ContextGLBlendFactor.ONE] = this._gl.ONE;
-            this._blendFactorDictionary[ContextGLBlendFactor.DESTINATION_ALPHA] = this._gl.DST_ALPHA;
-            this._blendFactorDictionary[ContextGLBlendFactor.DESTINATION_COLOR] = this._gl.DST_COLOR;
-            this._blendFactorDictionary[ContextGLBlendFactor.ONE] = this._gl.ONE;
-            this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_DESTINATION_ALPHA] = this._gl.ONE_MINUS_DST_ALPHA;
-            this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_DESTINATION_COLOR] = this._gl.ONE_MINUS_DST_COLOR;
-            this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA] = this._gl.ONE_MINUS_SRC_ALPHA;
-            this._blendFactorDictionary[ContextGLBlendFactor.ONE_MINUS_SOURCE_COLOR] = this._gl.ONE_MINUS_SRC_COLOR;
-            this._blendFactorDictionary[ContextGLBlendFactor.SOURCE_ALPHA] = this._gl.SRC_ALPHA;
-            this._blendFactorDictionary[ContextGLBlendFactor.SOURCE_COLOR] = this._gl.SRC_COLOR;
-            this._blendFactorDictionary[ContextGLBlendFactor.ZERO] = this._gl.ZERO;
-            this._drawModeDictionary[ContextGLDrawMode.LINES] = this._gl.LINES;
-            this._drawModeDictionary[ContextGLDrawMode.TRIANGLES] = this._gl.TRIANGLES;
-            this._compareModeDictionary[ContextGLCompareMode.ALWAYS] = this._gl.ALWAYS;
-            this._compareModeDictionary[ContextGLCompareMode.EQUAL] = this._gl.EQUAL;
-            this._compareModeDictionary[ContextGLCompareMode.GREATER] = this._gl.GREATER;
-            this._compareModeDictionary[ContextGLCompareMode.GREATER_EQUAL] = this._gl.GEQUAL;
-            this._compareModeDictionary[ContextGLCompareMode.LESS] = this._gl.LESS;
-            this._compareModeDictionary[ContextGLCompareMode.LESS_EQUAL] = this._gl.LEQUAL;
-            this._compareModeDictionary[ContextGLCompareMode.NEVER] = this._gl.NEVER;
-            this._compareModeDictionary[ContextGLCompareMode.NOT_EQUAL] = this._gl.NOTEQUAL;
-            this._stencilActionDictionary[ContextGLStencilAction.DECREMENT_SATURATE] = this._gl.DECR;
-            this._stencilActionDictionary[ContextGLStencilAction.DECREMENT_WRAP] = this._gl.DECR_WRAP;
-            this._stencilActionDictionary[ContextGLStencilAction.INCREMENT_SATURATE] = this._gl.INCR;
-            this._stencilActionDictionary[ContextGLStencilAction.INCREMENT_WRAP] = this._gl.INCR_WRAP;
-            this._stencilActionDictionary[ContextGLStencilAction.INVERT] = this._gl.INVERT;
-            this._stencilActionDictionary[ContextGLStencilAction.KEEP] = this._gl.KEEP;
-            this._stencilActionDictionary[ContextGLStencilAction.SET] = this._gl.REPLACE;
-            this._stencilActionDictionary[ContextGLStencilAction.ZERO] = this._gl.ZERO;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE] = this._gl.ONE;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.DESTINATION_ALPHA] = this._gl.DST_ALPHA;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.DESTINATION_COLOR] = this._gl.DST_COLOR;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE] = this._gl.ONE;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_DESTINATION_ALPHA] = this._gl.ONE_MINUS_DST_ALPHA;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_DESTINATION_COLOR] = this._gl.ONE_MINUS_DST_COLOR;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA] = this._gl.ONE_MINUS_SRC_ALPHA;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_COLOR] = this._gl.ONE_MINUS_SRC_COLOR;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.SOURCE_ALPHA] = this._gl.SRC_ALPHA;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.SOURCE_COLOR] = this._gl.SRC_COLOR;
+            this._blendFactorDictionary[exports.ContextGLBlendFactor.ZERO] = this._gl.ZERO;
+            this._drawModeDictionary[exports.ContextGLDrawMode.LINES] = this._gl.LINES;
+            this._drawModeDictionary[exports.ContextGLDrawMode.TRIANGLES] = this._gl.TRIANGLES;
+            this._compareModeDictionary[exports.ContextGLCompareMode.ALWAYS] = this._gl.ALWAYS;
+            this._compareModeDictionary[exports.ContextGLCompareMode.EQUAL] = this._gl.EQUAL;
+            this._compareModeDictionary[exports.ContextGLCompareMode.GREATER] = this._gl.GREATER;
+            this._compareModeDictionary[exports.ContextGLCompareMode.GREATER_EQUAL] = this._gl.GEQUAL;
+            this._compareModeDictionary[exports.ContextGLCompareMode.LESS] = this._gl.LESS;
+            this._compareModeDictionary[exports.ContextGLCompareMode.LESS_EQUAL] = this._gl.LEQUAL;
+            this._compareModeDictionary[exports.ContextGLCompareMode.NEVER] = this._gl.NEVER;
+            this._compareModeDictionary[exports.ContextGLCompareMode.NOT_EQUAL] = this._gl.NOTEQUAL;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.DECREMENT_SATURATE] = this._gl.DECR;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.DECREMENT_WRAP] = this._gl.DECR_WRAP;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.INCREMENT_SATURATE] = this._gl.INCR;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.INCREMENT_WRAP] = this._gl.INCR_WRAP;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.INVERT] = this._gl.INVERT;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.KEEP] = this._gl.KEEP;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.SET] = this._gl.REPLACE;
+            this._stencilActionDictionary[exports.ContextGLStencilAction.ZERO] = this._gl.ZERO;
             this._textureIndexDictionary[0] = this._gl.TEXTURE0;
             this._textureIndexDictionary[1] = this._gl.TEXTURE1;
             this._textureIndexDictionary[2] = this._gl.TEXTURE2;
@@ -26777,38 +26764,38 @@ var ContextWebGL = (function () {
             this._textureIndexDictionary[7] = this._gl.TEXTURE7;
             this._textureTypeDictionary["texture2d"] = this._gl.TEXTURE_2D;
             this._textureTypeDictionary["textureCube"] = this._gl.TEXTURE_CUBE_MAP;
-            this._wrapDictionary[ContextGLWrapMode.REPEAT] = this._gl.REPEAT;
-            this._wrapDictionary[ContextGLWrapMode.CLAMP] = this._gl.CLAMP_TO_EDGE;
-            this._filterDictionary[ContextGLTextureFilter.LINEAR] = this._gl.LINEAR;
-            this._filterDictionary[ContextGLTextureFilter.NEAREST] = this._gl.NEAREST;
-            this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR] = new Object();
-            this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR][ContextGLMipFilter.MIPNEAREST] = this._gl.LINEAR_MIPMAP_NEAREST;
-            this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR][ContextGLMipFilter.MIPLINEAR] = this._gl.LINEAR_MIPMAP_LINEAR;
-            this._mipmapFilterDictionary[ContextGLTextureFilter.LINEAR][ContextGLMipFilter.MIPNONE] = this._gl.LINEAR;
-            this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST] = new Object();
-            this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST][ContextGLMipFilter.MIPNEAREST] = this._gl.NEAREST_MIPMAP_NEAREST;
-            this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST][ContextGLMipFilter.MIPLINEAR] = this._gl.NEAREST_MIPMAP_LINEAR;
-            this._mipmapFilterDictionary[ContextGLTextureFilter.NEAREST][ContextGLMipFilter.MIPNONE] = this._gl.NEAREST;
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.FLOAT_1] = new VertexBufferProperties$1(1, this._gl.FLOAT, false);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.FLOAT_2] = new VertexBufferProperties$1(2, this._gl.FLOAT, false);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.FLOAT_3] = new VertexBufferProperties$1(3, this._gl.FLOAT, false);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.FLOAT_4] = new VertexBufferProperties$1(4, this._gl.FLOAT, false);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.BYTE_1] = new VertexBufferProperties$1(1, this._gl.BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.BYTE_2] = new VertexBufferProperties$1(2, this._gl.BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.BYTE_3] = new VertexBufferProperties$1(3, this._gl.BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.BYTE_4] = new VertexBufferProperties$1(4, this._gl.BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_BYTE_1] = new VertexBufferProperties$1(1, this._gl.UNSIGNED_BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_BYTE_2] = new VertexBufferProperties$1(2, this._gl.UNSIGNED_BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_BYTE_3] = new VertexBufferProperties$1(3, this._gl.UNSIGNED_BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_BYTE_4] = new VertexBufferProperties$1(4, this._gl.UNSIGNED_BYTE, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.SHORT_1] = new VertexBufferProperties$1(1, this._gl.SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.SHORT_2] = new VertexBufferProperties$1(2, this._gl.SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.SHORT_3] = new VertexBufferProperties$1(3, this._gl.SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.SHORT_4] = new VertexBufferProperties$1(4, this._gl.SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_SHORT_1] = new VertexBufferProperties$1(1, this._gl.UNSIGNED_SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_SHORT_2] = new VertexBufferProperties$1(2, this._gl.UNSIGNED_SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_SHORT_3] = new VertexBufferProperties$1(3, this._gl.UNSIGNED_SHORT, true);
-            this._vertexBufferPropertiesDictionary[ContextGLVertexBufferFormat.UNSIGNED_SHORT_4] = new VertexBufferProperties$1(4, this._gl.UNSIGNED_SHORT, true);
+            this._wrapDictionary[exports.ContextGLWrapMode.REPEAT] = this._gl.REPEAT;
+            this._wrapDictionary[exports.ContextGLWrapMode.CLAMP] = this._gl.CLAMP_TO_EDGE;
+            this._filterDictionary[exports.ContextGLTextureFilter.LINEAR] = this._gl.LINEAR;
+            this._filterDictionary[exports.ContextGLTextureFilter.NEAREST] = this._gl.NEAREST;
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR] = new Object();
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR][exports.ContextGLMipFilter.MIPNEAREST] = this._gl.LINEAR_MIPMAP_NEAREST;
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR][exports.ContextGLMipFilter.MIPLINEAR] = this._gl.LINEAR_MIPMAP_LINEAR;
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.LINEAR][exports.ContextGLMipFilter.MIPNONE] = this._gl.LINEAR;
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST] = new Object();
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPNEAREST] = this._gl.NEAREST_MIPMAP_NEAREST;
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPLINEAR] = this._gl.NEAREST_MIPMAP_LINEAR;
+            this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPNONE] = this._gl.NEAREST;
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.FLOAT_1] = new VertexBufferProperties$1(1, this._gl.FLOAT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.FLOAT_2] = new VertexBufferProperties$1(2, this._gl.FLOAT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.FLOAT_3] = new VertexBufferProperties$1(3, this._gl.FLOAT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.FLOAT_4] = new VertexBufferProperties$1(4, this._gl.FLOAT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.BYTE_1] = new VertexBufferProperties$1(1, this._gl.BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.BYTE_2] = new VertexBufferProperties$1(2, this._gl.BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.BYTE_3] = new VertexBufferProperties$1(3, this._gl.BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.BYTE_4] = new VertexBufferProperties$1(4, this._gl.BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_1] = new VertexBufferProperties$1(1, this._gl.UNSIGNED_BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_2] = new VertexBufferProperties$1(2, this._gl.UNSIGNED_BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_3] = new VertexBufferProperties$1(3, this._gl.UNSIGNED_BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_4] = new VertexBufferProperties$1(4, this._gl.UNSIGNED_BYTE, true);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.SHORT_1] = new VertexBufferProperties$1(1, this._gl.SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.SHORT_2] = new VertexBufferProperties$1(2, this._gl.SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.SHORT_3] = new VertexBufferProperties$1(3, this._gl.SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.SHORT_4] = new VertexBufferProperties$1(4, this._gl.SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_1] = new VertexBufferProperties$1(1, this._gl.UNSIGNED_SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_2] = new VertexBufferProperties$1(2, this._gl.UNSIGNED_SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_3] = new VertexBufferProperties$1(3, this._gl.UNSIGNED_SHORT, false);
+            this._vertexBufferPropertiesDictionary[exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_4] = new VertexBufferProperties$1(4, this._gl.UNSIGNED_SHORT, false);
             this._stencilCompareMode = this._gl.ALWAYS;
             this._stencilCompareModeBack = this._gl.ALWAYS;
             this._stencilCompareModeFront = this._gl.ALWAYS;
@@ -26849,17 +26836,17 @@ var ContextWebGL = (function () {
         if (alpha === void 0) { alpha = 1; }
         if (depth === void 0) { depth = 1; }
         if (stencil === void 0) { stencil = 0; }
-        if (mask === void 0) { mask = ContextGLClearMask.ALL; }
+        if (mask === void 0) { mask = exports.ContextGLClearMask.ALL; }
         if (!this._drawing) {
             this.updateBlendStatus();
             this._drawing = true;
         }
         var glmask = 0;
-        if (mask & ContextGLClearMask.COLOR)
+        if (mask & exports.ContextGLClearMask.COLOR)
             glmask |= this._gl.COLOR_BUFFER_BIT;
-        if (mask & ContextGLClearMask.STENCIL)
+        if (mask & exports.ContextGLClearMask.STENCIL)
             glmask |= this._gl.STENCIL_BUFFER_BIT;
-        if (mask & ContextGLClearMask.DEPTH)
+        if (mask & exports.ContextGLClearMask.DEPTH)
             glmask |= this._gl.DEPTH_BUFFER_BIT;
         this._gl.clearColor(red, green, blue, alpha);
         this._gl.clearDepth(depth);
@@ -26943,8 +26930,8 @@ var ContextWebGL = (function () {
         this._gl.colorMask(red, green, blue, alpha);
     };
     ContextWebGL.prototype.setCulling = function (triangleFaceToCull, coordinateSystem) {
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
-        if (triangleFaceToCull == ContextGLTriangleFace.NONE) {
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
+        if (triangleFaceToCull == exports.ContextGLTriangleFace.NONE) {
             this._gl.disable(this._gl.CULL_FACE);
         }
         else {
@@ -26963,22 +26950,14 @@ var ContextWebGL = (function () {
     ContextWebGL.prototype.disableStencil = function () {
         this._gl.disable(this._gl.STENCIL_TEST);
     };
-    ContextWebGL.prototype.setStencilActionsMasks = function (compareMode, referenceValue, writeMask, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail) {
-        if (compareMode === void 0) { compareMode = "always"; }
-        if (actionOnBothPass === void 0) { actionOnBothPass = "keep"; }
-        if (actionOnDepthFail === void 0) { actionOnDepthFail = "keep"; }
-        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = "keep"; }
-        this._gl.stencilFunc(this._compareModeDictionary[compareMode], referenceValue, 0xff);
-        this._gl.stencilOp(this._stencilActionDictionary[actionOnDepthPassStencilFail], this._stencilActionDictionary[actionOnDepthFail], this._stencilActionDictionary[actionOnBothPass]);
-    };
     ContextWebGL.prototype.setStencilActions = function (triangleFace, compareMode, actionOnBothPass, actionOnDepthFail, actionOnDepthPassStencilFail, coordinateSystem) {
-        if (triangleFace === void 0) { triangleFace = "frontAndBack"; }
-        if (compareMode === void 0) { compareMode = "always"; }
-        if (actionOnBothPass === void 0) { actionOnBothPass = "keep"; }
-        if (actionOnDepthFail === void 0) { actionOnDepthFail = "keep"; }
-        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = "keep"; }
-        if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
-        this._separateStencil = triangleFace != "frontAndBack";
+        if (triangleFace === void 0) { triangleFace = exports.ContextGLTriangleFace.FRONT_AND_BACK; }
+        if (compareMode === void 0) { compareMode = exports.ContextGLCompareMode.ALWAYS; }
+        if (actionOnBothPass === void 0) { actionOnBothPass = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthFail === void 0) { actionOnDepthFail = exports.ContextGLStencilAction.KEEP; }
+        if (actionOnDepthPassStencilFail === void 0) { actionOnDepthPassStencilFail = exports.ContextGLStencilAction.KEEP; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
+        this._separateStencil = triangleFace != exports.ContextGLTriangleFace.FRONT_AND_BACK;
         var compareModeGL = this._compareModeDictionary[compareMode];
         var fail = this._stencilActionDictionary[actionOnDepthPassStencilFail];
         var zFail = this._stencilActionDictionary[actionOnDepthFail];
@@ -26988,18 +26967,20 @@ var ContextWebGL = (function () {
             this._gl.stencilFunc(compareModeGL, this._stencilReferenceValue, this._stencilReadMask);
             this._gl.stencilOp(fail, zFail, pass);
         }
-        else if (triangleFace == "back") {
+        else if (triangleFace == exports.ContextGLTriangleFace.BACK) {
             this._stencilCompareModeBack = compareModeGL;
             this._gl.stencilFuncSeparate(this._gl.BACK, compareModeGL, this._stencilReferenceValue, this._stencilReadMask);
             this._gl.stencilOpSeparate(this._gl.BACK, fail, zFail, pass);
         }
-        else if (triangleFace == "front") {
+        else if (triangleFace == exports.ContextGLTriangleFace.FRONT) {
             this._stencilCompareModeFront = compareModeGL;
             this._gl.stencilFuncSeparate(this._gl.FRONT, compareModeGL, this._stencilReferenceValue, this._stencilReadMask);
             this._gl.stencilOpSeparate(this._gl.FRONT, fail, zFail, pass);
         }
     };
     ContextWebGL.prototype.setStencilReferenceValue = function (referenceValue, readMask, writeMask) {
+        if (readMask === void 0) { readMask = 0xFF; }
+        if (writeMask === void 0) { writeMask = 0xFF; }
         this._stencilReferenceValue = referenceValue;
         this._stencilReadMask = readMask;
         if (this._separateStencil) {
@@ -27044,7 +27025,7 @@ var ContextWebGL = (function () {
         var textureType = this._textureTypeDictionary[texture.textureType];
         samplerState.type = textureType;
         this._gl.bindTexture(textureType, texture.glTexture);
-        this._gl.uniform1i(this._currentProgram.getUniformLocation(ContextGLProgramType.SAMPLER, sampler), sampler);
+        this._gl.uniform1i(this._currentProgram.getUniformLocation(exports.ContextGLProgramType.SAMPLER, sampler), sampler);
         this._gl.texParameteri(textureType, this._gl.TEXTURE_WRAP_S, samplerState.wrap);
         this._gl.texParameteri(textureType, this._gl.TEXTURE_WRAP_T, samplerState.wrap);
         this._gl.texParameteri(textureType, this._gl.TEXTURE_MAG_FILTER, samplerState.filter);
@@ -27106,11 +27087,11 @@ var ContextWebGL = (function () {
     };
     ContextWebGL.prototype.translateTriangleFace = function (triangleFace, coordinateSystem) {
         switch (triangleFace) {
-            case ContextGLTriangleFace.BACK:
-                return (coordinateSystem == "leftHanded") ? this._gl.FRONT : this._gl.BACK;
-            case ContextGLTriangleFace.FRONT:
-                return (coordinateSystem == "leftHanded") ? this._gl.BACK : this._gl.FRONT;
-            case ContextGLTriangleFace.FRONT_AND_BACK:
+            case exports.ContextGLTriangleFace.BACK:
+                return (coordinateSystem == exports.CoordinateSystem.LEFT_HANDED) ? this._gl.FRONT : this._gl.BACK;
+            case exports.ContextGLTriangleFace.FRONT:
+                return (coordinateSystem == exports.CoordinateSystem.LEFT_HANDED) ? this._gl.BACK : this._gl.FRONT;
+            case exports.ContextGLTriangleFace.FRONT_AND_BACK:
                 return this._gl.FRONT_AND_BACK;
             default:
                 throw "Unknown ContextGLTriangleFace type."; // TODO error
@@ -27141,7 +27122,7 @@ var Stage = (function (_super) {
     __extends(Stage, _super);
     function Stage(container, stageIndex, stageManager, forceSoftware, profile) {
         if (forceSoftware === void 0) { forceSoftware = false; }
-        if (profile === void 0) { profile = "baseline"; }
+        if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
         var _this = _super.call(this) || this;
         _this._abstractionPool = new Object();
         _this._programData = new Array();
@@ -27173,30 +27154,30 @@ var Stage = (function (_super) {
         CSS.setElementX(_this._container, 0);
         CSS.setElementY(_this._container, 0);
         _this._bufferFormatDictionary[1] = new Array(5);
-        _this._bufferFormatDictionary[1][1] = ContextGLVertexBufferFormat.BYTE_1;
-        _this._bufferFormatDictionary[1][2] = ContextGLVertexBufferFormat.BYTE_2;
-        _this._bufferFormatDictionary[1][3] = ContextGLVertexBufferFormat.BYTE_3;
-        _this._bufferFormatDictionary[1][4] = ContextGLVertexBufferFormat.BYTE_4;
+        _this._bufferFormatDictionary[1][1] = exports.ContextGLVertexBufferFormat.BYTE_1;
+        _this._bufferFormatDictionary[1][2] = exports.ContextGLVertexBufferFormat.BYTE_2;
+        _this._bufferFormatDictionary[1][3] = exports.ContextGLVertexBufferFormat.BYTE_3;
+        _this._bufferFormatDictionary[1][4] = exports.ContextGLVertexBufferFormat.BYTE_4;
         _this._bufferFormatDictionary[2] = new Array(5);
-        _this._bufferFormatDictionary[2][1] = ContextGLVertexBufferFormat.SHORT_1;
-        _this._bufferFormatDictionary[2][2] = ContextGLVertexBufferFormat.SHORT_2;
-        _this._bufferFormatDictionary[2][3] = ContextGLVertexBufferFormat.SHORT_3;
-        _this._bufferFormatDictionary[2][4] = ContextGLVertexBufferFormat.SHORT_4;
+        _this._bufferFormatDictionary[2][1] = exports.ContextGLVertexBufferFormat.SHORT_1;
+        _this._bufferFormatDictionary[2][2] = exports.ContextGLVertexBufferFormat.SHORT_2;
+        _this._bufferFormatDictionary[2][3] = exports.ContextGLVertexBufferFormat.SHORT_3;
+        _this._bufferFormatDictionary[2][4] = exports.ContextGLVertexBufferFormat.SHORT_4;
         _this._bufferFormatDictionary[4] = new Array(5);
-        _this._bufferFormatDictionary[4][1] = ContextGLVertexBufferFormat.FLOAT_1;
-        _this._bufferFormatDictionary[4][2] = ContextGLVertexBufferFormat.FLOAT_2;
-        _this._bufferFormatDictionary[4][3] = ContextGLVertexBufferFormat.FLOAT_3;
-        _this._bufferFormatDictionary[4][4] = ContextGLVertexBufferFormat.FLOAT_4;
+        _this._bufferFormatDictionary[4][1] = exports.ContextGLVertexBufferFormat.FLOAT_1;
+        _this._bufferFormatDictionary[4][2] = exports.ContextGLVertexBufferFormat.FLOAT_2;
+        _this._bufferFormatDictionary[4][3] = exports.ContextGLVertexBufferFormat.FLOAT_3;
+        _this._bufferFormatDictionary[4][4] = exports.ContextGLVertexBufferFormat.FLOAT_4;
         _this._bufferFormatDictionary[5] = new Array(5);
-        _this._bufferFormatDictionary[5][1] = ContextGLVertexBufferFormat.UNSIGNED_BYTE_1;
-        _this._bufferFormatDictionary[5][2] = ContextGLVertexBufferFormat.UNSIGNED_BYTE_2;
-        _this._bufferFormatDictionary[5][3] = ContextGLVertexBufferFormat.UNSIGNED_BYTE_3;
-        _this._bufferFormatDictionary[5][4] = ContextGLVertexBufferFormat.UNSIGNED_BYTE_4;
+        _this._bufferFormatDictionary[5][1] = exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_1;
+        _this._bufferFormatDictionary[5][2] = exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_2;
+        _this._bufferFormatDictionary[5][3] = exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_3;
+        _this._bufferFormatDictionary[5][4] = exports.ContextGLVertexBufferFormat.UNSIGNED_BYTE_4;
         _this._bufferFormatDictionary[6] = new Array(5);
-        _this._bufferFormatDictionary[6][1] = ContextGLVertexBufferFormat.UNSIGNED_SHORT_1;
-        _this._bufferFormatDictionary[6][2] = ContextGLVertexBufferFormat.UNSIGNED_SHORT_2;
-        _this._bufferFormatDictionary[6][3] = ContextGLVertexBufferFormat.UNSIGNED_SHORT_3;
-        _this._bufferFormatDictionary[6][4] = ContextGLVertexBufferFormat.UNSIGNED_SHORT_4;
+        _this._bufferFormatDictionary[6][1] = exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_1;
+        _this._bufferFormatDictionary[6][2] = exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_2;
+        _this._bufferFormatDictionary[6][3] = exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_3;
+        _this._bufferFormatDictionary[6][4] = exports.ContextGLVertexBufferFormat.UNSIGNED_SHORT_4;
         _this.visible = true;
         return _this;
     }
@@ -27246,24 +27227,24 @@ var Stage = (function (_super) {
         // old value (will likely be same if re-requesting.)
         var _this = this;
         if (forceSoftware === void 0) { forceSoftware = false; }
-        if (profile === void 0) { profile = "baseline"; }
-        if (mode === void 0) { mode = "auto"; }
+        if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
+        if (mode === void 0) { mode = exports.ContextMode.AUTO; }
         if (this._usesSoftwareRendering != null)
             this._usesSoftwareRendering = forceSoftware;
         this._profile = profile;
         try {
-            if (mode == ContextMode.FLASH)
+            if (mode == exports.ContextMode.FLASH)
                 new ContextFlash(this._container, function (context) { return _this._callback(context); });
-            else if (mode == ContextMode.SOFTWARE)
+            else if (mode == exports.ContextMode.SOFTWARE)
                 this._context = new ContextSoftware(this._container);
-            else if (mode == ContextMode.GLES)
+            else if (mode == exports.ContextMode.GLES)
                 this._context = new ContextGLES(this._container);
             else
                 this._context = new ContextWebGL(this._container);
         }
         catch (e) {
             try {
-                if (mode == ContextMode.AUTO)
+                if (mode == exports.ContextMode.AUTO)
                     new ContextFlash(this._container, function (context) { return _this._callback(context); });
                 else
                     this.dispatchEvent(new StageEvent(StageEvent.STAGE_ERROR, this));
@@ -27599,9 +27580,9 @@ var Stage = (function (_super) {
         this._context.setVertexBufferAt(index, buffer, offset, this._bufferFormatDictionary[unsigned ? size + 4 : size][dimensions]);
     };
     Stage.prototype.setSamplerState = function (index, repeat, smooth, mipmap) {
-        var wrap = repeat ? ContextGLWrapMode.REPEAT : ContextGLWrapMode.CLAMP;
-        var filter = (smooth && !this.globalDisableSmooth) ? ContextGLTextureFilter.LINEAR : ContextGLTextureFilter.NEAREST;
-        var mipfilter = (mipmap && !this.globalDisableMipmap) ? ContextGLMipFilter.MIPLINEAR : ContextGLMipFilter.MIPNONE;
+        var wrap = repeat ? exports.ContextGLWrapMode.REPEAT : exports.ContextGLWrapMode.CLAMP;
+        var filter = (smooth && !this.globalDisableSmooth) ? exports.ContextGLTextureFilter.LINEAR : exports.ContextGLTextureFilter.NEAREST;
+        var mipfilter = (mipmap && !this.globalDisableMipmap) ? exports.ContextGLMipFilter.MIPLINEAR : exports.ContextGLMipFilter.MIPNONE;
         this._context.setSamplerStateAt(index, wrap, filter, mipfilter);
     };
     return Stage;
@@ -27646,8 +27627,8 @@ var StageManager = (function (_super) {
      */
     StageManager.prototype.getStageAt = function (index, forceSoftware, profile, mode) {
         if (forceSoftware === void 0) { forceSoftware = false; }
-        if (profile === void 0) { profile = "baseline"; }
-        if (mode === void 0) { mode = "auto"; }
+        if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
+        if (mode === void 0) { mode = exports.ContextMode.AUTO; }
         if (index < 0 || index >= StageManager.STAGE_MAX_QUANTITY)
             throw new ArgumentError("Index is out of bounds [0.." + StageManager.STAGE_MAX_QUANTITY + "]");
         if (!this._stages[index]) {
@@ -27681,8 +27662,8 @@ var StageManager = (function (_super) {
      */
     StageManager.prototype.getFreeStage = function (forceSoftware, profile, mode) {
         if (forceSoftware === void 0) { forceSoftware = false; }
-        if (profile === void 0) { profile = "baseline"; }
-        if (mode === void 0) { mode = "auto"; }
+        if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
+        if (mode === void 0) { mode = exports.ContextMode.AUTO; }
         var i = 0;
         var len = this._stages.length;
         while (i < len) {
@@ -28558,7 +28539,7 @@ var ParticleAccelerationState = (function (_super) {
     ParticleAccelerationState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleAccelerationState.ACCELERATION_INDEX);
         if (this._particleAccelerationNode.mode == ParticlePropertiesMode.LOCAL_STATIC)
-            animationElements.activateVertexBuffer(index, this._particleAccelerationNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(index, this._particleAccelerationNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
         else
             shader.setVertexConst(index, this._halfAcceleration.x, this._halfAcceleration.y, this._halfAcceleration.z);
     };
@@ -28794,8 +28775,8 @@ var ParticleBezierCurveState = (function (_super) {
         var controlIndex = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleBezierCurveState.BEZIER_CONTROL_INDEX);
         var endIndex = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleBezierCurveState.BEZIER_END_INDEX);
         if (this._particleBezierCurveNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
-            animationElements.activateVertexBuffer(controlIndex, this._particleBezierCurveNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
-            animationElements.activateVertexBuffer(endIndex, this._particleBezierCurveNode._iDataOffset + 3, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(controlIndex, this._particleBezierCurveNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(endIndex, this._particleBezierCurveNode._iDataOffset + 3, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
         }
         else {
             shader.setVertexConst(controlIndex, this._controlPoint.x, this._controlPoint.y, this._controlPoint.z);
@@ -29101,9 +29082,9 @@ var ParticleColorState = (function (_super) {
                 shader.setVertexConst(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.CYCLE_INDEX), this._cycleData.x, this._cycleData.y, this._cycleData.z, this._cycleData.w);
             if (this._usesMultiplier) {
                 if (this._particleColorNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
-                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.START_MULTIPLIER_INDEX), dataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.START_MULTIPLIER_INDEX), dataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
                     dataOffset += 4;
-                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.DELTA_MULTIPLIER_INDEX), dataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.DELTA_MULTIPLIER_INDEX), dataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
                     dataOffset += 4;
                 }
                 else {
@@ -29113,9 +29094,9 @@ var ParticleColorState = (function (_super) {
             }
             if (this._usesOffset) {
                 if (this._particleColorNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
-                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.START_OFFSET_INDEX), dataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.START_OFFSET_INDEX), dataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
                     dataOffset += 4;
-                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.DELTA_OFFSET_INDEX), dataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.DELTA_OFFSET_INDEX), dataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
                 }
                 else {
                     shader.setVertexConst(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleColorState.START_OFFSET_INDEX), this._startOffsetData.x, this._startOffsetData.y, this._startOffsetData.z, this._startOffsetData.w);
@@ -29177,7 +29158,7 @@ var ParticleTimeState = (function (_super) {
         return _this;
     }
     ParticleTimeState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
-        animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleTimeState.TIME_STREAM_INDEX), this._particleTimeNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+        animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleTimeState.TIME_STREAM_INDEX), this._particleTimeNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
         var particleTime = this._pTime / 1000;
         shader.setVertexConst(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleTimeState.TIME_CONSTANT_INDEX), particleTime, particleTime, particleTime, particleTime);
     };
@@ -29945,18 +29926,18 @@ var ParticleFollowState = (function (_super) {
         if (this._particleFollowNode._iUsesPosition && this._particleFollowNode._iUsesRotation) {
             if (needProcess)
                 this.processPositionAndRotation(currentTime, deltaTime, animationElements);
-            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_POSITION_INDEX), this._particleFollowNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
-            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_ROTATION_INDEX), this._particleFollowNode._iDataOffset + 3, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_POSITION_INDEX), this._particleFollowNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_ROTATION_INDEX), this._particleFollowNode._iDataOffset + 3, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
         }
         else if (this._particleFollowNode._iUsesPosition) {
             if (needProcess)
                 this.processPosition(currentTime, deltaTime, animationElements);
-            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_POSITION_INDEX), this._particleFollowNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_POSITION_INDEX), this._particleFollowNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
         }
         else if (this._particleFollowNode._iUsesRotation) {
             if (needProcess)
                 this.precessRotation(currentTime, deltaTime, animationElements);
-            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_ROTATION_INDEX), this._particleFollowNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleFollowState.FOLLOW_ROTATION_INDEX), this._particleFollowNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
         }
         this._prePos.copyFrom(this._targetPos);
         this._targetEuler.copyFrom(this._targetEuler);
@@ -30241,11 +30222,11 @@ var ParticleInitialColorState = (function (_super) {
             if (this._particleInitialColorNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
                 var dataOffset = this._particleInitialColorNode._iDataOffset;
                 if (this._usesMultiplier) {
-                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleInitialColorState.MULTIPLIER_INDEX), dataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleInitialColorState.MULTIPLIER_INDEX), dataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
                     dataOffset += 4;
                 }
                 if (this._usesOffset)
-                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleInitialColorState.OFFSET_INDEX), dataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleInitialColorState.OFFSET_INDEX), dataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
             }
             else {
                 if (this._usesMultiplier)
@@ -30423,9 +30404,9 @@ var ParticleOrbitState = (function (_super) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleOrbitState.ORBIT_INDEX);
         if (this._particleOrbitNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
             if (this._usesPhase)
-                animationElements.activateVertexBuffer(index, this._particleOrbitNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                animationElements.activateVertexBuffer(index, this._particleOrbitNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
             else
-                animationElements.activateVertexBuffer(index, this._particleOrbitNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+                animationElements.activateVertexBuffer(index, this._particleOrbitNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
         }
         else
             shader.setVertexConst(index, this._orbitData.x, this._orbitData.y, this._orbitData.z, this._orbitData.w);
@@ -30608,7 +30589,7 @@ var ParticleOscillatorState = (function (_super) {
     ParticleOscillatorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleOscillatorState.OSCILLATOR_INDEX);
         if (this._particleOscillatorNode.mode == ParticlePropertiesMode.LOCAL_STATIC)
-            animationElements.activateVertexBuffer(index, this._particleOscillatorNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+            animationElements.activateVertexBuffer(index, this._particleOscillatorNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
         else
             shader.setVertexConst(index, this._oscillatorData.x, this._oscillatorData.y, this._oscillatorData.z, this._oscillatorData.w);
     };
@@ -30747,7 +30728,7 @@ var ParticlePositionState = (function (_super) {
         if (this._particlePositionNode.mode == ParticlePropertiesMode.GLOBAL)
             shader.setVertexConst(index, this._position.x, this._position.y, this._position.z);
         else
-            animationElements.activateVertexBuffer(index, this._particlePositionNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(index, this._particlePositionNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
     };
     return ParticlePositionState;
 }(ParticleStateBase));
@@ -31016,7 +30997,7 @@ var ParticleRotateToPositionState = (function (_super) {
             shader.setVertexConst(index, this._offset.x, this._offset.y, this._offset.z);
         }
         else
-            animationElements.activateVertexBuffer(index, this._particleRotateToPositionNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(index, this._particleRotateToPositionNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
     };
     return ParticleRotateToPositionState;
 }(ParticleStateBase));
@@ -31241,7 +31222,7 @@ var ParticleRotationalVelocityState = (function (_super) {
         if (this._particleRotationalVelocityNode.mode == ParticlePropertiesMode.GLOBAL)
             shader.setVertexConst(index, this._rotationalVelocityData.x, this._rotationalVelocityData.y, this._rotationalVelocityData.z, this._rotationalVelocityData.w);
         else
-            animationElements.activateVertexBuffer(index, this._particleRotationalVelocityNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+            animationElements.activateVertexBuffer(index, this._particleRotationalVelocityNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
     };
     ParticleRotationalVelocityState.prototype.updateRotationalVelocityData = function () {
         if (this._particleRotationalVelocityNode.mode == ParticlePropertiesMode.GLOBAL) {
@@ -31454,12 +31435,12 @@ var ParticleScaleState = (function (_super) {
         if (this._particleScaleNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
             if (this._usesCycle) {
                 if (this._usesPhase)
-                    animationElements.activateVertexBuffer(index, this._particleScaleNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_4);
+                    animationElements.activateVertexBuffer(index, this._particleScaleNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
                 else
-                    animationElements.activateVertexBuffer(index, this._particleScaleNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+                    animationElements.activateVertexBuffer(index, this._particleScaleNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
             }
             else
-                animationElements.activateVertexBuffer(index, this._particleScaleNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_2);
+                animationElements.activateVertexBuffer(index, this._particleScaleNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_2);
         }
         else
             shader.setVertexConst(index, this._scaleData.x, this._scaleData.y, this._scaleData.z, this._scaleData.w);
@@ -31947,9 +31928,9 @@ var ParticleSpriteSheetState = (function (_super) {
                 var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleSpriteSheetState.UV_INDEX_1);
                 if (this._particleSpriteSheetNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
                     if (this._usesPhase)
-                        animationElements.activateVertexBuffer(index, this._particleSpriteSheetNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+                        animationElements.activateVertexBuffer(index, this._particleSpriteSheetNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
                     else
-                        animationElements.activateVertexBuffer(index, this._particleSpriteSheetNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_2);
+                        animationElements.activateVertexBuffer(index, this._particleSpriteSheetNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_2);
                 }
                 else
                     shader.setVertexConst(index, this._spriteSheetData[4], this._spriteSheetData[5]);
@@ -32307,7 +32288,7 @@ var ParticleVelocityState = (function (_super) {
         if (this._particleVelocityNode.mode == ParticlePropertiesMode.GLOBAL)
             shader.setVertexConst(index, this._velocity.x, this._velocity.y, this._velocity.z);
         else
-            animationElements.activateVertexBuffer(index, this._particleVelocityNode._iDataOffset, stage, ContextGLVertexBufferFormat.FLOAT_3);
+            animationElements.activateVertexBuffer(index, this._particleVelocityNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
     };
     return ParticleVelocityState;
 }(ParticleStateBase));
@@ -36046,8 +36027,8 @@ var ShaderBase = (function () {
      */
     function ShaderBase(elementsClass, pass, stage) {
         this._abstractionPool = new Object();
-        this._blendFactorSource = ContextGLBlendFactor.ONE;
-        this._blendFactorDest = ContextGLBlendFactor.ZERO;
+        this._blendFactorSource = exports.ContextGLBlendFactor.ONE;
+        this._blendFactorDest = exports.ContextGLBlendFactor.ZERO;
         this._invalidProgram = true;
         this._animationVertexCode = "";
         this._animationFragmentCode = "";
@@ -36059,12 +36040,12 @@ var ShaderBase = (function () {
          *
          * @see away.stagegl.ContextGLCompareMode
          */
-        this.depthCompareMode = ContextGLCompareMode.LESS_EQUAL;
+        this.depthCompareMode = exports.ContextGLCompareMode.LESS_EQUAL;
         /**
          * Indicate whether the shader should write to the depth buffer or not. Ignored when blending is enabled.
          */
         this.writeDepth = true;
-        this._defaultCulling = ContextGLTriangleFace.BACK;
+        this._defaultCulling = exports.ContextGLTriangleFace.BACK;
         this._pInverseSceneMatrix = new Float32Array(16);
         //set ambient values to default
         this.ambientR = 0xFF;
@@ -36305,28 +36286,28 @@ var ShaderBase = (function () {
     ShaderBase.prototype.setBlendMode = function (value) {
         switch (value) {
             case BlendMode.NORMAL:
-                this._blendFactorSource = ContextGLBlendFactor.ONE;
-                this._blendFactorDest = ContextGLBlendFactor.ZERO;
+                this._blendFactorSource = exports.ContextGLBlendFactor.ONE;
+                this._blendFactorDest = exports.ContextGLBlendFactor.ZERO;
                 this.usesBlending = false;
                 break;
             case BlendMode.LAYER:
-                this._blendFactorSource = ContextGLBlendFactor.SOURCE_ALPHA;
-                this._blendFactorDest = ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA;
+                this._blendFactorSource = exports.ContextGLBlendFactor.SOURCE_ALPHA;
+                this._blendFactorDest = exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA;
                 this.usesBlending = true;
                 break;
             case BlendMode.MULTIPLY:
-                this._blendFactorSource = ContextGLBlendFactor.ZERO;
-                this._blendFactorDest = ContextGLBlendFactor.SOURCE_COLOR;
+                this._blendFactorSource = exports.ContextGLBlendFactor.ZERO;
+                this._blendFactorDest = exports.ContextGLBlendFactor.SOURCE_COLOR;
                 this.usesBlending = true;
                 break;
             case BlendMode.ADD:
-                this._blendFactorSource = ContextGLBlendFactor.SOURCE_ALPHA;
-                this._blendFactorDest = ContextGLBlendFactor.ONE;
+                this._blendFactorSource = exports.ContextGLBlendFactor.SOURCE_ALPHA;
+                this._blendFactorDest = exports.ContextGLBlendFactor.ONE;
                 this.usesBlending = true;
                 break;
             case BlendMode.ALPHA:
-                this._blendFactorSource = ContextGLBlendFactor.ZERO;
-                this._blendFactorDest = ContextGLBlendFactor.SOURCE_ALPHA;
+                this._blendFactorSource = exports.ContextGLBlendFactor.ZERO;
+                this._blendFactorDest = exports.ContextGLBlendFactor.SOURCE_ALPHA;
                 this.usesBlending = true;
                 break;
             default:
@@ -36337,7 +36318,7 @@ var ShaderBase = (function () {
      * @inheritDoc
      */
     ShaderBase.prototype._iActivate = function (camera) {
-        this._stage.context.setCulling(this.useBothSides ? ContextGLTriangleFace.NONE : this._defaultCulling, camera.projection.coordinateSystem);
+        this._stage.context.setCulling(this.useBothSides ? exports.ContextGLTriangleFace.NONE : this._defaultCulling, camera.projection.coordinateSystem);
         if (!this.usesTangentSpace && this.cameraPositionIndex >= 0) {
             var pos = camera.scenePosition;
             this.vertexConstantData[this.cameraPositionIndex] = pos.x;
@@ -36354,7 +36335,7 @@ var ShaderBase = (function () {
      */
     ShaderBase.prototype._iDeactivate = function () {
         //For the love of god don't remove this if you want your multi-material shadows to not flicker like shit
-        this._stage.context.setDepthTest(true, ContextGLCompareMode.LESS_EQUAL);
+        this._stage.context.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
         this.activeElements = null;
     };
     /**
@@ -37244,8 +37225,8 @@ var RendererBase = (function (_super) {
         if (stage === void 0) { stage = null; }
         if (materialClassGL === void 0) { materialClassGL = null; }
         if (forceSoftware === void 0) { forceSoftware = false; }
-        if (profile === void 0) { profile = "baseline"; }
-        if (mode === void 0) { mode = "auto"; }
+        if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
+        if (mode === void 0) { mode = exports.ContextMode.AUTO; }
         var _this = _super.call(this) || this;
         _this._renderablePools = new Object();
         _this._materialPools = new Object();
@@ -37611,8 +37592,8 @@ var RendererBase = (function (_super) {
     RendererBase.prototype._iRenderCascades = function (camera, view, target, numCascades, scissorRects, cameras) {
         this._pStage.setRenderTarget(target, true, 0);
         this._pContext.clear(1, 1, 1, 1, 1, 0);
-        this._pContext.setBlendFactors(ContextGLBlendFactor.ONE, ContextGLBlendFactor.ZERO);
-        this._pContext.setDepthTest(true, ContextGLCompareMode.LESS);
+        this._pContext.setBlendFactors(exports.ContextGLBlendFactor.ONE, exports.ContextGLBlendFactor.ZERO);
+        this._pContext.setDepthTest(true, exports.ContextGLCompareMode.LESS);
         var head = this._pOpaqueRenderableHead;
         var first = true;
         //TODO cascades must have separate collectors, rather than separate draw commands
@@ -37622,7 +37603,7 @@ var RendererBase = (function (_super) {
             first = false;
         }
         //line required for correct rendering when using away3d with starling. DO NOT REMOVE UNLESS STARLING INTEGRATION IS RETESTED!
-        this._pContext.setDepthTest(false, ContextGLCompareMode.LESS_EQUAL);
+        this._pContext.setDepthTest(false, exports.ContextGLCompareMode.LESS_EQUAL);
         this._pStage.scissorRect = null;
     };
     /**
@@ -37644,7 +37625,7 @@ var RendererBase = (function (_super) {
          if (_backgroundImageRenderer)
          _backgroundImageRenderer.render();
          */
-        this._pContext.setBlendFactors(ContextGLBlendFactor.ONE, ContextGLBlendFactor.ZERO);
+        this._pContext.setBlendFactors(exports.ContextGLBlendFactor.ONE, exports.ContextGLBlendFactor.ZERO);
         this.pDraw(camera);
         //line required for correct rendering when using away3d with starling. DO NOT REMOVE UNLESS STARLING INTEGRATION IS RETESTED!
         //this._pContext.setDepthTest(false, ContextGLCompareMode.LESS_EQUAL); //oopsie
@@ -37655,10 +37636,6 @@ var RendererBase = (function (_super) {
             }
         }
         this._pStage.scissorRect = null;
-        // TODO: remove software renderToTexture
-        if (this.drawCallback != null) {
-            this.drawCallback();
-        }
     };
     /*
      * Will draw the renderer's output on next render to the provided bitmap data.
@@ -37671,7 +37648,7 @@ var RendererBase = (function (_super) {
      * Performs the actual drawing of geometry to the target.
      */
     RendererBase.prototype.pDraw = function (camera) {
-        this._pContext.setDepthTest(true, ContextGLCompareMode.LESS_EQUAL);
+        this._pContext.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
         if (this._disableColor)
             this._pContext.setColorMask(false, false, false, false);
         this.drawRenderables(camera, this._pOpaqueRenderableHead);
@@ -37723,7 +37700,7 @@ var RendererBase = (function (_super) {
         var materialGL;
         var passes;
         var pass;
-        this._pContext.setStencilActions("frontAndBack", "always", "keep", "keep", "keep");
+        this._pContext.setStencilActions(exports.ContextGLTriangleFace.FRONT_AND_BACK, exports.ContextGLCompareMode.ALWAYS, exports.ContextGLStencilAction.KEEP, exports.ContextGLStencilAction.KEEP, exports.ContextGLStencilAction.KEEP);
         this._registeredMasks.length = 0;
         //var gl = this._pContext["_gl"];
         //if(gl) {
@@ -37752,7 +37729,8 @@ var RendererBase = (function (_super) {
                         this._pContext.disableStencil();
                         //gl.stencilFunc(gl.ALWAYS, 0, 0xff);
                         //gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
-                        this._pContext.setStencilActionsMasks(ContextGLCompareMode.ALWAYS, 0, 0xff, ContextGLStencilAction.KEEP, ContextGLStencilAction.KEEP, ContextGLStencilAction.KEEP);
+                        this._pContext.setStencilActions(exports.ContextGLTriangleFace.FRONT_AND_BACK, exports.ContextGLCompareMode.ALWAYS, exports.ContextGLStencilAction.KEEP, exports.ContextGLStencilAction.KEEP, exports.ContextGLStencilAction.KEEP);
+                        this._pContext.setStencilReferenceValue(0);
                     }
                     else {
                         this._renderMasks(camera, renderableGL.sourceEntity._iAssignedMasks());
@@ -37967,7 +37945,8 @@ var RendererBase = (function (_super) {
         this._maskConfig++;
         //gl.stencilFunc(gl.ALWAYS, this._maskConfig, 0xff);
         //gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
-        this._pContext.setStencilActionsMasks("always", this._maskConfig, 0xff, ContextGLStencilAction.SET, ContextGLStencilAction.SET, ContextGLStencilAction.SET);
+        this._pContext.setStencilActions(exports.ContextGLTriangleFace.FRONT_AND_BACK, exports.ContextGLCompareMode.ALWAYS, exports.ContextGLStencilAction.SET, exports.ContextGLStencilAction.SET, exports.ContextGLStencilAction.SET);
+        this._pContext.setStencilReferenceValue(this._maskConfig);
         var numLayers = masks.length;
         var numRenderables = this._registeredMasks.length;
         var renderableGL;
@@ -37978,7 +37957,8 @@ var RendererBase = (function (_super) {
             if (i != 0) {
                 //gl.stencilFunc(gl.EQUAL, this._maskConfig, 0xff);
                 //gl.stencilOp(gl.KEEP, gl.INCR, gl.INCR);
-                this._pContext.setStencilActionsMasks(ContextGLCompareMode.EQUAL, this._maskConfig, 0xff, ContextGLStencilAction.INCREMENT_SATURATE, ContextGLStencilAction.INCREMENT_SATURATE, ContextGLStencilAction.KEEP);
+                this._pContext.setStencilActions(exports.ContextGLTriangleFace.FRONT_AND_BACK, exports.ContextGLCompareMode.EQUAL, exports.ContextGLStencilAction.INCREMENT_SATURATE, exports.ContextGLStencilAction.INCREMENT_SATURATE, exports.ContextGLStencilAction.KEEP);
+                this._pContext.setStencilReferenceValue(this._maskConfig);
                 this._maskConfig++;
             }
             children = masks[i];
@@ -37997,9 +37977,10 @@ var RendererBase = (function (_super) {
         }
         //gl.stencilFunc(gl.EQUAL, this._maskConfig, 0xff);
         //gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
-        this._pContext.setStencilActionsMasks(ContextGLCompareMode.EQUAL, this._maskConfig, 0xff, ContextGLStencilAction.KEEP, ContextGLStencilAction.KEEP, ContextGLStencilAction.KEEP);
+        this._pContext.setStencilActions(exports.ContextGLTriangleFace.FRONT_AND_BACK, exports.ContextGLCompareMode.EQUAL, exports.ContextGLStencilAction.KEEP, exports.ContextGLStencilAction.KEEP, exports.ContextGLStencilAction.KEEP);
+        this._pContext.setStencilReferenceValue(this._maskConfig);
         this._pContext.setColorMask(true, true, true, true);
-        this._pContext.setDepthTest(true, ContextGLCompareMode.LESS_EQUAL);
+        this._pContext.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
         //this._stage.setRenderTarget(oldRenderTarget);
     };
     RendererBase.prototype._drawMask = function (camera, renderableGL) {
@@ -38008,7 +37989,7 @@ var RendererBase = (function (_super) {
         var len = passes.length;
         var pass = passes[len - 1];
         this.activatePass(pass, camera);
-        this._pContext.setDepthTest(false, ContextGLCompareMode.LESS_EQUAL); //TODO: setup so as not to override activate
+        this._pContext.setDepthTest(false, exports.ContextGLCompareMode.LESS_EQUAL); //TODO: setup so as not to override activate
         // only render last pass for now
         renderableGL._iRender(pass, camera, this._pRttViewProjectionMatrix);
         this.deactivatePass(pass);
@@ -38301,8 +38282,8 @@ var Filter3DRenderer = (function () {
         len = this._tasks.length;
         if (len > 1) {
             context.setProgram(this._tasks[0].getProgram(stage));
-            context.setVertexBufferAt(this._tasks[0]._positionIndex, vertexBuffer, 0, ContextGLVertexBufferFormat.FLOAT_2);
-            context.setVertexBufferAt(this._tasks[0]._uvIndex, vertexBuffer, 8, ContextGLVertexBufferFormat.FLOAT_2);
+            context.setVertexBufferAt(this._tasks[0]._positionIndex, vertexBuffer, 0, exports.ContextGLVertexBufferFormat.FLOAT_2);
+            context.setVertexBufferAt(this._tasks[0]._uvIndex, vertexBuffer, 8, exports.ContextGLVertexBufferFormat.FLOAT_2);
         }
         for (i = 0; i < len; ++i) {
             task = this._tasks[i];
@@ -38313,13 +38294,13 @@ var Filter3DRenderer = (function () {
             if (!task.target) {
                 stage.scissorRect = null;
                 vertexBuffer = this._rttManager.renderToScreenVertexBuffer;
-                context.setVertexBufferAt(task._positionIndex, vertexBuffer, 0, ContextGLVertexBufferFormat.FLOAT_2);
-                context.setVertexBufferAt(task._uvIndex, vertexBuffer, 8, ContextGLVertexBufferFormat.FLOAT_2);
+                context.setVertexBufferAt(task._positionIndex, vertexBuffer, 0, exports.ContextGLVertexBufferFormat.FLOAT_2);
+                context.setVertexBufferAt(task._uvIndex, vertexBuffer, 8, exports.ContextGLVertexBufferFormat.FLOAT_2);
             }
             context.clear(0.0, 0.0, 0.0, 0.0);
             task.activate(stage, camera, depthTexture);
-            context.setBlendFactors(ContextGLBlendFactor.ONE, ContextGLBlendFactor.ZERO);
-            context.drawIndices(ContextGLDrawMode.TRIANGLES, indexBuffer, 0, 6);
+            context.setBlendFactors(exports.ContextGLBlendFactor.ONE, exports.ContextGLBlendFactor.ZERO);
+            context.drawIndices(exports.ContextGLDrawMode.TRIANGLES, indexBuffer, 0, 6);
             task.deactivate(stage);
         }
         context.setTextureAt(0, null);
@@ -38364,8 +38345,8 @@ var DefaultRenderer = (function (_super) {
     function DefaultRenderer(stage, forceSoftware, profile, mode) {
         if (stage === void 0) { stage = null; }
         if (forceSoftware === void 0) { forceSoftware = false; }
-        if (profile === void 0) { profile = "baseline"; }
-        if (mode === void 0) { mode = "auto"; }
+        if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
+        if (mode === void 0) { mode = exports.ContextMode.AUTO; }
         var _this = _super.call(this, stage, null, forceSoftware, profile, mode) || this;
         _this._antiAlias = 0;
         _this._directionalLights = new Array();
@@ -38374,8 +38355,8 @@ var DefaultRenderer = (function (_super) {
         if (stage)
             _this.shareContext = true;
         _this._pRttBufferManager = RTTBufferManager.getInstance(_this._pStage);
-        _this._pDepthRenderer = new DepthRenderer(_this._pStage);
-        _this._pDistanceRenderer = new DistanceRenderer(_this._pStage);
+        _this._depthRenderer = new DepthRenderer(_this._pStage);
+        _this._distanceRenderer = new DistanceRenderer(_this._pStage);
         if (_this._width == 0)
             _this.width = window.innerWidth;
         else
@@ -38386,6 +38367,20 @@ var DefaultRenderer = (function (_super) {
             _this._pRttBufferManager.viewHeight = _this._height;
         return _this;
     }
+    Object.defineProperty(DefaultRenderer.prototype, "distanceRenderer", {
+        get: function () {
+            return this._distanceRenderer;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DefaultRenderer.prototype, "depthRenderer", {
+        get: function () {
+            return this._depthRenderer;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(DefaultRenderer.prototype, "antiAlias", {
         get: function () {
             return this._antiAlias;
@@ -38464,7 +38459,7 @@ var DefaultRenderer = (function (_super) {
         if (this._pBackBufferInvalid)
             this.pUpdateBackBuffer();
         if (this.shareContext && this._pContext)
-            this._pContext.clear(0, 0, 0, 1, 1, 0, ContextGLClearMask.DEPTH);
+            this._pContext.clear(0, 0, 0, 1, 1, 0, exports.ContextGLClearMask.DEPTH);
         if (this._pFilter3DRenderer) {
             this.textureRatioX = this._pRttBufferManager.textureRatioX;
             this.textureRatioY = this._pRttBufferManager.textureRatioY;
@@ -38503,10 +38498,6 @@ var DefaultRenderer = (function (_super) {
         this.updateLights(camera, view);
         _super.prototype.pExecuteRender.call(this, camera, view, target, scissorRect, surfaceSelector);
     };
-    // TODO: remove software renderToTexture
-    DefaultRenderer.prototype.getDepthRenderer = function () {
-        return this._pDepthRenderer;
-    };
     DefaultRenderer.prototype.updateLights = function (camera, view) {
         var len, i;
         var light;
@@ -38516,14 +38507,14 @@ var DefaultRenderer = (function (_super) {
             light = this._directionalLights[i];
             shadowMapper = light.shadowMapper;
             if (light.shadowsEnabled && (shadowMapper.autoUpdateShadows || shadowMapper._iShadowsInvalid))
-                shadowMapper.iRenderDepthMap(view, this._pDepthRenderer);
+                shadowMapper.iRenderDepthMap(view, this._depthRenderer);
         }
         len = this._pointLights.length;
         for (i = 0; i < len; ++i) {
             light = this._pointLights[i];
             shadowMapper = light.shadowMapper;
             if (light.shadowsEnabled && (shadowMapper.autoUpdateShadows || shadowMapper._iShadowsInvalid))
-                shadowMapper.iRenderDepthMap(view, this._pDistanceRenderer);
+                shadowMapper.iRenderDepthMap(view, this._distanceRenderer);
         }
     };
     /**
@@ -38552,10 +38543,10 @@ var DefaultRenderer = (function (_super) {
             this._pStage.dispose();
         this._pRttBufferManager.dispose();
         this._pRttBufferManager = null;
-        this._pDepthRenderer.dispose();
-        this._pDistanceRenderer.dispose();
-        this._pDepthRenderer = null;
-        this._pDistanceRenderer = null;
+        this._depthRenderer.dispose();
+        this._distanceRenderer.dispose();
+        this._depthRenderer = null;
+        this._distanceRenderer = null;
         this._pDepthRender = null;
         _super.prototype.dispose.call(this);
     };
@@ -38563,18 +38554,18 @@ var DefaultRenderer = (function (_super) {
      *
      */
     DefaultRenderer.prototype.pRenderDepthPrepass = function (view) {
-        this._pDepthRenderer.disableColor = true;
+        this._depthRenderer.disableColor = true;
         if (this._pFilter3DRenderer) {
-            this._pDepthRenderer.textureRatioX = this._pRttBufferManager.textureRatioX;
-            this._pDepthRenderer.textureRatioY = this._pRttBufferManager.textureRatioY;
-            this._pDepthRenderer._iRender(view.camera, view, this._pFilter3DRenderer.getMainInputTexture(this._pStage), this._pRttBufferManager.renderToTextureRect);
+            this._depthRenderer.textureRatioX = this._pRttBufferManager.textureRatioX;
+            this._depthRenderer.textureRatioY = this._pRttBufferManager.textureRatioY;
+            this._depthRenderer._iRender(view.camera, view, this._pFilter3DRenderer.getMainInputTexture(this._pStage), this._pRttBufferManager.renderToTextureRect);
         }
         else {
-            this._pDepthRenderer.textureRatioX = 1;
-            this._pDepthRenderer.textureRatioY = 1;
-            this._pDepthRenderer._iRender(view.camera, view);
+            this._depthRenderer.textureRatioX = 1;
+            this._depthRenderer.textureRatioY = 1;
+            this._depthRenderer._iRender(view.camera, view);
         }
-        this._pDepthRenderer.disableColor = false;
+        this._depthRenderer.disableColor = false;
     };
     /**
      *
@@ -38582,9 +38573,9 @@ var DefaultRenderer = (function (_super) {
     DefaultRenderer.prototype.pRenderSceneDepthToTexture = function (view) {
         if (this._pDepthTextureInvalid || !this._pDepthRender)
             this.initDepthTexture(this._pStage.context);
-        this._pDepthRenderer.textureRatioX = this._pRttBufferManager.textureRatioX;
-        this._pDepthRenderer.textureRatioY = this._pRttBufferManager.textureRatioY;
-        this._pDepthRenderer._iRender(view.camera, view, this._pDepthRender);
+        this._depthRenderer.textureRatioX = this._pRttBufferManager.textureRatioX;
+        this._depthRenderer.textureRatioY = this._pRttBufferManager.textureRatioY;
+        this._depthRenderer._iRender(view.camera, view, this._pDepthRender);
     };
     /**
      * Updates the backbuffer dimensions.
@@ -38991,11 +38982,11 @@ var GL_LineElements = (function (_super) {
         matrix3D.copyFrom(renderable.sourceEntity.sceneTransform);
         matrix3D.append(camera.inverseSceneTransform);
         shader.sceneMatrix.copyFrom(matrix3D, true);
-        context.setProgramConstantsFromArray(ContextGLProgramType.VERTEX, shader.vertexConstantData);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.VERTEX, shader.vertexConstantData);
         if (this._indices)
-            this.getIndexBufferGL().draw(ContextGLDrawMode.TRIANGLES, offset * 3, count * 3 || this.numIndices);
+            this.getIndexBufferGL().draw(exports.ContextGLDrawMode.TRIANGLES, offset * 3, count * 3 || this.numIndices);
         else
-            this._stage.context.drawVertices(ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
+            this._stage.context.drawVertices(exports.ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
     };
     /**
      * //TODO
@@ -39107,12 +39098,12 @@ var GL_TriangleElements = (function (_super) {
             shader.viewMatrix.copyFrom(matrix3D, true);
         }
         var context = this._stage.context;
-        context.setProgramConstantsFromArray(ContextGLProgramType.VERTEX, shader.vertexConstantData);
-        context.setProgramConstantsFromArray(ContextGLProgramType.FRAGMENT, shader.fragmentConstantData);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.VERTEX, shader.vertexConstantData);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, shader.fragmentConstantData);
         if (this._indices)
-            this.getIndexBufferGL().draw(ContextGLDrawMode.TRIANGLES, offset * 3, count * 3 || this.numIndices);
+            this.getIndexBufferGL().draw(exports.ContextGLDrawMode.TRIANGLES, offset * 3, count * 3 || this.numIndices);
         else
-            this._stage.context.drawVertices(ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
+            this._stage.context.drawVertices(exports.ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
     };
     /**
      * //TODO
@@ -39222,12 +39213,12 @@ var GL_SkyboxElements = (function (_super) {
             shader.sceneMatrix.copyFrom(renderable.renderSceneTransform, true);
         shader.viewMatrix.copyFrom(this._skyboxProjection, true);
         var context = this._stage.context;
-        context.setProgramConstantsFromArray(ContextGLProgramType.VERTEX, shader.vertexConstantData);
-        context.setProgramConstantsFromArray(ContextGLProgramType.FRAGMENT, shader.fragmentConstantData);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.VERTEX, shader.vertexConstantData);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, shader.fragmentConstantData);
         if (this._indices)
-            this.getIndexBufferGL().draw(ContextGLDrawMode.TRIANGLES, 0, this.numIndices);
+            this.getIndexBufferGL().draw(exports.ContextGLDrawMode.TRIANGLES, 0, this.numIndices);
         else
-            this._stage.context.drawVertices(ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
+            this._stage.context.drawVertices(exports.ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
     };
     return GL_SkyboxElements;
 }(GL_TriangleElements));
@@ -39253,7 +39244,7 @@ var Filter3DTaskBase = (function () {
         this._program3DInvalid = true;
         this._textureScale = 1;
         this._requireDepthRender = requireDepthRender;
-        this._registerCache = new ShaderRegisterCache("baseline");
+        this._registerCache = new ShaderRegisterCache(exports.ContextGLProfile.BASELINE);
     }
     Object.defineProperty(Filter3DTaskBase.prototype, "textureScale", {
         /**
@@ -39476,7 +39467,7 @@ var Filter3DCompositeTask = (function (_super) {
         this._data[6] = this._textureWidth / this._overlayWidth;
         this._data[7] = this._textureHeight / this._overlayHeight;
         var context = stage.context;
-        context.setProgramConstantsFromArray(ContextGLProgramType.FRAGMENT, this._data);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, this._data);
         stage.getAbstraction(this._overlayTexture).activate(this._overlayTextureIndex, false);
     };
     Filter3DCompositeTask.prototype.deactivate = function (stage) {
@@ -39675,7 +39666,7 @@ var Filter3DFXAATask = (function (_super) {
         return code.join(" ");
     };
     Filter3DFXAATask.prototype.activate = function (stage, camera3D, depthTexture) {
-        stage.context.setProgramConstantsFromArray(ContextGLProgramType.FRAGMENT, this._data);
+        stage.context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, this._data);
     };
     Filter3DFXAATask.prototype.updateTextures = function (stage) {
         _super.prototype.updateTextures.call(this, stage);
@@ -39759,7 +39750,7 @@ var Filter3DHBlurTask = (function (_super) {
         return code;
     };
     Filter3DHBlurTask.prototype.activate = function (stage, camera3D, depthTexture) {
-        stage.context.setProgramConstantsFromArray(ContextGLProgramType.FRAGMENT, this._data);
+        stage.context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, this._data);
     };
     Filter3DHBlurTask.prototype.updateTextures = function (stage) {
         _super.prototype.updateTextures.call(this, stage);
@@ -39840,7 +39831,7 @@ var Filter3DVBlurTask = (function (_super) {
         return code;
     };
     Filter3DVBlurTask.prototype.activate = function (stage, camera3D, depthTexture) {
-        stage.context.setProgramConstantsFromArray(ContextGLProgramType.FRAGMENT, this._data);
+        stage.context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, this._data);
     };
     Filter3DVBlurTask.prototype.updateTextures = function (stage) {
         _super.prototype.updateTextures.call(this, stage);
@@ -40664,7 +40655,7 @@ AlignmentMode.REGISTRATION_POINT = "registrationPoint";
 /**
  *
  */
-AlignmentMode.PIVOT_POINT = "pivot";
+AlignmentMode.TRANSFORM_POINT = "transformPoint";
 
 /**
  *
@@ -41390,26 +41381,63 @@ var DisplayObject = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(DisplayObject.prototype, "pivot", {
+    Object.defineProperty(DisplayObject.prototype, "registrationPoint", {
         /**
          * Defines the local point around which the object rotates.
          */
         get: function () {
-            return this._pivot;
+            if (this._registrationMatrix3D)
+                return new Vector3D(-this._registrationMatrix3D._rawData[12] * this.scaleX, -this._registrationMatrix3D._rawData[13] * this.scaleY, -this._registrationMatrix3D._rawData[14] * this.scaleZ);
+            return null;
         },
-        set: function (pivot) {
-            if (this._pivot && this._pivot.x == pivot.x && this._pivot.y == pivot.y && this._pivot.z == pivot.z)
-                return;
-            if (!pivot) {
-                this._pivot = null;
-                this._pivotScale = null;
+        set: function (value) {
+            if (!value) {
+                if (!this._registrationMatrix3D)
+                    return;
+                this._registrationMatrix3D._rawData[12] = 0;
+                this._registrationMatrix3D._rawData[13] = 0;
+                this._registrationMatrix3D._rawData[14] = 0;
+                if (this._registrationMatrix3D.isIdentity())
+                    this._registrationMatrix3D = null;
             }
             else {
-                if (!this._pivot)
-                    this._pivot = new Vector3D();
-                this._pivot.x = pivot.x;
-                this._pivot.y = pivot.y;
-                this._pivot.z = pivot.z;
+                if (!this._registrationMatrix3D)
+                    this._registrationMatrix3D = new Matrix3D();
+                this._registrationMatrix3D._rawData[12] = -value.x / this._transform.scale.x;
+                this._registrationMatrix3D._rawData[13] = -value.y / this._transform.scale.y;
+                this._registrationMatrix3D._rawData[14] = -value.z / this._transform.scale.z;
+            }
+            this._registrationMatrix3D.invalidatePosition();
+            this.pInvalidateHierarchicalProperties(HierarchicalProperties.SCENE_TRANSFORM);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DisplayObject.prototype, "registrationScale", {
+        /**
+         * Defines the local scale.
+         */
+        get: function () {
+            if (this._registrationMatrix3D)
+                return new Vector3D(this._registrationMatrix3D._rawData[0], this._registrationMatrix3D._rawData[5], this._registrationMatrix3D._rawData[10]);
+            return null;
+        },
+        set: function (value) {
+            if (!value) {
+                if (!this._registrationMatrix3D)
+                    return;
+                this._registrationMatrix3D._rawData[0] = 1;
+                this._registrationMatrix3D._rawData[5] = 1;
+                this._registrationMatrix3D._rawData[10] = 1;
+                if (this._registrationMatrix3D.isIdentity())
+                    this._registrationMatrix3D = null;
+            }
+            else {
+                if (!this._registrationMatrix3D)
+                    this._registrationMatrix3D = new Matrix3D();
+                this._registrationMatrix3D._rawData[0] = value.x;
+                this._registrationMatrix3D._rawData[5] = value.y;
+                this._registrationMatrix3D._rawData[10] = value.z;
             }
             this.pInvalidateHierarchicalProperties(HierarchicalProperties.SCENE_TRANSFORM);
         },
@@ -41647,8 +41675,11 @@ var DisplayObject = (function (_super) {
          */
         get: function () {
             if (this._scenePositionDirty) {
-                if (this._pivot && this.alignmentMode == AlignmentMode.PIVOT_POINT) {
-                    this._scenePosition = this.sceneTransform.transformVector(this._pivotScale);
+                if (this._registrationMatrix3D && this.alignmentMode == AlignmentMode.REGISTRATION_POINT) {
+                    this._scenePosition.x = -this._registrationMatrix3D._rawData[12];
+                    this._scenePosition.y = -this._registrationMatrix3D._rawData[13];
+                    this._scenePosition.z = -this._registrationMatrix3D._rawData[14];
+                    this._scenePosition = this.sceneTransform.transformVector(this._scenePosition, this._scenePosition);
                 }
                 else {
                     this.sceneTransform.copyColumnTo(3, this._scenePosition);
@@ -41960,7 +41991,8 @@ var DisplayObject = (function (_super) {
     DisplayObject.prototype.copyTo = function (displayObject) {
         displayObject.isPartition = this._iIsPartition;
         displayObject.boundsType = this._boundsType;
-        displayObject.pivot = this._pivot;
+        if (this._registrationMatrix3D)
+            displayObject._registrationMatrix3D = this._registrationMatrix3D.clone();
         displayObject.name = this._pName;
         displayObject.mouseEnabled = this._explicitMouseEnabled;
         displayObject.extra = this.extra;
@@ -42354,9 +42386,11 @@ var DisplayObject = (function (_super) {
     DisplayObject.prototype.movePivot = function (dx, dy, dz) {
         if (dx == 0 && dy == 0 && dz == 0)
             return;
-        this._pivot.x += dx;
-        this._pivot.y += dy;
-        this._pivot.z += dz;
+        if (!this._registrationMatrix3D)
+            this._registrationMatrix3D = new Matrix3D();
+        this._registrationMatrix3D._rawData[12] -= dx / this._transform.scale.x;
+        this._registrationMatrix3D._rawData[13] -= dy / this._transform.scale.y;
+        this._registrationMatrix3D._rawData[14] -= dz / this._transform.scale.z;
         this.pInvalidateHierarchicalProperties(HierarchicalProperties.SCENE_TRANSFORM);
     };
     DisplayObject.prototype.reset = function () {
@@ -42375,15 +42409,15 @@ var DisplayObject = (function (_super) {
     DisplayObject.prototype.getRenderSceneTransform = function (cameraTransform) {
         if (this.orientationMode == OrientationMode.CAMERA_PLANE) {
             var comps = cameraTransform.decompose();
-            var scale = comps[3];
             comps[0].copyFrom(this.scenePosition);
-            scale.x = this.scaleX;
-            scale.y = this.scaleY;
-            scale.z = this.scaleZ;
+            comps[3].copyFrom(this._transform.scale);
             this._orientationMatrix.recompose(comps);
-            //add in case of pivot
-            if (this._pivot && this.alignmentMode == AlignmentMode.PIVOT_POINT)
-                this._orientationMatrix.prependTranslation(-this._pivot.x / this.scaleX, -this._pivot.y / this.scaleY, -this._pivot.z / this.scaleZ);
+            //add in case of registration point
+            if (this._registrationMatrix3D) {
+                this._orientationMatrix.prepend(this._registrationMatrix3D);
+                if (this.alignmentMode != AlignmentMode.REGISTRATION_POINT)
+                    this._orientationMatrix.appendTranslation(-this._registrationMatrix3D._rawData[12] * this._transform.scale.x, -this._registrationMatrix3D._rawData[13] * this._transform.scale.y, -this._registrationMatrix3D._rawData[14] * this._transform.scale.z);
+            }
             return this._orientationMatrix;
         }
         return this.sceneTransform;
@@ -42474,15 +42508,10 @@ var DisplayObject = (function (_super) {
         if (this._iController)
             this._iController.updateController();
         this._pSceneTransform.copyFrom(this._transform.matrix3D);
-        if (this._pivot) {
-            if (!this._pivotScale)
-                this._pivotScale = new Vector3D();
-            this._pivotScale.x = this._pivot.x / this._transform.scale.x;
-            this._pivotScale.y = this._pivot.y / this._transform.scale.y;
-            this._pivotScale.z = this._pivot.z / this._transform.scale.z;
-            this._pSceneTransform.prependTranslation(-this._pivotScale.x, -this._pivotScale.y, -this._pivotScale.z);
-            if (this.alignmentMode != AlignmentMode.PIVOT_POINT)
-                this._pSceneTransform.appendTranslation(this._pivot.x, this._pivot.y, this._pivot.z);
+        if (this._registrationMatrix3D) {
+            this._pSceneTransform.prepend(this._registrationMatrix3D);
+            if (this.alignmentMode != AlignmentMode.REGISTRATION_POINT)
+                this._pSceneTransform.appendTranslation(-this._registrationMatrix3D._rawData[12] * this._transform.scale.x, -this._registrationMatrix3D._rawData[13] * this._transform.scale.y, -this._registrationMatrix3D._rawData[14] * this._transform.scale.z);
         }
         if (this._pParent && !this._pParent._iIsRoot)
             this._pSceneTransform.append(this._pParent.sceneTransform);
@@ -48682,7 +48711,7 @@ var TextField = (function (_super) {
             if (this._textFormat && !(this._textFormat.font_table.isAsset(TesselatedFontTable) && (this._textFormat.material))) {
                 var new_ct = this.transform.colorTransform || (this.transform.colorTransform = new ColorTransform());
                 //if(new_ct.color==0xffffff){
-                this.transform.colorTransform.color = this._textFormat.color;
+                this.transform.colorTransform.color = (this.textColor != null) ? this.textColor : this._textFormat.color;
                 this.pInvalidateHierarchicalProperties(HierarchicalProperties.COLOR_TRANSFORM);
             }
             return this._graphics;
@@ -50457,6 +50486,19 @@ var Skybox = (function (_super) {
 Skybox.traverseName = TraverserBase.addEntityName("applySkybox");
 Skybox.assetType = "[asset Skybox]";
 
+var TextureProjectorEvent = (function (_super) {
+    __extends(TextureProjectorEvent, _super);
+    function TextureProjectorEvent(type) {
+        return _super.call(this, type) || this;
+    }
+    //@override
+    TextureProjectorEvent.prototype.clone = function () {
+        return new TextureProjectorEvent(this.type);
+    };
+    return TextureProjectorEvent;
+}(EventBase));
+TextureProjectorEvent.TEXTURE_CHANGE = "textureChange";
+
 /**
  * TextureProjector is an object in the scene that can be used to project textures onto geometry. To do so,
  * the object's material must have a ProjectiveTextureMethod method added to it with a TextureProjector object
@@ -50515,6 +50557,19 @@ var TextureProjector = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(TextureProjector.prototype, "preserveFocalLength", {
+        /**
+         *
+         */
+        get: function () {
+            return this._projection.preserveFocalLength;
+        },
+        set: function (value) {
+            this._projection.preserveFocalLength = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(TextureProjector.prototype, "focalLength", {
         /**
          * The focal length of the projection, or the distance to the viewing plance from the camera.
@@ -50558,6 +50613,12 @@ var TextureProjector = (function (_super) {
             if (value == this._texture)
                 return;
             this._texture = value;
+            var width = value.getImageAt(0).width;
+            var height = value.getImageAt(0).height;
+            this._projection._iAspectRatio = width / height;
+            this._projection._iUpdateScissorRect(0, 0, width, height);
+            this._projection._iUpdateViewport(0, 0, width, height);
+            this.dispatchEvent(new TextureProjectorEvent(TextureProjectorEvent.TEXTURE_CHANGE));
         },
         enumerable: true,
         configurable: true
@@ -53809,7 +53870,7 @@ var LightingShader = (function (_super) {
         var diffuseLightSources = this._lightingPass._iUsesDiffuse(this) ? this._lightingPass.diffuseLightSources : 0x00;
         var specularLightSources = this._lightingPass._iUsesSpecular(this) ? this._lightingPass.specularLightSources : 0x00;
         var combinedLightSources = diffuseLightSources | specularLightSources;
-        this.usesLightFallOff = this._lightingPass.enableLightFallOff && this.profile != ContextGLProfile.BASELINE_CONSTRAINED;
+        this.usesLightFallOff = this._lightingPass.enableLightFallOff && this.profile != exports.ContextGLProfile.BASELINE_CONSTRAINED;
         this.usesCommonData = this.usesLightFallOff || this.usesCommonData;
         this.numLights = numAllLights + numLightProbes;
         this.usesLights = numAllLights > 0 && (combinedLightSources & LightSources.LIGHTS) != 0;
@@ -54349,7 +54410,7 @@ var GL_SkyboxMaterial = (function (_super) {
      */
     GL_SkyboxMaterial.prototype._iActivate = function (camera) {
         _super.prototype._iActivate.call(this, camera);
-        this._stage.context.setDepthTest(false, ContextGLCompareMode.LESS);
+        this._stage.context.setDepthTest(false, exports.ContextGLCompareMode.LESS);
         this._texture.activate(this);
     };
     return GL_SkyboxMaterial;
@@ -54396,16 +54457,6 @@ var GL_TextureBase = (function (_super) {
             return textureReg;
         }
         return sharedReg.textures[index];
-    };
-    GL_TextureBase.prototype.getFormatString = function (image) {
-        switch (image.format) {
-            case ContextGLTextureFormat.COMPRESSED:
-                return "dxt1,";
-            case ContextGLTextureFormat.COMPRESSED_ALPHA:
-                return "dxt5,";
-            default:
-                return "";
-        }
     };
     return GL_TextureBase;
 }(AbstractionBase));
@@ -55383,6 +55434,9 @@ var DiffuseBasicMethod = (function (_super) {
         var code = "";
         var diffuseColor;
         var cutOffReg;
+        // incorporate input from ambient
+        if (sharedRegisters.shadowTarget)
+            code += this.pApplyShadow(shader, methodVO, registerCache, sharedRegisters);
         registerCache.addFragmentTempUsages(diffuseColor = registerCache.getFreeFragmentVectorTemp(), 1);
         var ambientColorRegister = registerCache.getFreeFragmentConstant();
         methodVO.fragmentConstantsIndex = ambientColorRegister.index * 4;
@@ -55411,9 +55465,6 @@ var DiffuseBasicMethod = (function (_super) {
                 "add " + diffuseColor + ".xyz, " + diffuseColor + ", " + this._pTotalLightColorReg + "\n" +
                 "mul " + targetReg + ".xyz, " + targetReg + ", " + diffuseColor + "\n"; // multiply by target which could be texture or white
         }
-        // incorporate input from ambient
-        if (sharedRegisters.shadowTarget)
-            code += "mov " + targetReg + ".xyz, " + sharedRegisters.shadowTarget + ".xyz\n";
         registerCache.removeFragmentTempUsage(this._pTotalLightColorReg);
         registerCache.removeFragmentTempUsage(diffuseColor);
         return code;
@@ -55877,7 +55928,7 @@ var MethodMaterial = (function (_super) {
         _this._diffuseMethod = new DiffuseBasicMethod();
         _this._normalMethod = new NormalBasicMethod();
         _this._specularMethod = new SpecularBasicMethod();
-        _this._depthCompareMode = ContextGLCompareMode.LESS_EQUAL;
+        _this._depthCompareMode = exports.ContextGLCompareMode.LESS_EQUAL;
         _this._mode = MethodMaterialMode.SINGLE_PASS;
         //add default methods owners
         _this._ambientMethod.iAddOwner(_this);
@@ -58141,6 +58192,7 @@ var EffectProjectiveTextureMethod = (function (_super) {
         if (mode === void 0) { mode = "multiply"; }
         if (exposure === void 0) { exposure = 1; }
         var _this = _super.call(this) || this;
+        _this._onTextureChangedDelegate = function (event) { return _this._onTextureChanged(event); };
         _this.projector = projector;
         _this._exposure = exposure;
         _this._mode = mode;
@@ -58198,11 +58250,14 @@ var EffectProjectiveTextureMethod = (function (_super) {
             return this._projector;
         },
         set: function (value) {
+            if (this._projector == value)
+                return;
             if (this._projector)
-                this.iRemoveTexture(this._projector.texture);
+                this._projector.removeEventListener(TextureProjectorEvent.TEXTURE_CHANGE, this._onTextureChangedDelegate);
             this._projector = value;
             if (this._projector)
-                this.iAddTexture(this._projector.texture);
+                this._projector.addEventListener(TextureProjectorEvent.TEXTURE_CHANGE, this._onTextureChangedDelegate);
+            this.updateTexture();
             this.iInvalidateShaderProgram();
         },
         enumerable: true,
@@ -58278,6 +58333,16 @@ var EffectProjectiveTextureMethod = (function (_super) {
      */
     EffectProjectiveTextureMethod.prototype.iActivate = function (shader, methodVO, stage) {
         methodVO.textureGL.activate(methodVO.pass._render);
+    };
+    EffectProjectiveTextureMethod.prototype._onTextureChanged = function (event) {
+        this.updateTexture();
+    };
+    EffectProjectiveTextureMethod.prototype.updateTexture = function () {
+        if (this._texture)
+            this.iRemoveTexture(this._texture);
+        this._texture = (this._projector) ? this._projector.texture : null;
+        if (this._texture)
+            this.iAddTexture(this._texture);
     };
     return EffectProjectiveTextureMethod;
 }(EffectMethodBase));
@@ -59242,7 +59307,7 @@ var ShadowMethodBase = (function (_super) {
         index = methodVO.vertexConstantsIndex;
         if (index != -1) {
             vertexData[index] = .5;
-            vertexData[index + 1] = -.5;
+            vertexData[index + 1] = .5;
             vertexData[index + 2] = 0.0;
             vertexData[index + 3] = 1.0;
         }
@@ -59784,7 +59849,7 @@ var ShadowHardMethod = (function (_super) {
         methodVO.fragmentConstantsIndex = decReg.index * 4;
         code += methodVO.textureGL._iGetFragmentCode(depthCol, regCache, sharedRegisters, this._pDepthMapCoordReg) +
             "dp4 " + depthCol + ".z, " + depthCol + ", " + decReg + "\n" +
-            "slt " + targetReg + ".z, " + this._pDepthMapCoordReg + ".z, " + depthCol + ".z\n"; // 0 if in shadow
+            "slt " + targetReg + ".w, " + this._pDepthMapCoordReg + ".z, " + depthCol + ".z\n"; // 0 if in shadow
         return code;
     };
     /**
@@ -61713,7 +61778,7 @@ var GL_MethodMaterial = (function (_super) {
             for (var i = firstAdditiveIndex; i < this._nonCasterLightPasses.length; ++i) {
                 this._nonCasterLightPasses[i].forceSeparateMVP = forceSeparateMVP;
                 this._nonCasterLightPasses[i].shader.setBlendMode(BlendMode.ADD);
-                this._nonCasterLightPasses[i].shader.depthCompareMode = ContextGLCompareMode.LESS_EQUAL;
+                this._nonCasterLightPasses[i].shader.depthCompareMode = exports.ContextGLCompareMode.LESS_EQUAL;
             }
         }
         if (this._casterLightPass || this._nonCasterLightPasses) {
@@ -61723,7 +61788,7 @@ var GL_MethodMaterial = (function (_super) {
             if (this._pass) {
                 this._pass.mode = MethodPassMode.EFFECTS;
                 this._pass.forceSeparateMVP = forceSeparateMVP;
-                this._pass.shader.depthCompareMode = ContextGLCompareMode.LESS_EQUAL;
+                this._pass.shader.depthCompareMode = exports.ContextGLCompareMode.LESS_EQUAL;
                 this._pass.shader.setBlendMode(BlendMode.LAYER);
             }
         }
@@ -63760,7 +63825,9 @@ var AWDParser = (function (_super) {
             // todo: finish optional properties (spreadmode + focalpoint)
             this._newBlockBytes.readUnsignedInt();
         }
-        this.parseProperties(null);
+        var props = this.parseProperties(AWDParser.spriteLibraryProperties);
+        sprite.registrationPoint = new Vector3D(props.get(1, 0.0), props.get(2, 0.0), 0.0);
+        sprite.registrationScale = new Vector3D(props.get(3, 1.0), props.get(4, 1.0), 1.0);
         sprite.extra = this.parseUserAttributes();
         this._pFinalizeAsset(sprite, name);
         this._blocks[blockID].data = sprite;
@@ -64110,6 +64177,18 @@ var AWDParser = (function (_super) {
                     var curveData = new ByteArray(str_len);
                     this._newBlockBytes.readBytes(curveData, 0, str_len);
                 }
+                else if (str_type == 17) {
+                    element_type = ElementType.CONCENATED_STREAMS_UINT16;
+                    attr_count = 4;
+                    var curveData = new ByteArray(str_len);
+                    this._newBlockBytes.readBytes(curveData, 0, str_len);
+                }
+                else if (str_type == 18) {
+                    element_type = ElementType.CONCENATED_STREAMS_UINT16;
+                    attr_count = 8;
+                    var curveData = new ByteArray(str_len);
+                    this._newBlockBytes.readBytes(curveData, 0, str_len);
+                }
                 else {
                     console.log("skipping unknown subgeom stream");
                     this._newBlockBytes.position = str_end;
@@ -64133,6 +64212,18 @@ var AWDParser = (function (_super) {
                 graphics.addShape(new Shape(curve_elements));
                 if (this._debug)
                     console.log("Parsed a TriangleElements with curves");
+            }
+            else if (element_type == ElementType.CONCENATED_STREAMS_UINT16) {
+                var vertexBuffer = new AttributesBuffer(attr_count, str_len / attr_count);
+                vertexBuffer.bufferView = new Uint8Array(curveData.arraybytes);
+                var curve_elements = new TriangleElements(vertexBuffer);
+                curve_elements.setPositions(new Short2Attributes(vertexBuffer, true));
+                if (attr_count == 8) {
+                    curve_elements.setCustomAttributes("curves", new Byte4Attributes(vertexBuffer, false));
+                }
+                graphics.addShape(new Shape(curve_elements));
+                if (this._debug)
+                    console.log("Parsed a TriangleElements uint16");
             }
             else if (element_type == ElementType.STANDART_STREAMS) {
                 var triangle_elements = new TriangleElements(new AttributesBuffer());
@@ -64290,7 +64381,7 @@ var AWDParser = (function (_super) {
         // in AWD version 2.1 we read the Container properties
         if ((this._version[0] == 2) && (this._version[1] == 1)) {
             var props = this.parseProperties(AWDParser.containerProperties);
-            ctr.pivot = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
+            ctr.registrationPoint = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
         }
         else {
             this.parseProperties(null);
@@ -64358,7 +64449,7 @@ var AWDParser = (function (_super) {
         }
         if ((this._version[0] == 2) && (this._version[1] == 1)) {
             var props = this.parseProperties(AWDParser.spriteInstanceProperties);
-            sprite.pivot = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
+            sprite.registrationPoint = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
             sprite.castsShadows = props.get(5, true);
         }
         else {
@@ -64488,7 +64579,7 @@ var AWDParser = (function (_super) {
         }
         camera.name = name;
         props = this.parseProperties(AWDParser.cameraPivotProperties);
-        camera.pivot = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
+        camera.registrationPoint = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
         camera.extra = this.parseUserAttributes();
         this._pFinalizeAsset(camera, name);
         this._blocks[blockID].data = camera;
@@ -64869,7 +64960,7 @@ var AWDParser = (function (_super) {
         }
         if (targetObject) {
             props = this.parseProperties(AWDParser.targetProperties);
-            targetObject.pivot = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
+            targetObject.registrationPoint = new Vector3D(props.get(1, 0), props.get(2, 0), props.get(3, 0));
             targetObject.extra = this.parseUserAttributes();
         }
         this._blocks[blockID].data = targetObject;
@@ -65534,6 +65625,12 @@ AWDParser.textFieldProperties = {
     9: AWDParser.UINT8
 };
 AWDParser.textFieldTypes = ["static", "dynamic", "input", "input"];
+AWDParser.spriteLibraryProperties = {
+    1: AWDParser.FLOAT32,
+    2: AWDParser.FLOAT32,
+    3: AWDParser.FLOAT32,
+    4: AWDParser.FLOAT32
+};
 AWDParser.movieClipProperties = {
     1: AWDParser.FLOAT32,
     2: AWDParser.UINT16,
@@ -65683,6 +65780,7 @@ ElementType.CONCENATED_STREAMS = 1;
 ElementType.SHARED_BUFFER = 2;
 ElementType.CONCATENATED_SUBGEO = 3;
 ElementType.SHARED_INDEXBUFFER = 4;
+ElementType.CONCENATED_STREAMS_UINT16 = 5;
 var AWDProperties = (function () {
     function AWDProperties() {
     }
@@ -66451,7 +66549,10 @@ var FNTParser = (function (_super) {
      */
     FNTParser.prototype._iResolveDependency = function (resourceDependency) {
         if (resourceDependency.assets.length) {
-            var mat = new MethodMaterial(resourceDependency.assets[0]);
+            var asset = resourceDependency.assets[0];
+            asset.width = this._bitmapFontTable.texture_width;
+            asset.height = this._bitmapFontTable.texture_height;
+            var mat = new MethodMaterial(asset);
             mat.bothSides = true;
             mat.alphaBlending = true;
             mat.useColorTransform = true;
@@ -69151,11 +69252,14 @@ var MouseManager = (function () {
         // transfer touches to event
         var i = 0;
         var cnt = 0;
+        var touchCnt = 0;
         cnt++; //we temporary added 1 float to transfer fps from java to js. skip this
         var numTouches = messageView[cnt++];
         var touchtype = messageView[cnt++];
         var activeTouchID = messageView[cnt++];
-        if ((touchtype != 1) && (touchtype != 6)) {
+        var x = 0;
+        var y = 0;
+        if ((touchtype != 1) && (touchtype != 6) && (touchtype != 12) && (touchtype != 262) && (touchtype != 518)) {
             // if this is not a UP command, we add all touches
             for (i = 0; i < numTouches; i++) {
                 var newTouch = {};
@@ -69163,46 +69267,75 @@ var MouseManager = (function () {
                 newTouch.clientX = messageView[cnt++];
                 newTouch.clientY = messageView[cnt++];
                 newTouchEvent.touches[i] = newTouch;
-                newTouchEvent.changedTouches[i] = newTouch;
             }
-            
-            newTouchEvent.changedTouches[i] = newTouchEvent.touches[activeTouchID];
+            newTouchEvent.changedTouches[0] = newTouchEvent.touches[activeTouchID];
+            x = newTouchEvent.changedTouches[0].clientX;
+            y = newTouchEvent.changedTouches[0].clientY;
         }
         else {
             // if this is a UP command, we add all touches, except the active one
-            for (i = 0; i < numTouches; i++) {
-                if (i != activeTouchID) {
+            if (numTouches == 1) {
+                var newTouch = {};
+                newTouch.identifier = messageView[cnt++];
+                newTouch.clientX = messageView[cnt++];
+                newTouch.clientY = messageView[cnt++];
+                newTouchEvent.clientX = newTouch.clientX;
+                newTouchEvent.clientY = newTouch.clientY;
+                x = newTouchEvent.clientX;
+                y = newTouchEvent.clientY;
+            }
+            else {
+                for (i = 0; i < numTouches; i++) {
                     var newTouch = {};
                     newTouch.identifier = messageView[cnt++];
                     newTouch.clientX = messageView[cnt++];
                     newTouch.clientY = messageView[cnt++];
-                    newTouchEvent.touches[i] = newTouch;
-                    newTouchEvent.changedTouches[i] = newTouch;
-                }
-                else {
-                    newTouchEvent.clientX = messageView[cnt++];
-                    newTouchEvent.clientY = messageView[cnt++];
-                    cnt++;
+                    if (i != activeTouchID) {
+                        newTouchEvent.touches[touchCnt] = newTouch;
+                    }
+                    else {
+                        newTouchEvent.clientX = newTouch.clientX;
+                        newTouchEvent.clientY = newTouch.clientY;
+                        x = newTouchEvent.clientX;
+                        y = newTouchEvent.clientY;
+                    }
                 }
             }
-            
         }
         // set the target in order to have a collision
         newTouchEvent.target = this._viewLookup[viewIdx].htmlElement;
-        if (touchtype == 0) {
+        //console.log("Touch ID:"+touchtype+" activeTouchID "+activeTouchID+" numTouches "+numTouches+" x"+x+" y"+y);
+        /*
+         public static final int ACTION_DOWN = 0;
+         public static final int ACTION_POINTER_1_DOWN = 5;
+         public static final int ACTION_POINTER_DOWN = 5;
+         public static final int ACTION_BUTTON_PRESS = 11;
+         public static final int ACTION_POINTER_2_DOWN = 261;
+         public static final int ACTION_POINTER_3_DOWN = 517;
+
+
+         public static final int ACTION_UP = 1;
+         public static final int ACTION_POINTER_1_UP = 6;
+         public static final int ACTION_POINTER_UP = 6;
+         public static final int ACTION_BUTTON_RELEASE = 12;
+         public static final int ACTION_POINTER_2_UP = 262;
+         public static final int ACTION_POINTER_3_UP = 518;
+
+         public static final int ACTION_MOVE = 2;
+
+
+         */
+        if ((touchtype == 0) || (touchtype == 5) || (touchtype == 11) || (touchtype == 261) || (touchtype == 517)) {
             this.onMouseDown(newTouchEvent);
         }
-        else if (touchtype == 1) {
+        else if ((touchtype == 1) || (touchtype == 6) || (touchtype == 12) || (touchtype == 262) || (touchtype == 518)) {
             this.onMouseUp(newTouchEvent);
         }
         else if (touchtype == 2) {
             this.onMouseMove(newTouchEvent);
         }
-        else if (touchtype == 261) {
-            this.onMouseDown(newTouchEvent);
-        }
-        else if (touchtype == 6) {
-            this.onMouseUp(newTouchEvent);
+        else {
+            console.log("recieved unknown touch event-type: " + touchtype);
         }
     };
     MouseManager.prototype.fireEventsForViewFromString = function (touchMessage, viewIdx) {
@@ -71284,6 +71417,7 @@ RenderablePool.registerAbstraction(GL_SkyboxRenderable, Skybox);
 Stage.registerAbstraction(GL_RenderImage2D, Image2D);
 Stage.registerAbstraction(GL_RenderImageCube, ImageCube);
 Stage.registerAbstraction(GL_BitmapImage2D, BitmapImage2D);
+Stage.registerAbstraction(GL_ExternalImage2D, ExternalImage2D);
 Stage.registerAbstraction(GL_BitmapImageCube, BitmapImageCube);
 Stage.registerAbstraction(GL_BitmapImage2D, SpecularImage2D);
 Stage.registerAbstraction(GL_Sampler2D, Sampler2D);
@@ -71377,7 +71511,6 @@ exports.ParserDataFormat = ParserDataFormat;
 exports.ParserUtils = ParserUtils;
 exports.ResourceDependency = ResourceDependency;
 exports.WaveAudioParser = WaveAudioParser;
-exports.CoordinateSystem = CoordinateSystem;
 exports.FreeMatrixProjection = FreeMatrixProjection;
 exports.ObliqueNearPlaneProjection = ObliqueNearPlaneProjection;
 exports.OrthographicOffCenterProjection = OrthographicOffCenterProjection;
@@ -71436,6 +71569,7 @@ exports.BitmapImageCube = BitmapImageCube;
 exports.BlendMode = BlendMode;
 exports.CPUCanvas = CPUCanvas;
 exports.CPURenderingContext2D = CPURenderingContext2D;
+exports.ExternalImage2D = ExternalImage2D;
 exports.Image2D = Image2D;
 exports.ImageBase = ImageBase;
 exports.ImageCube = ImageCube;
@@ -71699,6 +71833,7 @@ exports.DisplayObjectEvent = DisplayObjectEvent;
 exports.LightEvent = LightEvent;
 exports.MouseEvent = MouseEvent;
 exports.ResizeEvent = ResizeEvent;
+exports.TextureProjectorEvent = TextureProjectorEvent;
 exports.TouchEvent = TouchEvent;
 exports.FrameScriptManager = FrameScriptManager;
 exports.LightPickerBase = LightPickerBase;
@@ -71753,20 +71888,6 @@ exports.Mapping = Mapping;
 exports.OpLUT = OpLUT;
 exports.Token = Token;
 exports.GL_AttributesBuffer = GL_AttributesBuffer;
-exports.ContextGLBlendFactor = ContextGLBlendFactor;
-exports.ContextGLClearMask = ContextGLClearMask;
-exports.ContextGLCompareMode = ContextGLCompareMode;
-exports.ContextGLDrawMode = ContextGLDrawMode;
-exports.ContextGLMipFilter = ContextGLMipFilter;
-exports.ContextGLProfile = ContextGLProfile;
-exports.ContextGLProgramType = ContextGLProgramType;
-exports.ContextGLStencilAction = ContextGLStencilAction;
-exports.ContextGLTextureFilter = ContextGLTextureFilter;
-exports.ContextGLTextureFormat = ContextGLTextureFormat;
-exports.ContextGLTriangleFace = ContextGLTriangleFace;
-exports.ContextGLVertexBufferFormat = ContextGLVertexBufferFormat;
-exports.ContextGLWrapMode = ContextGLWrapMode;
-exports.ContextMode = ContextMode;
 exports.SamplerState = SamplerState;
 exports.StageEvent = StageEvent;
 exports.ContextFlash = ContextFlash;
@@ -71787,6 +71908,7 @@ exports.TextureBaseGLES = TextureBaseGLES;
 exports.TextureGLES = TextureGLES;
 exports.VertexBufferGLES = VertexBufferGLES;
 exports.GL_BitmapImage2D = GL_BitmapImage2D;
+exports.GL_ExternalImage2D = GL_ExternalImage2D;
 exports.GL_BitmapImageCube = GL_BitmapImageCube;
 exports.GL_Image2D = GL_Image2D;
 exports.GL_ImageBase = GL_ImageBase;

@@ -2,9 +2,9 @@ export * from "@awayjs/view";
 
 import {Loader, WaveAudioParser, AttributesBuffer} from "@awayjs/core";
 
-import {Image2DParser, ImageCubeParser, TextureAtlasParser, Shape, Image2D, ImageCube, BitmapImage2D, BitmapImageCube, SpecularImage2D, Sampler2D, SamplerCube, LineElements, TriangleElements, Single2DTexture, SingleCubeTexture, BasicMaterial} from "@awayjs/graphics";
+import {Image2DParser, ImageCubeParser, TextureAtlasParser, Shape, Image2D, ImageCube, BitmapImage2D, ExternalImage2D, BitmapImageCube, SpecularImage2D, Sampler2D, SamplerCube, LineElements, TriangleElements, Single2DTexture, SingleCubeTexture, BasicMaterial} from "@awayjs/graphics";
 
-import {Stage, GL_AttributesBuffer, GL_RenderImage2D, GL_RenderImageCube, GL_BitmapImage2D, GL_BitmapImageCube, GL_Sampler2D, GL_SamplerCube} from "@awayjs/stage";
+import {Stage, GL_AttributesBuffer, GL_RenderImage2D, GL_RenderImageCube, GL_BitmapImage2D, GL_ExternalImage2D, GL_BitmapImageCube, GL_Sampler2D, GL_SamplerCube} from "@awayjs/stage";
 
 import {Skybox, Billboard, LineSegment, Camera, DirectionalLight, Sprite, MovieClip, TextField, LightProbe, PointLight} from "@awayjs/scene";
 
@@ -35,6 +35,7 @@ RenderablePool.registerAbstraction(GL_SkyboxRenderable, Skybox);
 Stage.registerAbstraction(GL_RenderImage2D, Image2D);
 Stage.registerAbstraction(GL_RenderImageCube, ImageCube);
 Stage.registerAbstraction(GL_BitmapImage2D, BitmapImage2D);
+Stage.registerAbstraction(GL_ExternalImage2D, ExternalImage2D);
 Stage.registerAbstraction(GL_BitmapImageCube, BitmapImageCube);
 Stage.registerAbstraction(GL_BitmapImage2D, SpecularImage2D);
 Stage.registerAbstraction(GL_Sampler2D, Sampler2D);
