@@ -9,7 +9,7 @@ TODO
 # Examples
 
 * For running examples<br>
-[http://awayjs.github.io/examples](http://awayjs.github.io/examples)
+[http://awayjs.github.io/awayjs-examples](http://awayjs.github.io/awayjs-examples)
 * For source code<br>
 [https://github.com/awayjs/awayjs-examples](https://github.com/awayjs/awayjs-examples)
 
