@@ -8,9 +8,9 @@ TODO
 
 # Examples
 
-* For running examples:
+* For running examples<br>
 [http://awayjs.github.io/examples](http://awayjs.github.io/examples)
-* For source code:
+* For source code<br>
 [https://github.com/awayjs/awayjs-examples](https://github.com/awayjs/awayjs-examples)
 
 # Installation		
@@ -54,3 +54,8 @@ You can then link your awayjs-full package to your local configuration:
 ```typescript		
 npm link path/to/your/@awayjs/folder		
 ```
+
+# Documentation
+
+Please visit our docs site<br>
+[http://awayjs.github.io/docs](http://awayjs.github.io/docs)
