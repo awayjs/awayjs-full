@@ -1,4 +1,5 @@
 # AwayJS
+[![Build Status](https://travis-ci.org/awayjs/awayjs-full.svg?branch=dev)](https://travis-ci.org/awayjs/awayjs-full)
 
 AwayJS is a graphics library for javascript written in typescript.
 
