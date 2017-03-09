@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+- stable
+script:
+  - bash scripts/build.sh
+env:
+  global:
+  - ENCRYPTION_LABEL: b470d98245a7
