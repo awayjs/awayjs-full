@@ -3,20 +3,20 @@
 
 AwayJS is a graphics library for javascript written in typescript.
 
-# Features
+## Features
 
 TODO
 
-# Examples
+## Examples
 
 * For running examples<br>
 [http://awayjs.github.io/awayjs-examples](http://awayjs.github.io/awayjs-examples)
 * For source code<br>
 [https://github.com/awayjs/awayjs-examples](https://github.com/awayjs/awayjs-examples)
 
-# Installation		
+## Installation		
  		
-## Flat Installation		
+### Flat Installation		
  		
 AwayJS can be installed as a flattened package using 
 [awayjs-full](https://github.com/awayjs/awayjs-full) or 
@@ -32,7 +32,7 @@ or
 npm install --save @awayjs/awayjs-lite		
 ```
  		
-## Modular Installation		
+### Modular Installation		
  		
 AwayJS can be installed as a series of interdependant modules (see below) 
 that can be configured, depending on the specific requirements of the application. 		
@@ -56,7 +56,6 @@ You can then link your awayjs-full package to your local configuration:
 npm link path/to/your/@awayjs/folder		
 ```
 
-# Documentation
+## Documentation
 
-Please visit our docs site<br>
-[http://awayjs.github.io/docs](http://awayjs.github.io/docs)
+[Official AwayJS Documentation](https://awayjs.github.io/docs)
