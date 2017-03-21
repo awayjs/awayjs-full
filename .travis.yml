@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- stable
+script:
+- bash scripts/build.sh
+env:
+  global:
+  - ENCRYPTION_LABEL: b470d98245a7
+notifications:
+  slack:
+    secure: s4kwi3lZ702ptdmx0972GKcuyEnZHGEnumA2ypTP1QhpZgOqCeM4QdG8Zm82w1FLVpYnwlSQ1irFjpVYph72i28wT17bZjHwXPEBg05FN8/662hRC78zz+uZkeLIzDsXumoz3GcueLPQWZDdC20ZNWWyShFN7ll5C5BigIhxm4o=

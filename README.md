@@ -1,53 +1,61 @@
-awayjs-full
-==========
+# AwayJS
+[![Build Status](https://travis-ci.org/awayjs/awayjs-full.svg?branch=dev)](https://travis-ci.org/awayjs/awayjs-full)
 
-GENERAL ENVIRONMENT SETUP
-=========================
+AwayJS is a graphics library for javascript written in typescript.
 
-1) Install node version is 7.2.0
-2) Install npm version is 4.0.3
-3) Install webpack version 2.1.0-beta.27
-4) Install typescript version 2.2.0-dev.20161130
+## Features
 
-USING AWAYJS-FULL IN YOUR PROJECT
-==========================================================
+TODO
 
-This is all you need to do to use awayjs-full in your project.
+## Examples
 
-Add the awayjs-full dependency: 
-"npm install awayjs-full"
+* For running examples<br>
+[http://awayjs.github.io/awayjs-examples](http://awayjs.github.io/awayjs-examples)
+* For source code<br>
+[https://github.com/awayjs/awayjs-examples](https://github.com/awayjs/awayjs-examples)
 
-If you want to store this depdency, add it to your npm packages.json dependency array.
+## Installation		
+ 		
+### Flat Installation		
+ 		
+AwayJS can be installed as a flattened package using 
+[awayjs-full](https://github.com/awayjs/awayjs-full) or 
+[awayjs-lite](https://github.com/awayjs/awayjs-lite) via npm.		
 
-LINKING TO AWAYJS-FULL AS A DEVELOPMENT MODULE
-==========================================================
+```typescript	
+npm install --save @awayjs/awayjs-full		 
+```
 
-This process allows you to not only use awayjs-full, but be able to modify it. It is a rather complex process since awayjs-full needs to link to all its modules, but the modules themselves need to be interliked.
+or
+		
+```typescript		
+npm install --save @awayjs/awayjs-lite		
+```
+ 		
+### Modular Installation		
+ 		
+AwayJS can be installed as a series of interdependant modules (see below) 
+that can be configured, depending on the specific requirements of the application. 		
+This configuration should provide the best experience for typed development 
+using typescript.		
+ 		
+First, clone [awayjs-full](https://github.com/awayjs/awayjs-full), then run 
+the script [InitAwayDev_mac.command]() *TODO links neededs* or [InitAwayDev_win.bat]().		
+The script will clone all the dependencies, and interlink them in the awayjs-full 
+installation.		
+ 		
+In your application, install awayjs-full via npm:		
+ 		
+```typescript		
+npm install --save @awayjs/awayjs-full		
+```
+ 		
+You can then link your awayjs-full package to your local configuration:		
+ 		
+```typescript		
+npm link path/to/your/@awayjs/folder		
+```
 
-Fortunately, you can use a script for this task. See: "awayjs-full/init_scripts/readme.md".
+## Documentation
 
-BUILD OPTION A)
-
-After running the script, all the awayjs modules are properly interlinked, but you still need
-to rebuild the main module awayjs-full after making changes to any of the engine's files. This can be done in multiple ways.
-
-In each altered submodule you can run:
-"npm run build" 
-or if you want to setup a watcher:
-"npm run watch"
-
-You can then build your main project (or use a watcher). Note that there is no need to build your local awayjs-full manually.
-
-BUILD OPTION B)
-
-ALternatively, if you don't want to manually build or watch each submodule, you can setup a global
-watcher. This is less tedious but its important to note that this could be marginally slower than option A.
-
-In awayjs-full run:
-"npm run modules:build" 
-or if you want to setup a watcher:
-"npm run modules:watch"
-
-This basically builds or starts a watcher in each of the submodules.
-
-For this to work, the module aliases need to be commented out in webpack.config.js, in the resolve: alias: section. However, note that this could produce slower re-build times.
+[Official AwayJS Documentation](https://awayjs.github.io/docs)
