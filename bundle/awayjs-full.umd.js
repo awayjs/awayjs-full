@@ -1432,241 +1432,302 @@ var WaveAudio = (function (_super) {
 WaveAudio.assetType = "[asset WaveAudio]";
 
 /**
- * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
- * by a concrete subclass.
- */
-var ArgumentError = (function (_super) {
-    __extends(ArgumentError, _super);
-    /**
-     * Create a new ArgumentError.
-     *
-     * @param message An optional message to override the default error message.
-     * @param id The id of the error.
-     */
-    function ArgumentError(message, id) {
-        if (message === void 0) { message = null; }
-        if (id === void 0) { id = 0; }
-        return _super.call(this, message || "ArgumentError", id) || this;
-    }
-    return ArgumentError;
-}(ErrorBase));
-
-var DocumentError = (function (_super) {
-    __extends(DocumentError, _super);
-    function DocumentError(message, id) {
-        if (message === void 0) { message = "DocumentError"; }
-        if (id === void 0) { id = 0; }
-        return _super.call(this, message, id) || this;
-    }
-    return DocumentError;
-}(ErrorBase));
-DocumentError.DOCUMENT_DOES_NOT_EXIST = "documentDoesNotExist";
-
-/**
- * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
- * by a concrete subclass.
- */
-var PartialImplementationError = (function (_super) {
-    __extends(PartialImplementationError, _super);
-    /**
-     * Create a new AbstractMethodError.
-     * @param message An optional message to override the default error message.
-     * @param id The id of the error.
-     */
-    function PartialImplementationError(dependency, id) {
-        if (dependency === void 0) { dependency = ''; }
-        if (id === void 0) { id = 0; }
-        return _super.call(this, "PartialImplementationError - this function is in development. Required Dependency: " + dependency, id) || this;
-    }
-    return PartialImplementationError;
-}(ErrorBase));
-
-/**
- * RangeError is thrown when an index is accessed out of range of the number of
- * available indices on an Array.
- */
-var RangeError = (function (_super) {
-    __extends(RangeError, _super);
-    /**
-     * Create a new RangeError.
-     *
-     * @param message An optional message to override the default error message.
-     * @param id The id of the error.
-     */
-    function RangeError(message, id) {
-        if (message === void 0) { message = null; }
-        if (id === void 0) { id = 0; }
-        return _super.call(this, message || "RangeError", id) || this;
-    }
-    return RangeError;
-}(ErrorBase));
-
-var LoaderEvent = (function (_super) {
-    __extends(LoaderEvent, _super);
-    /**
-     * Create a new LoaderEvent object.
-     *
-     * @param type The event type.
-     * @param url The url of the loaded resource.
-     * @param assets The assets of the loaded resource.
-     */
-    function LoaderEvent(type, url, content, assets) {
-        if (url === void 0) { url = null; }
-        if (content === void 0) { content = null; }
-        if (assets === void 0) { assets = null; }
-        var _this = _super.call(this, type) || this;
-        _this._url = url;
-        _this._content = content;
-        _this._assets = assets;
-        return _this;
-    }
-    Object.defineProperty(LoaderEvent.prototype, "content", {
-        /**
-         * The content returned if the resource has been loaded inside a <code>Loader</code> object.
-         */
-        get: function () {
-            return this._content;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LoaderEvent.prototype, "url", {
-        /**
-         * The url of the loaded resource.
-         */
-        get: function () {
-            return this._url;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LoaderEvent.prototype, "assets", {
-        /**
-         * The error string on loadError.
-         */
-        get: function () {
-            return this._assets;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Clones the current event.
-     * @return An exact duplicate of the current event.
-     */
-    LoaderEvent.prototype.clone = function () {
-        return new LoaderEvent(this.type, this._url, this._content, this._assets);
-    };
-    return LoaderEvent;
-}(EventBase));
-/**
- * Dispatched when the loading of a session and all of its dependencies is complete.
- */
-LoaderEvent.LOAD_COMPLETE = "loadComplete";
-
-var ParserEvent = (function (_super) {
-    __extends(ParserEvent, _super);
-    function ParserEvent(type, message) {
-        if (message === void 0) { message = ''; }
-        var _this = _super.call(this, type) || this;
-        _this._message = message;
-        return _this;
-    }
-    Object.defineProperty(ParserEvent.prototype, "message", {
-        /**
-         * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
-         */
-        get: function () {
-            return this._message;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ParserEvent.prototype.clone = function () {
-        return new ParserEvent(this.type, this._message);
-    };
-    return ParserEvent;
-}(EventBase));
-/**
- * Dispatched when parsing of an asset completed.
- */
-ParserEvent.PARSE_COMPLETE = 'parseComplete';
-/**
- * Dispatched when an error occurs while parsing the data (e.g. because it's
- * incorrectly formatted.)
- */
-ParserEvent.PARSE_ERROR = 'parseError';
-/**
- * Dispatched when a parser is ready to have dependencies retrieved and resolved.
- * This is an internal event that should rarely (if ever) be listened for by
- * external classes.
- */
-ParserEvent.READY_FOR_DEPENDENCIES = 'readyForDependencies';
-
-var ProjectionEvent = (function (_super) {
-    __extends(ProjectionEvent, _super);
-    function ProjectionEvent(type, projection) {
-        var _this = _super.call(this, type) || this;
-        _this._projection = projection;
-        return _this;
-    }
-    Object.defineProperty(ProjectionEvent.prototype, "projection", {
-        get: function () {
-            return this._projection;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ProjectionEvent;
-}(EventBase));
-ProjectionEvent.MATRIX_CHANGED = "matrixChanged";
-
-var TimerEvent = (function (_super) {
-    __extends(TimerEvent, _super);
-    function TimerEvent(type) {
-        return _super.call(this, type) || this;
-    }
-    return TimerEvent;
-}(EventBase));
-/**
  *
  */
-TimerEvent.TIMER = "timer";
-/**
- *
- */
-TimerEvent.TIMER_COMPLETE = "timerComplete";
-
-var URLLoaderEvent = (function (_super) {
-    __extends(URLLoaderEvent, _super);
-    function URLLoaderEvent(type, urlLoader) {
-        var _this = _super.call(this, type) || this;
-        _this._urlLoader = urlLoader;
-        return _this;
+var ColorUtils = (function () {
+    function ColorUtils() {
     }
-    Object.defineProperty(URLLoaderEvent.prototype, "urlLoader", {
+    ColorUtils.float32ColorToARGB = function (float32Color) {
+        var a = (float32Color & 0xff000000) >>> 24;
+        var r = (float32Color & 0xff0000) >>> 16;
+        var g = (float32Color & 0xff00) >>> 8;
+        var b = float32Color & 0xff;
+        var result = [a, r, g, b];
+        return result;
+    };
+    ColorUtils.ARGBtoFloat32 = function (a, r, g, b) {
+        return ((a << 24) | (r << 16) | (g << 8) | b);
+    };
+    ColorUtils.componentToHex = function (c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    };
+    ColorUtils.RGBToHexString = function (argb) {
+        return "#" + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+    };
+    ColorUtils.ARGBToHexString = function (argb) {
+        return "#" + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+    };
+    return ColorUtils;
+}());
+
+/**
+ * The ColorTransform export class lets you adjust the color values in a display
+ * object. The color adjustment or <i>color transformation</i> can be applied
+ * to all four channels: red, green, blue, and alpha transparency.
+ *
+ * <p>When a ColorTransform object is applied to a display object, a new value
+ * for each color channel is calculated like this:</p>
+ *
+ * <ul>
+ *   <li>New red value = (old red value * <code>redMultiplier</code>) +
+ * <code>redOffset</code></li>
+ *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
+ * <code>greenOffset</code></li>
+ *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
+ * <code>blueOffset</code></li>
+ *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
+ * <code>alphaOffset</code></li>
+ * </ul>
+ *
+ * <p>If any of the color channel values is greater than 255 after the
+ * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
+ *
+ * <p>You can use ColorTransform objects in the following ways:</p>
+ *
+ * <ul>
+ *   <li>In the <code>colorTransform</code> parameter of the
+ * <code>colorTransform()</code> method of the BitmapData class</li>
+ *   <li>As the <code>colorTransform</code> property of a Transform object
+ * (which can be used as the <code>transform</code> property of a display
+ * object)</li>
+ * </ul>
+ *
+ * <p>You must use the <code>new ColorTransform()</code> constructor to create
+ * a ColorTransform object before you can call the methods of the
+ * ColorTransform object.</p>
+ *
+ * <p>Color transformations do not apply to the background color of a movie
+ * clip(such as a loaded SWF object). They apply only to graphics and symbols
+ * that are attached to the movie clip.</p>
+ */
+var ColorTransform = (function () {
+    function ColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
+        if (redMultiplier === void 0) { redMultiplier = 1; }
+        if (greenMultiplier === void 0) { greenMultiplier = 1; }
+        if (blueMultiplier === void 0) { blueMultiplier = 1; }
+        if (alphaMultiplier === void 0) { alphaMultiplier = 1; }
+        if (redOffset === void 0) { redOffset = 0; }
+        if (greenOffset === void 0) { greenOffset = 0; }
+        if (blueOffset === void 0) { blueOffset = 0; }
+        if (alphaOffset === void 0) { alphaOffset = 0; }
+        if (redMultiplier instanceof Float32Array) {
+            this._rawData = redMultiplier;
+        }
+        else {
+            this._rawData = new Float32Array(8);
+            this.redMultiplier = Number(redMultiplier);
+            this.greenMultiplier = greenMultiplier;
+            this.blueMultiplier = blueMultiplier;
+            this.alphaMultiplier = alphaMultiplier;
+            this.redOffset = redOffset;
+            this.greenOffset = greenOffset;
+            this.blueOffset = blueOffset;
+            this.alphaOffset = alphaOffset;
+        }
+    }
+    Object.defineProperty(ColorTransform.prototype, "alphaMultiplier", {
         /**
+         * A decimal value that is multiplied with the alpha transparency channel
+         * value.
          *
+         * <p>If you set the alpha transparency value of a display object directly by
+         * using the <code>alpha</code> property of the DisplayObject instance, it
+         * affects the value of the <code>alphaMultiplier</code> property of that
+         * display object's <code>transform.colorTransform</code> property.</p>
          */
         get: function () {
-            return this._urlLoader;
+            return this._rawData[3];
+        },
+        set: function (value) {
+            this._rawData[3] = value;
         },
         enumerable: true,
         configurable: true
     });
-    /**
-     *
-     */
-    URLLoaderEvent.prototype.clone = function () {
-        return new URLLoaderEvent(this.type, this._urlLoader);
+    Object.defineProperty(ColorTransform.prototype, "alphaOffset", {
+        /**
+         * A number from -255 to 255 that is added to the alpha transparency channel
+         * value after it has been multiplied by the <code>alphaMultiplier</code>
+         * value.
+         */
+        get: function () {
+            return this._rawData[7] * 0xFF;
+        },
+        set: function (value) {
+            this._rawData[7] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "blueMultiplier", {
+        /**
+         * A decimal value that is multiplied with the blue channel value.
+         */
+        get: function () {
+            return this._rawData[2];
+        },
+        set: function (value) {
+            this._rawData[2] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "blueOffset", {
+        /**
+         * A number from -255 to 255 that is added to the blue channel value after it
+         * has been multiplied by the <code>blueMultiplier</code> value.
+         */
+        get: function () {
+            return this._rawData[6] * 0xFF;
+        },
+        set: function (value) {
+            this._rawData[6] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "greenMultiplier", {
+        /**
+         * A decimal value that is multiplied with the green channel value.
+         */
+        get: function () {
+            return this._rawData[1];
+        },
+        set: function (value) {
+            this._rawData[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "greenOffset", {
+        /**
+         * A number from -255 to 255 that is added to the green channel value after
+         * it has been multiplied by the <code>greenMultiplier</code> value.
+         */
+        get: function () {
+            return this._rawData[5] * 0xFF;
+        },
+        set: function (value) {
+            this._rawData[5] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "redMultiplier", {
+        /**
+         * A decimal value that is multiplied with the red channel value.
+         */
+        get: function () {
+            return this._rawData[0];
+        },
+        set: function (value) {
+            this._rawData[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "redOffset", {
+        /**
+         * A number from -255 to 255 that is added to the red channel value after it
+         * has been multiplied by the <code>redMultiplier</code> value.
+         */
+        get: function () {
+            return this._rawData[4] * 0xFF;
+        },
+        set: function (value) {
+            this._rawData[4] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "color", {
+        /**
+         * The RGB color value for a ColorTransform object.
+         *
+         * <p>When you set this property, it changes the three color offset values
+         * (<code>redOffset</code>, <code>greenOffset</code>, and
+         * <code>blueOffset</code>) accordingly, and it sets the three color
+         * multiplier values(<code>redMultiplier</code>,
+         * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
+         * alpha transparency multiplier and offset values do not change.</p>
+         *
+         * <p>When you pass a value for this property, use the format
+         * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
+         * hexadecimal digits that specify the offset of each color component. The 0x
+         * tells the ActionScript compiler that the number is a hexadecimal
+         * value.</p>
+         */
+        get: function () {
+            return ((this._rawData[0] << 16) | (this._rawData[1] << 8) | this._rawData[2]);
+        },
+        set: function (value) {
+            var argb = ColorUtils.float32ColorToARGB(value);
+            this._rawData[4] = argb[1]; //(value >> 16) & 0xFF;
+            this._rawData[5] = argb[2]; //(value >> 8) & 0xFF;
+            this._rawData[6] = argb[3]; //value & 0xFF;
+            this._rawData[0] = 0;
+            this._rawData[1] = 0;
+            this._rawData[2] = 0;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ColorTransform.prototype.copyRawDataFrom = function (sourceData) {
+        var targetData = this._rawData;
+        targetData[0] = targetData[0];
+        targetData[1] = targetData[1];
+        targetData[2] = targetData[2];
+        targetData[3] = targetData[3];
+        targetData[4] = targetData[4];
+        targetData[5] = targetData[5];
+        targetData[6] = targetData[6];
+        targetData[7] = targetData[7];
     };
-    return URLLoaderEvent;
-}(EventBase));
-URLLoaderEvent.HTTP_STATUS = "httpStatus";
-URLLoaderEvent.LOAD_ERROR = "loadError";
-URLLoaderEvent.LOAD_PROGRESS = "loadProgress";
-URLLoaderEvent.LOAD_START = "loadStart";
-URLLoaderEvent.LOAD_COMPLETE = "loadComplete";
+    ColorTransform.prototype.clear = function () {
+        this._rawData[0] = 1;
+        this._rawData[1] = 1;
+        this._rawData[2] = 1;
+        this._rawData[3] = 1;
+        this._rawData[4] = 0;
+        this._rawData[5] = 0;
+        this._rawData[6] = 0;
+        this._rawData[7] = 0;
+    };
+    ColorTransform.prototype.clone = function () {
+        var colorTransform = new ColorTransform();
+        colorTransform.copyFrom(this);
+        return colorTransform;
+    };
+    ColorTransform.prototype.copyFrom = function (source) {
+        var sourceData = source._rawData, targetData = this._rawData;
+        targetData[0] = sourceData[0];
+        targetData[1] = sourceData[1];
+        targetData[2] = sourceData[2];
+        targetData[3] = sourceData[3];
+        targetData[4] = sourceData[4];
+        targetData[5] = sourceData[5];
+        targetData[6] = sourceData[6];
+        targetData[7] = sourceData[7];
+    };
+    ColorTransform.prototype.copyTo = function (target) {
+        target.copyFrom(this);
+    };
+    ColorTransform.prototype.prepend = function (ct) {
+        this._rawData[4] += ct._rawData[4] * this._rawData[0];
+        this._rawData[5] += ct._rawData[5] * this._rawData[1];
+        this._rawData[6] += ct._rawData[6] * this._rawData[2];
+        this._rawData[7] += ct._rawData[7] * this._rawData[3];
+        this.redMultiplier *= ct.redMultiplier;
+        this.greenMultiplier *= ct.greenMultiplier;
+        this.blueMultiplier *= ct.blueMultiplier;
+        this.alphaMultiplier *= ct.alphaMultiplier;
+    };
+    ColorTransform.prototype._isRenderable = function () {
+        return this._rawData[3] != 0 || this._rawData[7] > 0;
+    };
+    return ColorTransform;
+}());
 
 /**
  * The Vector3D export class represents a point or a location in the three-dimensional
@@ -1710,7 +1771,7 @@ var Vector3D = (function () {
         if (x === void 0) { x = 0; }
         if (y === void 0) { y = 0; }
         if (z === void 0) { z = 0; }
-        if (w === void 0) { w = 0; }
+        if (w === void 0) { w = 1; }
         this.x = x;
         this.y = y;
         this.z = z;
@@ -2777,304 +2838,6 @@ var Box = (function () {
 }());
 
 /**
- *
- */
-var ColorUtils = (function () {
-    function ColorUtils() {
-    }
-    ColorUtils.float32ColorToARGB = function (float32Color) {
-        var a = (float32Color & 0xff000000) >>> 24;
-        var r = (float32Color & 0xff0000) >>> 16;
-        var g = (float32Color & 0xff00) >>> 8;
-        var b = float32Color & 0xff;
-        var result = [a, r, g, b];
-        return result;
-    };
-    ColorUtils.ARGBtoFloat32 = function (a, r, g, b) {
-        return ((a << 24) | (r << 16) | (g << 8) | b);
-    };
-    ColorUtils.componentToHex = function (c) {
-        var hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    };
-    ColorUtils.RGBToHexString = function (argb) {
-        return "#" + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
-    };
-    ColorUtils.ARGBToHexString = function (argb) {
-        return "#" + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
-    };
-    return ColorUtils;
-}());
-
-/**
- * The ColorTransform export class lets you adjust the color values in a display
- * object. The color adjustment or <i>color transformation</i> can be applied
- * to all four channels: red, green, blue, and alpha transparency.
- *
- * <p>When a ColorTransform object is applied to a display object, a new value
- * for each color channel is calculated like this:</p>
- *
- * <ul>
- *   <li>New red value = (old red value * <code>redMultiplier</code>) +
- * <code>redOffset</code></li>
- *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
- * <code>greenOffset</code></li>
- *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
- * <code>blueOffset</code></li>
- *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
- * <code>alphaOffset</code></li>
- * </ul>
- *
- * <p>If any of the color channel values is greater than 255 after the
- * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
- *
- * <p>You can use ColorTransform objects in the following ways:</p>
- *
- * <ul>
- *   <li>In the <code>colorTransform</code> parameter of the
- * <code>colorTransform()</code> method of the BitmapData class</li>
- *   <li>As the <code>colorTransform</code> property of a Transform object
- * (which can be used as the <code>transform</code> property of a display
- * object)</li>
- * </ul>
- *
- * <p>You must use the <code>new ColorTransform()</code> constructor to create
- * a ColorTransform object before you can call the methods of the
- * ColorTransform object.</p>
- *
- * <p>Color transformations do not apply to the background color of a movie
- * clip(such as a loaded SWF object). They apply only to graphics and symbols
- * that are attached to the movie clip.</p>
- */
-var ColorTransform = (function () {
-    function ColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
-        if (redMultiplier === void 0) { redMultiplier = 1; }
-        if (greenMultiplier === void 0) { greenMultiplier = 1; }
-        if (blueMultiplier === void 0) { blueMultiplier = 1; }
-        if (alphaMultiplier === void 0) { alphaMultiplier = 1; }
-        if (redOffset === void 0) { redOffset = 0; }
-        if (greenOffset === void 0) { greenOffset = 0; }
-        if (blueOffset === void 0) { blueOffset = 0; }
-        if (alphaOffset === void 0) { alphaOffset = 0; }
-        if (redMultiplier instanceof Float32Array) {
-            this._rawData = redMultiplier;
-        }
-        else {
-            this._rawData = new Float32Array(8);
-            this.redMultiplier = Number(redMultiplier);
-            this.greenMultiplier = greenMultiplier;
-            this.blueMultiplier = blueMultiplier;
-            this.alphaMultiplier = alphaMultiplier;
-            this.redOffset = redOffset;
-            this.greenOffset = greenOffset;
-            this.blueOffset = blueOffset;
-            this.alphaOffset = alphaOffset;
-        }
-    }
-    Object.defineProperty(ColorTransform.prototype, "alphaMultiplier", {
-        /**
-         * A decimal value that is multiplied with the alpha transparency channel
-         * value.
-         *
-         * <p>If you set the alpha transparency value of a display object directly by
-         * using the <code>alpha</code> property of the DisplayObject instance, it
-         * affects the value of the <code>alphaMultiplier</code> property of that
-         * display object's <code>transform.colorTransform</code> property.</p>
-         */
-        get: function () {
-            return this._rawData[3];
-        },
-        set: function (value) {
-            this._rawData[3] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "alphaOffset", {
-        /**
-         * A number from -255 to 255 that is added to the alpha transparency channel
-         * value after it has been multiplied by the <code>alphaMultiplier</code>
-         * value.
-         */
-        get: function () {
-            return this._rawData[7] * 0xFF;
-        },
-        set: function (value) {
-            this._rawData[7] = value / 0xFF;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "blueMultiplier", {
-        /**
-         * A decimal value that is multiplied with the blue channel value.
-         */
-        get: function () {
-            return this._rawData[2];
-        },
-        set: function (value) {
-            this._rawData[2] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "blueOffset", {
-        /**
-         * A number from -255 to 255 that is added to the blue channel value after it
-         * has been multiplied by the <code>blueMultiplier</code> value.
-         */
-        get: function () {
-            return this._rawData[6] * 0xFF;
-        },
-        set: function (value) {
-            this._rawData[6] = value / 0xFF;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "greenMultiplier", {
-        /**
-         * A decimal value that is multiplied with the green channel value.
-         */
-        get: function () {
-            return this._rawData[1];
-        },
-        set: function (value) {
-            this._rawData[1] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "greenOffset", {
-        /**
-         * A number from -255 to 255 that is added to the green channel value after
-         * it has been multiplied by the <code>greenMultiplier</code> value.
-         */
-        get: function () {
-            return this._rawData[5] * 0xFF;
-        },
-        set: function (value) {
-            this._rawData[5] = value / 0xFF;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "redMultiplier", {
-        /**
-         * A decimal value that is multiplied with the red channel value.
-         */
-        get: function () {
-            return this._rawData[0];
-        },
-        set: function (value) {
-            this._rawData[0] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "redOffset", {
-        /**
-         * A number from -255 to 255 that is added to the red channel value after it
-         * has been multiplied by the <code>redMultiplier</code> value.
-         */
-        get: function () {
-            return this._rawData[4] * 0xFF;
-        },
-        set: function (value) {
-            this._rawData[4] = value / 0xFF;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ColorTransform.prototype, "color", {
-        /**
-         * The RGB color value for a ColorTransform object.
-         *
-         * <p>When you set this property, it changes the three color offset values
-         * (<code>redOffset</code>, <code>greenOffset</code>, and
-         * <code>blueOffset</code>) accordingly, and it sets the three color
-         * multiplier values(<code>redMultiplier</code>,
-         * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
-         * alpha transparency multiplier and offset values do not change.</p>
-         *
-         * <p>When you pass a value for this property, use the format
-         * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
-         * hexadecimal digits that specify the offset of each color component. The 0x
-         * tells the ActionScript compiler that the number is a hexadecimal
-         * value.</p>
-         */
-        get: function () {
-            return ((this._rawData[0] << 16) | (this._rawData[1] << 8) | this._rawData[2]);
-        },
-        set: function (value) {
-            var argb = ColorUtils.float32ColorToARGB(value);
-            this._rawData[4] = argb[1]; //(value >> 16) & 0xFF;
-            this._rawData[5] = argb[2]; //(value >> 8) & 0xFF;
-            this._rawData[6] = argb[3]; //value & 0xFF;
-            this._rawData[0] = 0;
-            this._rawData[1] = 0;
-            this._rawData[2] = 0;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ColorTransform.prototype.copyRawDataFrom = function (sourceData) {
-        var targetData = this._rawData;
-        targetData[0] = targetData[0];
-        targetData[1] = targetData[1];
-        targetData[2] = targetData[2];
-        targetData[3] = targetData[3];
-        targetData[4] = targetData[4];
-        targetData[5] = targetData[5];
-        targetData[6] = targetData[6];
-        targetData[7] = targetData[7];
-    };
-    ColorTransform.prototype.clear = function () {
-        this._rawData[0] = 1;
-        this._rawData[1] = 1;
-        this._rawData[2] = 1;
-        this._rawData[3] = 1;
-        this._rawData[4] = 0;
-        this._rawData[5] = 0;
-        this._rawData[6] = 0;
-        this._rawData[7] = 0;
-    };
-    ColorTransform.prototype.clone = function () {
-        var colorTransform = new ColorTransform();
-        colorTransform.copyFrom(this);
-        return colorTransform;
-    };
-    ColorTransform.prototype.copyFrom = function (source) {
-        var sourceData = source._rawData, targetData = this._rawData;
-        targetData[0] = sourceData[0];
-        targetData[1] = sourceData[1];
-        targetData[2] = sourceData[2];
-        targetData[3] = sourceData[3];
-        targetData[4] = sourceData[4];
-        targetData[5] = sourceData[5];
-        targetData[6] = sourceData[6];
-        targetData[7] = sourceData[7];
-    };
-    ColorTransform.prototype.copyTo = function (target) {
-        target.copyFrom(this);
-    };
-    ColorTransform.prototype.prepend = function (ct) {
-        this._rawData[4] += ct._rawData[4] * this._rawData[0];
-        this._rawData[5] += ct._rawData[5] * this._rawData[1];
-        this._rawData[6] += ct._rawData[6] * this._rawData[2];
-        this._rawData[7] += ct._rawData[7] * this._rawData[3];
-        this.redMultiplier *= ct.redMultiplier;
-        this.greenMultiplier *= ct.greenMultiplier;
-        this.blueMultiplier *= ct.blueMultiplier;
-        this.alphaMultiplier *= ct.alphaMultiplier;
-    };
-    ColorTransform.prototype._isRenderable = function () {
-        return this._rawData[3] != 0 || this._rawData[7] > 0;
-    };
-    return ColorTransform;
-}());
-
-/**
 * MathConsts provides some commonly used mathematical constants
 */
 var MathConsts = (function () {
@@ -3090,6 +2853,1905 @@ MathConsts.RADIANS_TO_DEGREES = 180 / Math.PI;
  * The amount to multiply with when converting degrees to radians.
  */
 MathConsts.DEGREES_TO_RADIANS = Math.PI / 180;
+
+/**
+ * A Quaternion object which can be used to represent rotations.
+ */
+var Orientation3D = (function () {
+    function Orientation3D() {
+    }
+    return Orientation3D;
+}());
+/**
+ * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
+ * @type {string}
+ */
+Orientation3D.AXIS_ANGLE = "axisAngle";
+/**
+ * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
+ * @type {string}
+ */
+Orientation3D.EULER_ANGLES = "eulerAngles";
+/**
+ * The quaternion orientation uses complex numbers.
+ * @type {string}
+ */
+Orientation3D.QUATERNION = "quaternion";
+
+/**
+ * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+ * by a concrete subclass.
+ */
+var ArgumentError = (function (_super) {
+    __extends(ArgumentError, _super);
+    /**
+     * Create a new ArgumentError.
+     *
+     * @param message An optional message to override the default error message.
+     * @param id The id of the error.
+     */
+    function ArgumentError(message, id) {
+        if (message === void 0) { message = null; }
+        if (id === void 0) { id = 0; }
+        return _super.call(this, message || "ArgumentError", id) || this;
+    }
+    return ArgumentError;
+}(ErrorBase));
+
+var Matrix3D = (function () {
+    /**
+     * Creates a Matrix3D object.
+     */
+    function Matrix3D(rawData) {
+        if (rawData === void 0) { rawData = null; }
+        this._position = new Vector3D();
+        this._positionDirty = true;
+        if (rawData != null) {
+            this._rawData = rawData;
+        }
+        else {
+            this._rawData = new Float32Array(16);
+            this.identity();
+        }
+    }
+    Matrix3D.getAxisRotationMatrix = function (x, y, z, degrees, target) {
+        if (target === void 0) { target = null; }
+        if (target == null)
+            target = new Matrix3D();
+        var targetData = target._rawData;
+        var rad = degrees * MathConsts.DEGREES_TO_RADIANS;
+        var c = Math.cos(rad);
+        var s = Math.sin(rad);
+        var t = 1 - c;
+        var tmp1, tmp2;
+        targetData[0] = c + x * x * t;
+        targetData[5] = c + y * y * t;
+        targetData[10] = c + z * z * t;
+        tmp1 = x * y * t;
+        tmp2 = z * s;
+        targetData[1] = tmp1 + tmp2;
+        targetData[4] = tmp1 - tmp2;
+        tmp1 = x * z * t;
+        tmp2 = y * s;
+        targetData[8] = tmp1 + tmp2;
+        targetData[2] = tmp1 - tmp2;
+        tmp1 = y * z * t;
+        tmp2 = x * s;
+        targetData[9] = tmp1 - tmp2;
+        targetData[6] = tmp1 + tmp2;
+        targetData[3] = 0;
+        targetData[7] = 0;
+        targetData[11] = 0;
+        targetData[12] = 0;
+        targetData[13] = 0;
+        targetData[14] = 0;
+        targetData[15] = 1;
+        target.invalidatePosition();
+        return target;
+    };
+    Matrix3D.getPointAtMatrix = function (pos, dir, up, target) {
+        if (target === void 0) { target = null; }
+        var dirN;
+        var upN;
+        var lftN;
+        if (target == null)
+            target = new Matrix3D();
+        var targetData = target._rawData;
+        dirN = dir.clone();
+        dirN.normalize();
+        upN = up.clone();
+        upN.normalize();
+        lftN = upN.crossProduct(dirN);
+        lftN.normalize();
+        if (lftN.length < 0.05) {
+            lftN.x = upN.y;
+            lftN.y = upN.x;
+            lftN.z = 0;
+            lftN.normalize();
+        }
+        upN = dirN.crossProduct(lftN);
+        targetData[0] = lftN.x;
+        targetData[1] = lftN.y;
+        targetData[2] = lftN.z;
+        targetData[3] = 0;
+        targetData[4] = upN.x;
+        targetData[5] = upN.y;
+        targetData[6] = upN.z;
+        targetData[7] = 0;
+        targetData[8] = dirN.x;
+        targetData[9] = dirN.y;
+        targetData[10] = dirN.z;
+        targetData[11] = 0;
+        targetData[12] = lftN.dotProduct(pos);
+        targetData[13] = upN.dotProduct(pos);
+        targetData[14] = dirN.dotProduct(pos);
+        targetData[15] = 1;
+        target.invalidatePosition();
+        return target;
+    };
+    /**
+     * Fills the 3d matrix with values representing the transformation made by the given quaternion.
+     *
+     * @param    quarternion    The quarterion object to convert.
+     */
+    Matrix3D.getQuaternionMatrix = function (quarternion, target) {
+        if (target === void 0) { target = null; }
+        if (target == null)
+            target = new Matrix3D();
+        var targetData = target._rawData;
+        var x = quarternion.x;
+        var y = quarternion.y;
+        var z = quarternion.z;
+        var w = quarternion.w;
+        var xx = x * x;
+        var xy = x * y;
+        var xz = x * z;
+        var xw = x * w;
+        var yy = y * y;
+        var yz = y * z;
+        var yw = y * w;
+        var zz = z * z;
+        var zw = z * w;
+        targetData[0] = 1 - 2 * (yy + zz);
+        targetData[1] = 2 * (xy + zw);
+        targetData[2] = 2 * (xz - yw);
+        targetData[4] = 2 * (xy - zw);
+        targetData[5] = 1 - 2 * (xx + zz);
+        targetData[6] = 2 * (yz + xw);
+        targetData[8] = 2 * (xz + yw);
+        targetData[9] = 2 * (yz - xw);
+        targetData[10] = 1 - 2 * (xx + yy);
+        targetData[3] = 0;
+        targetData[7] = 0;
+        targetData[11] = 0;
+        targetData[12] = 0;
+        targetData[13] = 0;
+        targetData[14] = 0;
+        targetData[15] = 1;
+        target.invalidatePosition();
+        return target;
+    };
+    /**
+     * Returns a boolean value representing whether there is any difference between the two given 3d matrices.
+     */
+    Matrix3D.compare = function (m1, m2) {
+        var r1 = m1._rawData;
+        var r2 = m2._rawData;
+        for (var i = 0; i < 16; ++i)
+            if (r1[i] != r2[i])
+                return false;
+        return true;
+    };
+    Object.defineProperty(Matrix3D.prototype, "determinant", {
+        /**
+         * [read-only] A number that determines whether a matrix is invertible.
+         */
+        get: function () {
+            return ((this._rawData[0] * this._rawData[5] - this._rawData[4] * this._rawData[1]) * (this._rawData[10] * this._rawData[15] - this._rawData[14] * this._rawData[11]) - (this._rawData[0] * this._rawData[9] - this._rawData[8] * this._rawData[1]) * (this._rawData[6] * this._rawData[15] - this._rawData[14] * this._rawData[7]) + (this._rawData[0] * this._rawData[13] - this._rawData[12] * this._rawData[1]) * (this._rawData[6] * this._rawData[11] - this._rawData[10] * this._rawData[7]) + (this._rawData[4] * this._rawData[9] - this._rawData[8] * this._rawData[5]) * (this._rawData[2] * this._rawData[15] - this._rawData[14] * this._rawData[3]) - (this._rawData[4] * this._rawData[13] - this._rawData[12] * this._rawData[5]) * (this._rawData[2] * this._rawData[11] - this._rawData[10] * this._rawData[3]) + (this._rawData[8] * this._rawData[13] - this._rawData[12] * this._rawData[9]) * (this._rawData[2] * this._rawData[7] - this._rawData[6] * this._rawData[3]));
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Matrix3D.prototype, "position", {
+        /**
+         * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
+         * transformation's frame of reference.
+         */
+        get: function () {
+            if (this._positionDirty) {
+                this._positionDirty = false;
+                this._position.x = this._rawData[12];
+                this._position.y = this._rawData[13];
+                this._position.z = this._rawData[14];
+            }
+            return this._position;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
+     */
+    Matrix3D.prototype.append = function (lhs) {
+        var lrd = lhs._rawData;
+        var m111 = this._rawData[0];
+        var m112 = this._rawData[1];
+        var m113 = this._rawData[2];
+        var m114 = this._rawData[3];
+        var m121 = this._rawData[4];
+        var m122 = this._rawData[5];
+        var m123 = this._rawData[6];
+        var m124 = this._rawData[7];
+        var m131 = this._rawData[8];
+        var m132 = this._rawData[9];
+        var m133 = this._rawData[10];
+        var m134 = this._rawData[11];
+        var m141 = this._rawData[12];
+        var m142 = this._rawData[13];
+        var m143 = this._rawData[14];
+        var m144 = this._rawData[15];
+        var m211 = lrd[0];
+        var m212 = lrd[1];
+        var m213 = lrd[2];
+        var m214 = lrd[3];
+        var m221 = lrd[4];
+        var m222 = lrd[5];
+        var m223 = lrd[6];
+        var m224 = lrd[7];
+        var m231 = lrd[8];
+        var m232 = lrd[9];
+        var m233 = lrd[10];
+        var m234 = lrd[11];
+        var m241 = lrd[12];
+        var m242 = lrd[13];
+        var m243 = lrd[14];
+        var m244 = lrd[15];
+        this._rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
+        this._rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
+        this._rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
+        this._rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
+        this._rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
+        this._rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
+        this._rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
+        this._rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
+        this._rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
+        this._rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
+        this._rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
+        this._rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
+        this._rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
+        this._rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
+        this._rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
+        this._rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
+        this._positionDirty = true;
+    };
+    /**
+     * Appends an incremental rotation to a Matrix3D object.
+     */
+    Matrix3D.prototype.appendRotation = function (degrees, axis) {
+        this.append(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
+    };
+    /**
+     * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
+     */
+    Matrix3D.prototype.appendSkew = function (xSkew, ySkew, zSkew) {
+        if (xSkew == 0 && ySkew == 0 && zSkew == 0)
+            return;
+        var rawData = Matrix3D._tempMatrix._rawData;
+        rawData[0] = 1;
+        rawData[1] = 0;
+        rawData[2] = 0;
+        rawData[3] = 0;
+        rawData[4] = xSkew;
+        rawData[5] = 1;
+        rawData[6] = 0;
+        rawData[7] = 0;
+        rawData[8] = ySkew;
+        rawData[9] = zSkew;
+        rawData[10] = 1;
+        rawData[11] = 0;
+        rawData[12] = 0;
+        rawData[13] = 0;
+        rawData[14] = 0;
+        rawData[15] = 1;
+        this.append(Matrix3D._tempMatrix);
+    };
+    /**
+     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+     */
+    Matrix3D.prototype.appendScale = function (xScale, yScale, zScale) {
+        if (xScale == 1 && yScale == 1 && zScale == 1)
+            return;
+        var rawData = Matrix3D._tempMatrix._rawData;
+        rawData[0] = xScale;
+        rawData[1] = 0;
+        rawData[2] = 0;
+        rawData[3] = 0;
+        rawData[4] = 0;
+        rawData[5] = yScale;
+        rawData[6] = 0;
+        rawData[7] = 0;
+        rawData[8] = 0;
+        rawData[9] = 0;
+        rawData[10] = zScale;
+        rawData[11] = 0;
+        rawData[12] = 0;
+        rawData[13] = 0;
+        rawData[14] = 0;
+        rawData[15] = 1;
+        this.append(Matrix3D._tempMatrix);
+    };
+    /**
+     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+     */
+    Matrix3D.prototype.appendTranslation = function (x, y, z) {
+        this._rawData[12] += x;
+        this._rawData[13] += y;
+        this._rawData[14] += z;
+        this._positionDirty = true;
+    };
+    /**
+     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
+     */
+    Matrix3D.prototype.clone = function () {
+        var matrix3D = new Matrix3D();
+        matrix3D.copyFrom(this);
+        return matrix3D;
+    };
+    /**
+     * Copies a Vector3D object into specific column of the calling Matrix3D object.
+     */
+    Matrix3D.prototype.copyColumnFrom = function (column, vector3D) {
+        if (column < 0 || column > 3)
+            throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+        column *= 4;
+        this._rawData[column] = vector3D.x;
+        this._rawData[column + 1] = vector3D.y;
+        this._rawData[column + 2] = vector3D.z;
+        this._rawData[column + 3] = vector3D.w;
+        this._positionDirty = true;
+    };
+    /**
+     * Copies specific column of the calling Matrix3D object into the Vector3D object.
+     */
+    Matrix3D.prototype.copyColumnTo = function (column, vector3D, negate) {
+        if (negate === void 0) { negate = false; }
+        if (column < 0 || column > 3)
+            throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+        column *= 4;
+        var sourceData = this._rawData;
+        if (negate) {
+            vector3D.x = -sourceData[column];
+            vector3D.y = -sourceData[column + 1];
+            vector3D.z = -sourceData[column + 2];
+            vector3D.w = -sourceData[column + 3];
+        }
+        else {
+            vector3D.x = sourceData[column];
+            vector3D.y = sourceData[column + 1];
+            vector3D.z = sourceData[column + 2];
+            vector3D.w = sourceData[column + 3];
+        }
+    };
+    /**
+     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
+     */
+    Matrix3D.prototype.copyFrom = function (source, transpose) {
+        if (transpose === void 0) { transpose = false; }
+        var sourceData = source._rawData, targetData = this._rawData;
+        targetData[0] = sourceData[0];
+        targetData[5] = sourceData[5];
+        targetData[10] = sourceData[10];
+        targetData[15] = sourceData[15];
+        if (transpose) {
+            targetData[1] = sourceData[4];
+            targetData[2] = sourceData[8];
+            targetData[3] = sourceData[12];
+            targetData[4] = sourceData[1];
+            targetData[6] = sourceData[9];
+            targetData[7] = sourceData[13];
+            targetData[8] = sourceData[2];
+            targetData[9] = sourceData[6];
+            targetData[11] = sourceData[14];
+            targetData[12] = sourceData[3];
+            targetData[13] = sourceData[7];
+            targetData[14] = sourceData[11];
+        }
+        else {
+            targetData[1] = sourceData[1];
+            targetData[2] = sourceData[2];
+            targetData[3] = sourceData[3];
+            targetData[4] = sourceData[4];
+            targetData[6] = sourceData[6];
+            targetData[7] = sourceData[7];
+            targetData[8] = sourceData[8];
+            targetData[9] = sourceData[9];
+            targetData[11] = sourceData[11];
+            targetData[12] = sourceData[12];
+            targetData[13] = sourceData[13];
+            targetData[14] = sourceData[14];
+        }
+        this._positionDirty = true;
+    };
+    /**
+     * Copies this Matrix3D object into a destination Matrix3D object.
+     */
+    Matrix3D.prototype.copyTo = function (target, transpose) {
+        if (transpose === void 0) { transpose = false; }
+        target.copyFrom(this, transpose);
+    };
+    Matrix3D.prototype.copyRawDataFrom = function (sourceData, offset, transpose) {
+        if (offset === void 0) { offset = 0; }
+        if (transpose === void 0) { transpose = false; }
+        var targetData = this._rawData;
+        targetData[0] = sourceData[offset + 0];
+        targetData[5] = sourceData[offset + 5];
+        targetData[10] = sourceData[offset + 10];
+        targetData[15] = sourceData[offset + 15];
+        if (transpose) {
+            targetData[offset + 1] = sourceData[4];
+            targetData[offset + 2] = sourceData[8];
+            targetData[offset + 3] = sourceData[12];
+            targetData[offset + 4] = sourceData[1];
+            targetData[offset + 6] = sourceData[9];
+            targetData[offset + 7] = sourceData[13];
+            targetData[offset + 8] = sourceData[2];
+            targetData[offset + 9] = sourceData[6];
+            targetData[offset + 11] = sourceData[14];
+            targetData[offset + 12] = sourceData[3];
+            targetData[offset + 13] = sourceData[7];
+            targetData[offset + 14] = sourceData[11];
+        }
+        else {
+            targetData[1] = sourceData[offset + 1];
+            targetData[2] = sourceData[offset + 2];
+            targetData[3] = sourceData[offset + 3];
+            targetData[4] = sourceData[offset + 4];
+            targetData[6] = sourceData[offset + 6];
+            targetData[7] = sourceData[offset + 7];
+            targetData[8] = sourceData[offset + 8];
+            targetData[9] = sourceData[offset + 9];
+            targetData[11] = sourceData[offset + 11];
+            targetData[12] = sourceData[offset + 12];
+            targetData[13] = sourceData[offset + 13];
+            targetData[14] = sourceData[offset + 14];
+        }
+        this._positionDirty = true;
+    };
+    Matrix3D.prototype.copyRawDataTo = function (targetData, offset, transpose) {
+        if (offset === void 0) { offset = 0; }
+        if (transpose === void 0) { transpose = false; }
+        var sourceData = this._rawData;
+        targetData[offset] = sourceData[0];
+        targetData[offset + 5] = sourceData[5];
+        targetData[offset + 10] = sourceData[10];
+        targetData[offset + 15] = sourceData[15];
+        if (transpose) {
+            targetData[offset + 1] = sourceData[4];
+            targetData[offset + 2] = sourceData[8];
+            targetData[offset + 3] = sourceData[12];
+            targetData[offset + 4] = sourceData[1];
+            targetData[offset + 6] = sourceData[9];
+            targetData[offset + 7] = sourceData[13];
+            targetData[offset + 8] = sourceData[2];
+            targetData[offset + 9] = sourceData[6];
+            targetData[offset + 11] = sourceData[14];
+            targetData[offset + 12] = sourceData[3];
+            targetData[offset + 13] = sourceData[7];
+            targetData[offset + 14] = sourceData[11];
+        }
+        else {
+            targetData[offset + 1] = sourceData[1];
+            targetData[offset + 2] = sourceData[2];
+            targetData[offset + 3] = sourceData[3];
+            targetData[offset + 4] = sourceData[4];
+            targetData[offset + 6] = sourceData[6];
+            targetData[offset + 7] = sourceData[7];
+            targetData[offset + 8] = sourceData[8];
+            targetData[offset + 9] = sourceData[9];
+            targetData[offset + 11] = sourceData[11];
+            targetData[offset + 12] = sourceData[12];
+            targetData[offset + 13] = sourceData[13];
+            targetData[offset + 14] = sourceData[14];
+        }
+    };
+    /**
+     * Copies a Vector3D object into specific row of the calling Matrix3D object.
+     */
+    Matrix3D.prototype.copyRowFrom = function (row, vector3D) {
+        if (row < 0 || row > 3)
+            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
+        this._rawData[row] = vector3D.x;
+        this._rawData[row + 4] = vector3D.y;
+        this._rawData[row + 8] = vector3D.z;
+        this._rawData[row + 12] = vector3D.w;
+        this._positionDirty = true;
+    };
+    /**
+     * Copies specific row of the calling Matrix3D object into the Vector3D object.
+     */
+    Matrix3D.prototype.copyRowTo = function (row, vector3D, negate) {
+        if (negate === void 0) { negate = false; }
+        if (row < 0 || row > 3)
+            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
+        var sourceData = this._rawData;
+        if (negate) {
+            vector3D.x = -sourceData[row];
+            vector3D.y = -sourceData[row + 4];
+            vector3D.z = -sourceData[row + 8];
+            vector3D.w = -sourceData[row + 12];
+        }
+        else {
+            vector3D.x = sourceData[row];
+            vector3D.y = sourceData[row + 4];
+            vector3D.z = sourceData[row + 8];
+            vector3D.w = sourceData[row + 12];
+        }
+    };
+    /**
+     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
+     */
+    Matrix3D.prototype.decompose = function (orientationStyle) {
+        if (orientationStyle === void 0) { orientationStyle = "eulerAngles"; }
+        var q;
+        if (this._components == null)
+            this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
+        var colX = new Vector3D(this._rawData[0], this._rawData[1], this._rawData[2]);
+        var colY = new Vector3D(this._rawData[4], this._rawData[5], this._rawData[6]);
+        var colZ = new Vector3D(this._rawData[8], this._rawData[9], this._rawData[10]);
+        var scale = this._components[3];
+        var skew = this._components[2];
+        //compute X scale factor and normalise colX
+        scale.x = colX.length;
+        colX.scaleBy(1 / scale.x);
+        //compute XY shear factor and make colY orthogonal to colX
+        skew.x = colX.dotProduct(colY);
+        colY = Vector3D.combine(colY, colX, 1, -skew.x);
+        //compute Y scale factor and normalise colY
+        scale.y = colY.length;
+        colY.scaleBy(1 / scale.y);
+        skew.x /= scale.y;
+        //compute XZ and YZ shears and make colZ orthogonal to colX and colY
+        skew.y = colX.dotProduct(colZ);
+        colZ = Vector3D.combine(colZ, colX, 1, -skew.y);
+        skew.z = colY.dotProduct(colZ);
+        colZ = Vector3D.combine(colZ, colY, 1, -skew.z);
+        //compute Z scale and normalise colZ
+        scale.z = colZ.length;
+        colZ.scaleBy(1 / scale.z);
+        skew.y /= scale.z;
+        skew.z /= scale.z;
+        //at this point, the matrix (in cols) is orthonormal
+        //check for a coordinate system flip. If the determinant is -1, negate the z scaling factor
+        if (colX.dotProduct(colY.crossProduct(colZ)) < 0) {
+            scale.z = -scale.z;
+            colZ.x = -colZ.x;
+            colZ.y = -colZ.y;
+            colZ.z = -colZ.z;
+        }
+        var rot = this._components[1];
+        switch (orientationStyle) {
+            case Orientation3D.AXIS_ANGLE:
+                rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
+                var len = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
+                rot.x = (colY.z - colZ.y) / len;
+                rot.y = (colZ.x - colX.z) / len;
+                rot.z = (colX.y - colY.x) / len;
+                break;
+            case Orientation3D.QUATERNION:
+                var tr = colX.x + colY.y + colZ.z;
+                if (tr > 0) {
+                    rot.w = Math.sqrt(1 + tr) / 2;
+                    rot.x = (colY.z - colZ.y) / (4 * rot.w);
+                    rot.y = (colZ.x - colX.z) / (4 * rot.w);
+                    rot.z = (colX.y - colY.x) / (4 * rot.w);
+                }
+                else if ((colX.x > colY.y) && (colX.x > colZ.z)) {
+                    rot.x = Math.sqrt(1 + colX.x - colY.y - colZ.z) / 2;
+                    rot.w = (colY.z - colZ.y) / (4 * rot.x);
+                    rot.y = (colX.y + colY.x) / (4 * rot.x);
+                    rot.z = (colZ.x + colX.z) / (4 * rot.x);
+                }
+                else if (colY.y > colZ.z) {
+                    rot.y = Math.sqrt(1 + colY.y - colX.x - colZ.z) / 2;
+                    rot.x = (colX.y + colY.x) / (4 * rot.y);
+                    rot.w = (colZ.x - colX.z) / (4 * rot.y);
+                    rot.z = (colY.z + colZ.y) / (4 * rot.y);
+                }
+                else {
+                    rot.z = Math.sqrt(1 + colZ.z - colX.x - colY.y) / 2;
+                    rot.x = (colZ.x + colX.z) / (4 * rot.z);
+                    rot.y = (colY.z + colZ.y) / (4 * rot.z);
+                    rot.w = (colX.y - colY.x) / (4 * rot.z);
+                }
+                break;
+            case Orientation3D.EULER_ANGLES:
+                rot.y = Math.asin(-colX.z);
+                //var cos:number = Math.cos(rot.y);
+                if (colX.z != 1 && colX.z != -1) {
+                    rot.x = Math.atan2(colY.z, colZ.z);
+                    rot.z = Math.atan2(colX.y, colX.x);
+                }
+                else {
+                    rot.z = 0;
+                    rot.x = Math.atan2(colY.x, colY.y);
+                }
+                break;
+        }
+        this._components[0].copyFrom(this.position);
+        return this._components;
+    };
+    /**
+     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
+     * coordinate to another.
+     */
+    Matrix3D.prototype.deltaTransformVector = function (v, t) {
+        if (t === void 0) { t = null; }
+        var x = v.x;
+        var y = v.y;
+        var z = v.z;
+        if (!t)
+            t = new Vector3D();
+        t.x = x * this._rawData[0] + y * this._rawData[4] + z * this._rawData[8];
+        t.y = x * this._rawData[1] + y * this._rawData[5] + z * this._rawData[9];
+        t.z = x * this._rawData[2] + y * this._rawData[6] + z * this._rawData[10];
+        t.w = x * this._rawData[3] + y * this._rawData[7] + z * this._rawData[11];
+        return t;
+    };
+    Matrix3D.prototype.deltaTransformVectors = function (vin, vout) {
+        var rawData = this._rawData;
+        var a = rawData[0];
+        var e = rawData[1];
+        var i = rawData[2];
+        var m = rawData[3];
+        var b = rawData[4];
+        var f = rawData[5];
+        var j = rawData[6];
+        var n = rawData[7];
+        var c = rawData[8];
+        var g = rawData[9];
+        var k = rawData[10];
+        var o = rawData[11];
+        var outIndex = 0;
+        var length = vin.length;
+        for (var index = 0; index < length; index += 3) {
+            var x = vin[index];
+            var y = vin[index + 1];
+            var z = vin[index + 2];
+            vout[outIndex++] = a * x + b * y + c * z;
+            vout[outIndex++] = e * x + f * y + g * z;
+            vout[outIndex++] = i * x + j * y + k * z;
+        }
+    };
+    /**
+     * Converts the current matrix to an identity or unit matrix.
+     */
+    Matrix3D.prototype.identity = function () {
+        this._rawData[0] = 1;
+        this._rawData[1] = 0;
+        this._rawData[2] = 0;
+        this._rawData[3] = 0;
+        this._rawData[4] = 0;
+        this._rawData[5] = 1;
+        this._rawData[6] = 0;
+        this._rawData[7] = 0;
+        this._rawData[8] = 0;
+        this._rawData[9] = 0;
+        this._rawData[10] = 1;
+        this._rawData[11] = 0;
+        this._rawData[12] = 0;
+        this._rawData[13] = 0;
+        this._rawData[14] = 0;
+        this._rawData[15] = 1;
+        this._positionDirty = true;
+    };
+    /**
+     * Inverts the current matrix.
+     */
+    Matrix3D.prototype.invert = function () {
+        var d = this.determinant;
+        var invertable = Math.abs(d) > 0.00000000001;
+        if (invertable) {
+            d = 1 / d;
+            var m11 = this._rawData[0];
+            var m12 = this._rawData[1];
+            var m13 = this._rawData[2];
+            var m14 = this._rawData[3];
+            var m21 = this._rawData[4];
+            var m22 = this._rawData[5];
+            var m23 = this._rawData[6];
+            var m24 = this._rawData[7];
+            var m31 = this._rawData[8];
+            var m32 = this._rawData[9];
+            var m33 = this._rawData[10];
+            var m34 = this._rawData[11];
+            var m41 = this._rawData[12];
+            var m42 = this._rawData[13];
+            var m43 = this._rawData[14];
+            var m44 = this._rawData[15];
+            this._rawData[0] = d * (m22 * (m33 * m44 - m43 * m34) - m32 * (m23 * m44 - m43 * m24) + m42 * (m23 * m34 - m33 * m24));
+            this._rawData[1] = -d * (m12 * (m33 * m44 - m43 * m34) - m32 * (m13 * m44 - m43 * m14) + m42 * (m13 * m34 - m33 * m14));
+            this._rawData[2] = d * (m12 * (m23 * m44 - m43 * m24) - m22 * (m13 * m44 - m43 * m14) + m42 * (m13 * m24 - m23 * m14));
+            this._rawData[3] = -d * (m12 * (m23 * m34 - m33 * m24) - m22 * (m13 * m34 - m33 * m14) + m32 * (m13 * m24 - m23 * m14));
+            this._rawData[4] = -d * (m21 * (m33 * m44 - m43 * m34) - m31 * (m23 * m44 - m43 * m24) + m41 * (m23 * m34 - m33 * m24));
+            this._rawData[5] = d * (m11 * (m33 * m44 - m43 * m34) - m31 * (m13 * m44 - m43 * m14) + m41 * (m13 * m34 - m33 * m14));
+            this._rawData[6] = -d * (m11 * (m23 * m44 - m43 * m24) - m21 * (m13 * m44 - m43 * m14) + m41 * (m13 * m24 - m23 * m14));
+            this._rawData[7] = d * (m11 * (m23 * m34 - m33 * m24) - m21 * (m13 * m34 - m33 * m14) + m31 * (m13 * m24 - m23 * m14));
+            this._rawData[8] = d * (m21 * (m32 * m44 - m42 * m34) - m31 * (m22 * m44 - m42 * m24) + m41 * (m22 * m34 - m32 * m24));
+            this._rawData[9] = -d * (m11 * (m32 * m44 - m42 * m34) - m31 * (m12 * m44 - m42 * m14) + m41 * (m12 * m34 - m32 * m14));
+            this._rawData[10] = d * (m11 * (m22 * m44 - m42 * m24) - m21 * (m12 * m44 - m42 * m14) + m41 * (m12 * m24 - m22 * m14));
+            this._rawData[11] = -d * (m11 * (m22 * m34 - m32 * m24) - m21 * (m12 * m34 - m32 * m14) + m31 * (m12 * m24 - m22 * m14));
+            this._rawData[12] = -d * (m21 * (m32 * m43 - m42 * m33) - m31 * (m22 * m43 - m42 * m23) + m41 * (m22 * m33 - m32 * m23));
+            this._rawData[13] = d * (m11 * (m32 * m43 - m42 * m33) - m31 * (m12 * m43 - m42 * m13) + m41 * (m12 * m33 - m32 * m13));
+            this._rawData[14] = -d * (m11 * (m22 * m43 - m42 * m23) - m21 * (m12 * m43 - m42 * m13) + m41 * (m12 * m23 - m22 * m13));
+            this._rawData[15] = d * (m11 * (m22 * m33 - m32 * m23) - m21 * (m12 * m33 - m32 * m13) + m31 * (m12 * m23 - m22 * m13));
+        }
+        this._positionDirty = true;
+        return invertable;
+    };
+    Matrix3D.prototype.isIdentity = function () {
+        if (this._rawData[0] == 1 &&
+            this._rawData[1] == 0 &&
+            this._rawData[2] == 0 &&
+            this._rawData[3] == 0 &&
+            this._rawData[4] == 0 &&
+            this._rawData[5] == 1 &&
+            this._rawData[6] == 0 &&
+            this._rawData[7] == 0 &&
+            this._rawData[8] == 0 &&
+            this._rawData[9] == 0 &&
+            this._rawData[10] == 1 &&
+            this._rawData[11] == 0 &&
+            this._rawData[12] == 0 &&
+            this._rawData[13] == 0 &&
+            this._rawData[14] == 0 &&
+            this._rawData[15] == 1)
+            return true;
+        return false;
+    };
+    /**
+     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
+     */
+    Matrix3D.prototype.prepend = function (rhs) {
+        var m111 = rhs._rawData[0];
+        var m112 = rhs._rawData[1];
+        var m113 = rhs._rawData[2];
+        var m114 = rhs._rawData[3];
+        var m121 = rhs._rawData[4];
+        var m122 = rhs._rawData[5];
+        var m123 = rhs._rawData[6];
+        var m124 = rhs._rawData[7];
+        var m131 = rhs._rawData[8];
+        var m132 = rhs._rawData[9];
+        var m133 = rhs._rawData[10];
+        var m134 = rhs._rawData[11];
+        var m141 = rhs._rawData[12];
+        var m142 = rhs._rawData[13];
+        var m143 = rhs._rawData[14];
+        var m144 = rhs._rawData[15];
+        var m211 = this._rawData[0];
+        var m212 = this._rawData[1];
+        var m213 = this._rawData[2];
+        var m214 = this._rawData[3];
+        var m221 = this._rawData[4];
+        var m222 = this._rawData[5];
+        var m223 = this._rawData[6];
+        var m224 = this._rawData[7];
+        var m231 = this._rawData[8];
+        var m232 = this._rawData[9];
+        var m233 = this._rawData[10];
+        var m234 = this._rawData[11];
+        var m241 = this._rawData[12];
+        var m242 = this._rawData[13];
+        var m243 = this._rawData[14];
+        var m244 = this._rawData[15];
+        this._rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
+        this._rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
+        this._rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
+        this._rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
+        this._rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
+        this._rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
+        this._rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
+        this._rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
+        this._rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
+        this._rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
+        this._rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
+        this._rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
+        this._rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
+        this._rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
+        this._rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
+        this._rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
+        this._positionDirty = true;
+    };
+    /**
+     * Prepends an incremental rotation to a Matrix3D object.
+     */
+    Matrix3D.prototype.prependRotation = function (degrees, axis) {
+        this.prepend(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
+    };
+    /**
+     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+     */
+    Matrix3D.prototype.prependScale = function (xScale, yScale, zScale) {
+        if (xScale == 1 && yScale == 1 && zScale == 1)
+            return;
+        var rawData = Matrix3D._tempMatrix._rawData;
+        rawData[0] = xScale;
+        rawData[1] = 0;
+        rawData[2] = 0;
+        rawData[3] = 0;
+        rawData[4] = 0;
+        rawData[5] = yScale;
+        rawData[6] = 0;
+        rawData[7] = 0;
+        rawData[8] = 0;
+        rawData[9] = 0;
+        rawData[10] = zScale;
+        rawData[11] = 0;
+        rawData[12] = 0;
+        rawData[13] = 0;
+        rawData[14] = 0;
+        rawData[15] = 1;
+        this.prepend(Matrix3D._tempMatrix);
+    };
+    /**
+     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+     */
+    Matrix3D.prototype.prependTranslation = function (x, y, z) {
+        var rawData = Matrix3D._tempMatrix._rawData;
+        rawData[0] = 1;
+        rawData[1] = 0;
+        rawData[2] = 0;
+        rawData[3] = 0;
+        rawData[4] = 0;
+        rawData[5] = 1;
+        rawData[6] = 0;
+        rawData[7] = 0;
+        rawData[8] = 0;
+        rawData[9] = 0;
+        rawData[10] = 1;
+        rawData[11] = 0;
+        rawData[12] = x;
+        rawData[13] = y;
+        rawData[14] = z;
+        rawData[15] = 1;
+        this.prepend(Matrix3D._tempMatrix);
+    };
+    // TODO orientationStyle
+    /**
+     * Sets the transformation matrix's translation, rotation, and scale settings.
+     */
+    Matrix3D.prototype.recompose = function (components) {
+        var pos = components[0] || this.position;
+        this.identity();
+        var scale = components[3];
+        if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
+            this.appendScale(scale.x, scale.y, scale.z);
+        var skew = components[2];
+        if (skew && (skew.x != 0 || skew.y != 0 || skew.z != 0))
+            this.appendSkew(skew.x, skew.y, skew.z);
+        var sin;
+        var cos;
+        var rawData = Matrix3D._tempMatrix._rawData;
+        rawData[12] = 0;
+        rawData[13] = 0;
+        rawData[14] = 0;
+        rawData[15] = 0;
+        var rotation = components[1];
+        if (rotation) {
+            var angle = -rotation.x;
+            if (angle != 0) {
+                sin = Math.sin(angle);
+                cos = Math.cos(angle);
+                rawData[0] = 1;
+                rawData[1] = 0;
+                rawData[2] = 0;
+                rawData[3] = 0;
+                rawData[4] = 0;
+                rawData[5] = cos;
+                rawData[6] = -sin;
+                rawData[7] = 0;
+                rawData[8] = 0;
+                rawData[9] = sin;
+                rawData[10] = cos;
+                rawData[11] = 0;
+                this.append(Matrix3D._tempMatrix);
+            }
+            angle = -rotation.y;
+            if (angle != 0) {
+                sin = Math.sin(angle);
+                cos = Math.cos(angle);
+                rawData[0] = cos;
+                rawData[1] = 0;
+                rawData[2] = sin;
+                rawData[3] = 0;
+                rawData[4] = 0;
+                rawData[5] = 1;
+                rawData[6] = 0;
+                rawData[7] = 0;
+                rawData[8] = -sin;
+                rawData[9] = 0;
+                rawData[10] = cos;
+                rawData[11] = 0;
+                this.append(Matrix3D._tempMatrix);
+            }
+            angle = -rotation.z;
+            if (angle != 0) {
+                sin = Math.sin(angle);
+                cos = Math.cos(angle);
+                rawData[0] = cos;
+                rawData[1] = -sin;
+                rawData[2] = 0;
+                rawData[3] = 0;
+                rawData[4] = sin;
+                rawData[5] = cos;
+                rawData[6] = 0;
+                rawData[7] = 0;
+                rawData[8] = 0;
+                rawData[9] = 0;
+                rawData[10] = 1;
+                rawData[11] = 0;
+                this.append(Matrix3D._tempMatrix);
+            }
+        }
+        this._rawData[12] = pos.x;
+        this._rawData[13] = pos.y;
+        this._rawData[14] = pos.z;
+        if (components[0])
+            this._positionDirty = true;
+        this._rawData[15] = 1;
+        return true;
+    };
+    Matrix3D.prototype.reflect = function (plane) {
+        var a = plane.a, b = plane.b, c = plane.c, d = plane.d;
+        var ab2 = -2 * a * b;
+        var ac2 = -2 * a * c;
+        var bc2 = -2 * b * c;
+        // reflection matrix
+        var rawData = this._rawData;
+        rawData[0] = 1 - 2 * a * a;
+        rawData[4] = ab2;
+        rawData[8] = ac2;
+        rawData[12] = -2 * a * d;
+        rawData[1] = ab2;
+        rawData[5] = 1 - 2 * b * b;
+        rawData[9] = bc2;
+        rawData[13] = -2 * b * d;
+        rawData[2] = ac2;
+        rawData[6] = bc2;
+        rawData[10] = 1 - 2 * c * c;
+        rawData[14] = -2 * c * d;
+        rawData[3] = 0;
+        rawData[7] = 0;
+        rawData[11] = 0;
+        rawData[15] = 1;
+        this._positionDirty = true;
+    };
+    Matrix3D.prototype.transformBox = function (box, target) {
+        if (target === void 0) { target = null; }
+        if (box == null)
+            throw new ArgumentError("ArgumentError, box cannot be null");
+        var minX, minY, minZ;
+        var maxX, maxY, maxZ;
+        maxX = box.width + (minX = box.x);
+        maxY = box.height + (minY = box.y);
+        maxZ = box.depth + (minZ = box.z);
+        if (!target)
+            target = new Box();
+        //TODO: take account of shear
+        target.width = maxX * this._rawData[0] + maxY * this._rawData[4] + maxZ * this._rawData[8] + this._rawData[12] - (target.x = minX * this._rawData[0] + minY * this._rawData[4] + minZ * this._rawData[8] + this._rawData[12]);
+        target.height = maxX * this._rawData[1] + maxY * this._rawData[5] + maxZ * this._rawData[9] + this._rawData[13] - (target.y = minX * this._rawData[1] + minY * this._rawData[5] + minZ * this._rawData[9] + this._rawData[13]);
+        target.depth = maxX * this._rawData[2] + maxY * this._rawData[6] + maxZ * this._rawData[10] + this._rawData[14] - (target.z = minX * this._rawData[2] + minY * this._rawData[6] + minZ * this._rawData[10] + this._rawData[14]);
+        return target;
+    };
+    Matrix3D.prototype.transformVector = function (vector, target) {
+        if (target === void 0) { target = null; }
+        if (vector == null)
+            throw new ArgumentError("ArgumentError, vector cannot be null");
+        var x = vector.x;
+        var y = vector.y;
+        var z = vector.z;
+        var w = vector.w;
+        if (!target)
+            target = new Vector3D();
+        target.x = x * this._rawData[0] + y * this._rawData[4] + z * this._rawData[8] + w * this._rawData[12];
+        target.y = x * this._rawData[1] + y * this._rawData[5] + z * this._rawData[9] + w * this._rawData[13];
+        target.z = x * this._rawData[2] + y * this._rawData[6] + z * this._rawData[10] + w * this._rawData[14];
+        target.w = x * this._rawData[3] + y * this._rawData[7] + z * this._rawData[11] + w * this._rawData[15];
+        return target;
+    };
+    /**
+     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
+     */
+    Matrix3D.prototype.transformVectors = function (vin, vout) {
+        var i = 0;
+        var x = 0, y = 0, z = 0;
+        while (i + 3 <= vin.length) {
+            x = vin[i];
+            y = vin[i + 1];
+            z = vin[i + 2];
+            vout[i] = x * this._rawData[0] + y * this._rawData[4] + z * this._rawData[8] + this._rawData[12];
+            vout[i + 1] = x * this._rawData[1] + y * this._rawData[5] + z * this._rawData[9] + this._rawData[13];
+            vout[i + 2] = x * this._rawData[2] + y * this._rawData[6] + z * this._rawData[10] + this._rawData[14];
+            i += 3;
+        }
+    };
+    /**
+     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
+     */
+    Matrix3D.prototype.transpose = function () {
+        var rawData = Matrix3D._tempMatrix._rawData;
+        this.copyRawDataTo(rawData, 0, true);
+        this._rawData[1] = rawData[1];
+        this._rawData[2] = rawData[2];
+        this._rawData[3] = rawData[3];
+        this._rawData[4] = rawData[4];
+        this._rawData[6] = rawData[6];
+        this._rawData[7] = rawData[7];
+        this._rawData[8] = rawData[8];
+        this._rawData[9] = rawData[9];
+        this._rawData[11] = rawData[11];
+        this._rawData[12] = rawData[12];
+        this._rawData[13] = rawData[13];
+        this._rawData[14] = rawData[14];
+        this._positionDirty = true;
+    };
+    Matrix3D.prototype.invalidatePosition = function () {
+        this._positionDirty = true;
+    };
+    Matrix3D.prototype.toFixed = function (decimalPlace) {
+        var magnitude = Math.pow(10, decimalPlace);
+        return "matrix3d(" + Math.round(this._rawData[0] * magnitude) / magnitude + "," + Math.round(this._rawData[1] * magnitude) / magnitude + "," + Math.round(this._rawData[2] * magnitude) / magnitude + "," + Math.round(this._rawData[3] * magnitude) / magnitude + "," + Math.round(this._rawData[4] * magnitude) / magnitude + "," + Math.round(this._rawData[5] * magnitude) / magnitude + "," + Math.round(this._rawData[6] * magnitude) / magnitude + "," + Math.round(this._rawData[7] * magnitude) / magnitude + "," + Math.round(this._rawData[8] * magnitude) / magnitude + "," + Math.round(this._rawData[9] * magnitude) / magnitude + "," + Math.round(this._rawData[10] * magnitude) / magnitude + "," + Math.round(this._rawData[11] * magnitude) / magnitude + "," + Math.round(this._rawData[12] * magnitude) / magnitude + "," + Math.round(this._rawData[13] * magnitude) / magnitude + "," + Math.round(this._rawData[14] * magnitude) / magnitude + "," + Math.round(this._rawData[15] * magnitude) / magnitude + ")";
+    };
+    Matrix3D.prototype.toString = function () {
+        return "matrix3d(" + Math.round(this._rawData[0] * 1000) / 1000 + "," + Math.round(this._rawData[1] * 1000) / 1000 + "," + Math.round(this._rawData[2] * 1000) / 1000 + "," + Math.round(this._rawData[3] * 1000) / 1000 + "," + Math.round(this._rawData[4] * 1000) / 1000 + "," + Math.round(this._rawData[5] * 1000) / 1000 + "," + Math.round(this._rawData[6] * 1000) / 1000 + "," + Math.round(this._rawData[7] * 1000) / 1000 + "," + Math.round(this._rawData[8] * 1000) / 1000 + "," + Math.round(this._rawData[9] * 1000) / 1000 + "," + Math.round(this._rawData[10] * 1000) / 1000 + "," + Math.round(this._rawData[11] * 1000) / 1000 + "," + Math.round(this._rawData[12] * 1000) / 1000 + "," + Math.round(this._rawData[13] * 1000) / 1000 + "," + Math.round(this._rawData[14] * 1000) / 1000 + "," + Math.round(this._rawData[15] * 1000) / 1000 + ")";
+    };
+    return Matrix3D;
+}());
+/**
+ * A reference to a Matrix3D to be used as a temporary data container, preventing object creation.
+ */
+Matrix3D.CALCULATION_MATRIX = new Matrix3D();
+Matrix3D._tempMatrix = new Matrix3D();
+
+var TransformEvent = (function (_super) {
+    __extends(TransformEvent, _super);
+    function TransformEvent(type, transform) {
+        var _this = _super.call(this, type) || this;
+        _this._transform = transform;
+        return _this;
+    }
+    Object.defineProperty(TransformEvent.prototype, "transform", {
+        /**
+         *
+         * @returns {Transform}
+         */
+        get: function () {
+            return this._transform;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Clones the event.
+     * @return An exact duplicate of the current object.
+     */
+    TransformEvent.prototype.clone = function () {
+        return new TransformEvent(this.type, this._transform);
+    };
+    return TransformEvent;
+}(EventBase));
+/**
+ *
+ */
+TransformEvent.INVALIDATE_MATRIX3D = "invalidateMatrix3D";
+/**
+ *
+ */
+TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D = "invalidateConcatenatedMatrix3D";
+/**
+ *
+ */
+TransformEvent.UPDATE_CONCATENATED_MATRIX3D = "updateConcatenatedMatrix3D";
+/**
+ *
+ */
+TransformEvent.INVALIDATE_COLOR_TRANSFORM = "invalidateColorTransform";
+
+/**
+ * The Transform class provides access to color adjustment properties and two-
+ * or three-dimensional transformation objects that can be applied to a
+ * display object. During the transformation, the color or the orientation and
+ * position of a display object is adjusted(offset) from the current values
+ * or coordinates to new values or coordinates. The Transform class also
+ * collects data about color and two-dimensional matrix transformations that
+ * are applied to a display object and all of its parent objects. You can
+ * access these combined transformations through the
+ * <code>concatenatedColorTransform</code> and <code>concatenatedMatrix</code>
+ * properties.
+ *
+ * <p>To apply color transformations: create a ColorTransform object, set the
+ * color adjustments using the object's methods and properties, and then
+ * assign the <code>colorTransformation</code> property of the
+ * <code>transform</code> property of the display object to the new
+ * ColorTransformation object.</p>
+ *
+ * <p>To apply two-dimensional transformations: create a Matrix object, set
+ * the matrix's two-dimensional transformation, and then assign the
+ * <code>transform.matrix</code> property of the display object to the new
+ * Matrix object.</p>
+ *
+ * <p>To apply three-dimensional transformations: start with a
+ * three-dimensional display object. A three-dimensional display object has a
+ * <code>z</code> property value other than zero. You do not need to create
+ * the Matrix3D object. For all three-dimensional objects, a Matrix3D object
+ * is created automatically when you assign a <code>z</code> value to a
+ * display object. You can access the display object's Matrix3D object through
+ * the display object's <code>transform</code> property. Using the methods of
+ * the Matrix3D class, you can add to or modify the existing transformation
+ * settings. Also, you can create a custom Matrix3D object, set the custom
+ * Matrix3D object's transformation elements, and then assign the new Matrix3D
+ * object to the display object using the <code>transform.matrix</code>
+ * property.</p>
+ *
+ * <p>To modify a perspective projection of the stage or root object: use the
+ * <code>transform.matrix</code> property of the root display object to gain
+ * access to the PerspectiveProjection object. Or, apply different perspective
+ * projection properties to a display object by setting the perspective
+ * projection properties of the display object's parent. The child display
+ * object inherits the new properties. Specifically, create a
+ * PerspectiveProjection object and set its properties, then assign the
+ * PerspectiveProjection object to the <code>perspectiveProjection</code>
+ * property of the parent display object's <code>transform</code> property.
+ * The specified projection transformation then applies to all the display
+ * object's three-dimensional children.</p>
+ *
+ * <p>Since both PerspectiveProjection and Matrix3D objects perform
+ * perspective transformations, do not assign both to a display object at the
+ * same time. Use the PerspectiveProjection object for focal length and
+ * projection center changes. For more control over the perspective
+ * transformation, create a perspective projection Matrix3D object.</p>
+ */
+var Transform = (function (_super) {
+    __extends(Transform, _super);
+    function Transform(rawData, concatenatedMatrix3D) {
+        if (rawData === void 0) { rawData = null; }
+        if (concatenatedMatrix3D === void 0) { concatenatedMatrix3D = null; }
+        var _this = _super.call(this) || this;
+        _this._inverseConcatenatedMatrix3D = new Matrix3D();
+        _this._rotation = new Vector3D();
+        _this._skew = new Vector3D();
+        _this._scale = new Vector3D(1, 1, 1);
+        _this._rawData = rawData || new Float32Array(24);
+        //create the view for matrix3D
+        _this._matrix3D = new Matrix3D(new Float32Array(_this._rawData.buffer, 0, 16));
+        //create the view for colorTransform
+        _this._colorTransform = new ColorTransform(new Float32Array(_this._rawData.buffer, 64, 8));
+        //create the concatenatedMatrix3D if required
+        _this._concatenatedMatrix3D = concatenatedMatrix3D || _this._matrix3D;
+        if (rawData == null) {
+            _this._matrix3D.identity();
+            _this._colorTransform.clear();
+        }
+        // Cached vector of transformation components used when
+        // recomposing the transform matrix in updateTransform()
+        _this._components = new Array(4);
+        _this._components[1] = _this._rotation;
+        _this._components[2] = _this._skew;
+        _this._components[3] = _this._scale;
+        _this.invalidateComponents();
+        return _this;
+    }
+    Object.defineProperty(Transform.prototype, "backVector", {
+        /**
+         *
+         */
+        get: function () {
+            if (!this._backVector)
+                this._backVector = new Vector3D();
+            this._matrix3D.copyColumnTo(2, this._backVector, true);
+            return this._backVector;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "colorTransform", {
+        /**
+         * A ColorTransform object containing values that universally adjust the
+         * colors in the display object.
+         *
+         * @throws TypeError The colorTransform is null when being set
+         */
+        get: function () {
+            return this._colorTransform;
+        },
+        set: function (val) {
+            var sourceData = val._rawData, targetData = this._matrix3D._rawData;
+            targetData[0] = sourceData[0];
+            targetData[1] = sourceData[1];
+            targetData[2] = sourceData[2];
+            targetData[3] = sourceData[3];
+            targetData[4] = sourceData[4];
+            targetData[5] = sourceData[5];
+            targetData[6] = sourceData[6];
+            targetData[7] = sourceData[7];
+            this.invalidateColorTransform();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "concatenatedMatrix3D", {
+        /**
+         * A Matrix object representing the combined transformation matrixes of the
+         * display object and all of its parent objects, back to the root level. If
+         * different transformation matrixes have been applied at different levels,
+         * all of those matrixes are concatenated into one matrix for this property.
+         * Also, for resizeable SWF content running in the browser, this property
+         * factors in the difference between stage coordinates and window coordinates
+         * due to window resizing. Thus, the property converts local coordinates to
+         * window coordinates, which may not be the same coordinate space as that of
+         * the Scene.
+         */
+        get: function () {
+            if (this._concatenatedMatrix3DDirty) {
+                this._concatenatedMatrix3DDirty = false;
+                this.dispatchEvent(this._updateConcatenatedMatrix3D || (this._updateConcatenatedMatrix3D = new TransformEvent(TransformEvent.UPDATE_CONCATENATED_MATRIX3D, this)));
+            }
+            return this._concatenatedMatrix3D;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "inverseConcatenatedMatrix3D", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._inverseConcatenatedMatrix3DDirty) {
+                this._inverseConcatenatedMatrix3DDirty = false;
+                this._inverseConcatenatedMatrix3D.copyFrom(this.concatenatedMatrix3D);
+                this._inverseConcatenatedMatrix3D.invert();
+            }
+            return this._inverseConcatenatedMatrix3D;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "downVector", {
+        /**
+         *
+         */
+        get: function () {
+            if (!this._downVector)
+                this._downVector = new Vector3D();
+            this._matrix3D.copyColumnTo(1, this._downVector, true);
+            return this._downVector;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "forwardVector", {
+        /**
+         *
+         */
+        get: function () {
+            if (!this._forwardVector)
+                this._forwardVector = new Vector3D();
+            this._matrix3D.copyColumnTo(2, this._forwardVector);
+            return this._forwardVector;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "leftVector", {
+        /**
+         *
+         */
+        get: function () {
+            if (!this._leftVector)
+                this._leftVector = new Vector3D();
+            this._matrix3D.copyColumnTo(0, this._backVector, true);
+            return this._leftVector;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "matrix3D", {
+        /**
+         * Provides access to the Matrix3D object of a three-dimensional display
+         * object. The Matrix3D object represents a transformation matrix that
+         * determines the display object's position and orientation. A Matrix3D
+         * object can also perform perspective projection.
+         *
+         * <p>If the <code>matrix</code> property is set to a value(not
+         * <code>null</code>), the <code>matrix3D</code> property is
+         * <code>null</code>. And if the <code>matrix3D</code> property is set to a
+         * value(not <code>null</code>), the <code>matrix</code> property is
+         * <code>null</code>.</p>
+         */
+        get: function () {
+            if (this._matrix3DDirty)
+                this.updateMatrix3D();
+            return this._matrix3D;
+        },
+        set: function (val) {
+            var sourceData = val._rawData, targetData = this._matrix3D._rawData;
+            targetData[0] = sourceData[0];
+            targetData[1] = sourceData[1];
+            targetData[2] = sourceData[2];
+            targetData[3] = sourceData[3];
+            targetData[4] = sourceData[4];
+            targetData[5] = sourceData[5];
+            targetData[6] = sourceData[6];
+            targetData[7] = sourceData[7];
+            targetData[8] = sourceData[8];
+            targetData[9] = sourceData[9];
+            targetData[10] = sourceData[10];
+            targetData[11] = sourceData[11];
+            targetData[12] = sourceData[12];
+            targetData[13] = sourceData[13];
+            targetData[14] = sourceData[14];
+            targetData[15] = sourceData[15];
+            this.invalidateComponents();
+            this.invalidateConcatenatedMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "pixelBounds", {
+        /**
+         * A Rectangle object that defines the bounding rectangle of the display
+         * object on the stage.
+         */
+        get: function () {
+            return this._pixelBounds;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "position", {
+        /**
+         * Defines the position of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+         */
+        get: function () {
+            return this._matrix3D.position;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "rightVector", {
+        /**
+         *
+         */
+        get: function () {
+            if (!this._rightVector)
+                this._rightVector = new Vector3D();
+            this._matrix3D.copyColumnTo(0, this._rightVector);
+            return this._rightVector;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Transform.prototype, "rotation", {
+        /**
+         * Defines the rotation of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+         */
+        get: function () {
+            if (this._componentsDirty)
+                this._updateComponents();
+            return this._rotation;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Rotates the 3d object directly to a euler angle
+     *
+     * @param    ax        The angle in degrees of the rotation around the x axis.
+     * @param    ay        The angle in degrees of the rotation around the y axis.
+     * @param    az        The angle in degrees of the rotation around the z axis.
+     */
+    Transform.prototype.rotateTo = function (ax, ay, az) {
+        if (this._componentsDirty)
+            this._updateComponents();
+        this._rotation.x = ax;
+        this._rotation.y = ay;
+        this._rotation.z = az;
+        this.invalidateMatrix3D();
+    };
+    Object.defineProperty(Transform.prototype, "scale", {
+        /**
+         * Defines the scale of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+         */
+        get: function () {
+            if (this._componentsDirty)
+                this._updateComponents();
+            return this._scale;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Transform.prototype.scaleTo = function (sx, sy, sz) {
+        if (this._componentsDirty)
+            this._updateComponents();
+        this._scale.x = sx;
+        this._scale.y = sy;
+        this._scale.z = sz;
+        this.invalidateMatrix3D();
+    };
+    Object.defineProperty(Transform.prototype, "skew", {
+        /**
+         * Defines the scale of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+         */
+        get: function () {
+            if (this._componentsDirty)
+                this._updateComponents();
+            return this._skew;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Transform.prototype.skewTo = function (sx, sy, sz) {
+        if (this._componentsDirty)
+            this._updateComponents();
+        this._skew.x = sx;
+        this._skew.y = sy;
+        this._skew.z = sz;
+        this.invalidateMatrix3D();
+    };
+    Object.defineProperty(Transform.prototype, "upVector", {
+        /**
+         *
+         */
+        get: function () {
+            if (!this._upVector)
+                this._upVector = new Vector3D();
+            this._matrix3D.copyColumnTo(1, this._upVector);
+            return this._upVector;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Transform.prototype.copyRawDataTo = function (transform) {
+        if (this._matrix3DDirty)
+            this.updateMatrix3D();
+        var targetData = transform._rawData;
+        var sourceData = this._rawData;
+        //Matrix3D data
+        targetData[0] = sourceData[0];
+        targetData[1] = sourceData[1];
+        targetData[2] = sourceData[2];
+        targetData[3] = sourceData[3];
+        targetData[4] = sourceData[4];
+        targetData[5] = sourceData[5];
+        targetData[6] = sourceData[6];
+        targetData[7] = sourceData[7];
+        targetData[8] = sourceData[8];
+        targetData[9] = sourceData[9];
+        targetData[10] = sourceData[10];
+        targetData[11] = sourceData[11];
+        targetData[12] = sourceData[12];
+        targetData[13] = sourceData[13];
+        targetData[14] = sourceData[14];
+        targetData[15] = sourceData[15];
+        //ColorTransform data
+        targetData[16] = sourceData[16];
+        targetData[17] = sourceData[17];
+        targetData[18] = sourceData[18];
+        targetData[19] = sourceData[19];
+        targetData[20] = sourceData[20];
+        targetData[21] = sourceData[21];
+        targetData[22] = sourceData[22];
+        targetData[23] = sourceData[23];
+        this.invalidateComponents();
+        this.invalidateColorTransform();
+    };
+    Transform.prototype.clone = function () {
+        var transform = new Transform();
+        this.copyRawDataTo(transform);
+        return transform;
+    };
+    Transform.prototype.dispose = function () {
+    };
+    /**
+     * Moves the 3d object forwards along it's local z axis
+     *
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.moveForward = function (distance) {
+        this.translateLocal(Vector3D.Z_AXIS, distance);
+    };
+    /**
+     * Moves the 3d object backwards along it's local z axis
+     *
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.moveBackward = function (distance) {
+        this.translateLocal(Vector3D.Z_AXIS, -distance);
+    };
+    /**
+     * Moves the 3d object backwards along it's local x axis
+     *
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.moveLeft = function (distance) {
+        this.translateLocal(Vector3D.X_AXIS, -distance);
+    };
+    /**
+     * Moves the 3d object forwards along it's local x axis
+     *
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.moveRight = function (distance) {
+        this.translateLocal(Vector3D.X_AXIS, distance);
+    };
+    /**
+     * Moves the 3d object forwards along it's local y axis
+     *
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.moveUp = function (distance) {
+        this.translateLocal(Vector3D.Y_AXIS, distance);
+    };
+    /**
+     * Moves the 3d object backwards along it's local y axis
+     *
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.moveDown = function (distance) {
+        this.translateLocal(Vector3D.Y_AXIS, -distance);
+    };
+    /**
+     * Moves the 3d object directly to a point in space
+     *
+     * @param    dx        The amount of movement along the local x axis.
+     * @param    dy        The amount of movement along the local y axis.
+     * @param    dz        The amount of movement along the local z axis.
+     */
+    Transform.prototype.moveTo = function (dx, dy, dz) {
+        this._matrix3D._rawData[12] = dx;
+        this._matrix3D._rawData[13] = dy;
+        this._matrix3D._rawData[14] = dz;
+        this.invalidatePosition();
+    };
+    /**
+     * Rotates the 3d object around it's local x-axis
+     *
+     * @param    angle        The amount of rotation in degrees
+     */
+    Transform.prototype.pitch = function (angle) {
+        this.rotate(Vector3D.X_AXIS, angle);
+    };
+    /**
+     * Rotates the 3d object around it's local z-axis
+     *
+     * @param    angle        The amount of rotation in degrees
+     */
+    Transform.prototype.roll = function (angle) {
+        this.rotate(Vector3D.Z_AXIS, angle);
+    };
+    /**
+     * Rotates the 3d object around it's local y-axis
+     *
+     * @param    angle        The amount of rotation in degrees
+     */
+    Transform.prototype.yaw = function (angle) {
+        this.rotate(Vector3D.Y_AXIS, angle);
+    };
+    /**
+     * Rotates the 3d object around an axis by a defined angle
+     *
+     * @param    axis        The vector defining the axis of rotation
+     * @param    angle        The amount of rotation in degrees
+     */
+    Transform.prototype.rotate = function (axis, angle) {
+        this.matrix3D.prependRotation(angle, axis);
+        this.invalidateComponents();
+    };
+    /**
+     * Moves the 3d object along a vector by a defined length
+     *
+     * @param    axis        The vector defining the axis of movement
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.translate = function (axis, distance) {
+        var x = axis.x, y = axis.y, z = axis.z;
+        var len = distance / Math.sqrt(x * x + y * y + z * z);
+        this.matrix3D.appendTranslation(x * len, y * len, z * len);
+        this.invalidatePosition();
+    };
+    /**
+     * Moves the 3d object along a vector by a defined length
+     *
+     * @param    axis        The vector defining the axis of movement
+     * @param    distance    The length of the movement
+     */
+    Transform.prototype.translateLocal = function (axis, distance) {
+        var x = axis.x, y = axis.y, z = axis.z;
+        var len = distance / Math.sqrt(x * x + y * y + z * z);
+        this.matrix3D.prependTranslation(x * len, y * len, z * len);
+        this.invalidatePosition();
+    };
+    Transform.prototype.clearMatrix3D = function () {
+        this._matrix3D.identity();
+        this.invalidateComponents();
+    };
+    Transform.prototype.clearColorTransform = function () {
+        if (!this._colorTransform)
+            return;
+        this._colorTransform.clear();
+        this.invalidateColorTransform();
+    };
+    /**
+     * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
+     *
+     * @private
+     */
+    Transform.prototype.invalidateMatrix3D = function () {
+        this._matrix3DDirty = true;
+        this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this)));
+    };
+    Transform.prototype.invalidateComponents = function () {
+        this.invalidatePosition();
+        this._componentsDirty = true;
+    };
+    Transform.prototype.invalidateConcatenatedMatrix3D = function () {
+        this._concatenatedMatrix3DDirty = true;
+        this._inverseConcatenatedMatrix3DDirty = true;
+        this.dispatchEvent(this._invalidateConcatenatedMatrix3D || (this._invalidateConcatenatedMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this)));
+    };
+    /**
+     *
+     */
+    Transform.prototype.invalidatePosition = function () {
+        this._matrix3D.invalidatePosition();
+        this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this)));
+    };
+    Transform.prototype.invalidateColorTransform = function () {
+        this.dispatchEvent(this._invalidateColorTransform || (this._invalidateColorTransform = new TransformEvent(TransformEvent.INVALIDATE_COLOR_TRANSFORM, this)));
+    };
+    /**
+     *
+     */
+    Transform.prototype.updateMatrix3D = function () {
+        this._matrix3D.recompose(this._components);
+        this._matrix3DDirty = false;
+    };
+    Transform.prototype._updateComponents = function () {
+        var elements = this._matrix3D.decompose();
+        var vec;
+        vec = elements[1];
+        this._rotation.x = vec.x;
+        this._rotation.y = vec.y;
+        this._rotation.z = vec.z;
+        vec = elements[2];
+        this._skew.x = vec.x;
+        this._skew.y = vec.y;
+        this._skew.z = vec.z;
+        vec = elements[3];
+        this._scale.x = vec.x;
+        this._scale.y = vec.y;
+        this._scale.z = vec.z;
+        this._componentsDirty = false;
+    };
+    return Transform;
+}(EventDispatcher));
+
+var DocumentError = (function (_super) {
+    __extends(DocumentError, _super);
+    function DocumentError(message, id) {
+        if (message === void 0) { message = "DocumentError"; }
+        if (id === void 0) { id = 0; }
+        return _super.call(this, message, id) || this;
+    }
+    return DocumentError;
+}(ErrorBase));
+DocumentError.DOCUMENT_DOES_NOT_EXIST = "documentDoesNotExist";
+
+/**
+ * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+ * by a concrete subclass.
+ */
+var PartialImplementationError = (function (_super) {
+    __extends(PartialImplementationError, _super);
+    /**
+     * Create a new AbstractMethodError.
+     * @param message An optional message to override the default error message.
+     * @param id The id of the error.
+     */
+    function PartialImplementationError(dependency, id) {
+        if (dependency === void 0) { dependency = ''; }
+        if (id === void 0) { id = 0; }
+        return _super.call(this, "PartialImplementationError - this function is in development. Required Dependency: " + dependency, id) || this;
+    }
+    return PartialImplementationError;
+}(ErrorBase));
+
+/**
+ * RangeError is thrown when an index is accessed out of range of the number of
+ * available indices on an Array.
+ */
+var RangeError = (function (_super) {
+    __extends(RangeError, _super);
+    /**
+     * Create a new RangeError.
+     *
+     * @param message An optional message to override the default error message.
+     * @param id The id of the error.
+     */
+    function RangeError(message, id) {
+        if (message === void 0) { message = null; }
+        if (id === void 0) { id = 0; }
+        return _super.call(this, message || "RangeError", id) || this;
+    }
+    return RangeError;
+}(ErrorBase));
+
+var LoaderEvent = (function (_super) {
+    __extends(LoaderEvent, _super);
+    /**
+     * Create a new LoaderEvent object.
+     *
+     * @param type The event type.
+     * @param url The url of the loaded resource.
+     * @param assets The assets of the loaded resource.
+     */
+    function LoaderEvent(type, url, content, assets) {
+        if (url === void 0) { url = null; }
+        if (content === void 0) { content = null; }
+        if (assets === void 0) { assets = null; }
+        var _this = _super.call(this, type) || this;
+        _this._url = url;
+        _this._content = content;
+        _this._assets = assets;
+        return _this;
+    }
+    Object.defineProperty(LoaderEvent.prototype, "content", {
+        /**
+         * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+         */
+        get: function () {
+            return this._content;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderEvent.prototype, "url", {
+        /**
+         * The url of the loaded resource.
+         */
+        get: function () {
+            return this._url;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderEvent.prototype, "assets", {
+        /**
+         * The error string on loadError.
+         */
+        get: function () {
+            return this._assets;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Clones the current event.
+     * @return An exact duplicate of the current event.
+     */
+    LoaderEvent.prototype.clone = function () {
+        return new LoaderEvent(this.type, this._url, this._content, this._assets);
+    };
+    return LoaderEvent;
+}(EventBase));
+/**
+ * Dispatched when the loading of a session and all of its dependencies is complete.
+ */
+LoaderEvent.LOAD_COMPLETE = "loadComplete";
+
+var ParserEvent = (function (_super) {
+    __extends(ParserEvent, _super);
+    function ParserEvent(type, message) {
+        if (message === void 0) { message = ''; }
+        var _this = _super.call(this, type) || this;
+        _this._message = message;
+        return _this;
+    }
+    Object.defineProperty(ParserEvent.prototype, "message", {
+        /**
+         * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
+         */
+        get: function () {
+            return this._message;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ParserEvent.prototype.clone = function () {
+        return new ParserEvent(this.type, this._message);
+    };
+    return ParserEvent;
+}(EventBase));
+/**
+ * Dispatched when parsing of an asset completed.
+ */
+ParserEvent.PARSE_COMPLETE = 'parseComplete';
+/**
+ * Dispatched when an error occurs while parsing the data (e.g. because it's
+ * incorrectly formatted.)
+ */
+ParserEvent.PARSE_ERROR = 'parseError';
+/**
+ * Dispatched when a parser is ready to have dependencies retrieved and resolved.
+ * This is an internal event that should rarely (if ever) be listened for by
+ * external classes.
+ */
+ParserEvent.READY_FOR_DEPENDENCIES = 'readyForDependencies';
+
+var ProjectionEvent = (function (_super) {
+    __extends(ProjectionEvent, _super);
+    function ProjectionEvent(type, projection) {
+        var _this = _super.call(this, type) || this;
+        _this._projection = projection;
+        return _this;
+    }
+    Object.defineProperty(ProjectionEvent.prototype, "projection", {
+        get: function () {
+            return this._projection;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ProjectionEvent;
+}(EventBase));
+ProjectionEvent.MATRIX_CHANGED = "matrixChanged";
+
+var TimerEvent = (function (_super) {
+    __extends(TimerEvent, _super);
+    function TimerEvent(type) {
+        return _super.call(this, type) || this;
+    }
+    return TimerEvent;
+}(EventBase));
+/**
+ *
+ */
+TimerEvent.TIMER = "timer";
+/**
+ *
+ */
+TimerEvent.TIMER_COMPLETE = "timerComplete";
+
+var URLLoaderEvent = (function (_super) {
+    __extends(URLLoaderEvent, _super);
+    function URLLoaderEvent(type, urlLoader) {
+        var _this = _super.call(this, type) || this;
+        _this._urlLoader = urlLoader;
+        return _this;
+    }
+    Object.defineProperty(URLLoaderEvent.prototype, "urlLoader", {
+        /**
+         *
+         */
+        get: function () {
+            return this._urlLoader;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     */
+    URLLoaderEvent.prototype.clone = function () {
+        return new URLLoaderEvent(this.type, this._urlLoader);
+    };
+    return URLLoaderEvent;
+}(EventBase));
+URLLoaderEvent.HTTP_STATUS = "httpStatus";
+URLLoaderEvent.LOAD_ERROR = "loadError";
+URLLoaderEvent.LOAD_PROGRESS = "loadProgress";
+URLLoaderEvent.LOAD_START = "loadStart";
+URLLoaderEvent.LOAD_COMPLETE = "loadComplete";
 
 /**
  * The Point object represents a location in a two-dimensional coordinate
@@ -3848,1044 +5510,6 @@ var Matrix = (function () {
     };
     return Matrix;
 }());
-
-/**
- * A Quaternion object which can be used to represent rotations.
- */
-var Orientation3D = (function () {
-    function Orientation3D() {
-    }
-    return Orientation3D;
-}());
-/**
- * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
- * @type {string}
- */
-Orientation3D.AXIS_ANGLE = "axisAngle";
-/**
- * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
- * @type {string}
- */
-Orientation3D.EULER_ANGLES = "eulerAngles";
-/**
- * The quaternion orientation uses complex numbers.
- * @type {string}
- */
-Orientation3D.QUATERNION = "quaternion";
-
-var Matrix3D = (function () {
-    /**
-     * Creates a Matrix3D object.
-     */
-    function Matrix3D(rawData) {
-        if (rawData === void 0) { rawData = null; }
-        this._position = new Vector3D();
-        this._positionDirty = true;
-        if (rawData != null) {
-            this._rawData = rawData;
-        }
-        else {
-            this._rawData = new Float32Array(16);
-            this.identity();
-        }
-    }
-    Matrix3D.getAxisRotationMatrix = function (x, y, z, degrees, target) {
-        if (target === void 0) { target = null; }
-        if (target == null)
-            target = new Matrix3D();
-        var targetData = target._rawData;
-        var rad = degrees * MathConsts.DEGREES_TO_RADIANS;
-        var c = Math.cos(rad);
-        var s = Math.sin(rad);
-        var t = 1 - c;
-        var tmp1, tmp2;
-        targetData[0] = c + x * x * t;
-        targetData[5] = c + y * y * t;
-        targetData[10] = c + z * z * t;
-        tmp1 = x * y * t;
-        tmp2 = z * s;
-        targetData[1] = tmp1 + tmp2;
-        targetData[4] = tmp1 - tmp2;
-        tmp1 = x * z * t;
-        tmp2 = y * s;
-        targetData[8] = tmp1 + tmp2;
-        targetData[2] = tmp1 - tmp2;
-        tmp1 = y * z * t;
-        tmp2 = x * s;
-        targetData[9] = tmp1 - tmp2;
-        targetData[6] = tmp1 + tmp2;
-        targetData[3] = 0;
-        targetData[7] = 0;
-        targetData[11] = 0;
-        targetData[12] = 0;
-        targetData[13] = 0;
-        targetData[14] = 0;
-        targetData[15] = 1;
-        target.invalidatePosition();
-        return target;
-    };
-    Matrix3D.getPointAtMatrix = function (pos, dir, up, target) {
-        if (target === void 0) { target = null; }
-        var dirN;
-        var upN;
-        var lftN;
-        if (target == null)
-            target = new Matrix3D();
-        var targetData = target._rawData;
-        dirN = dir.clone();
-        dirN.normalize();
-        upN = up.clone();
-        upN.normalize();
-        lftN = upN.crossProduct(dirN);
-        lftN.normalize();
-        if (lftN.length < 0.05) {
-            lftN.x = upN.y;
-            lftN.y = upN.x;
-            lftN.z = 0;
-            lftN.normalize();
-        }
-        upN = dirN.crossProduct(lftN);
-        targetData[0] = lftN.x;
-        targetData[1] = lftN.y;
-        targetData[2] = lftN.z;
-        targetData[3] = 0;
-        targetData[4] = upN.x;
-        targetData[5] = upN.y;
-        targetData[6] = upN.z;
-        targetData[7] = 0;
-        targetData[8] = dirN.x;
-        targetData[9] = dirN.y;
-        targetData[10] = dirN.z;
-        targetData[11] = 0;
-        targetData[12] = lftN.dotProduct(pos);
-        targetData[13] = upN.dotProduct(pos);
-        targetData[14] = dirN.dotProduct(pos);
-        targetData[15] = 1;
-        target.invalidatePosition();
-        return target;
-    };
-    /**
-     * Fills the 3d matrix with values representing the transformation made by the given quaternion.
-     *
-     * @param    quarternion    The quarterion object to convert.
-     */
-    Matrix3D.getQuaternionMatrix = function (quarternion, target) {
-        if (target === void 0) { target = null; }
-        if (target == null)
-            target = new Matrix3D();
-        var targetData = target._rawData;
-        var x = quarternion.x;
-        var y = quarternion.y;
-        var z = quarternion.z;
-        var w = quarternion.w;
-        var xx = x * x;
-        var xy = x * y;
-        var xz = x * z;
-        var xw = x * w;
-        var yy = y * y;
-        var yz = y * z;
-        var yw = y * w;
-        var zz = z * z;
-        var zw = z * w;
-        targetData[0] = 1 - 2 * (yy + zz);
-        targetData[1] = 2 * (xy + zw);
-        targetData[2] = 2 * (xz - yw);
-        targetData[4] = 2 * (xy - zw);
-        targetData[5] = 1 - 2 * (xx + zz);
-        targetData[6] = 2 * (yz + xw);
-        targetData[8] = 2 * (xz + yw);
-        targetData[9] = 2 * (yz - xw);
-        targetData[10] = 1 - 2 * (xx + yy);
-        targetData[3] = 0;
-        targetData[7] = 0;
-        targetData[11] = 0;
-        targetData[12] = 0;
-        targetData[13] = 0;
-        targetData[14] = 0;
-        targetData[15] = 1;
-        target.invalidatePosition();
-        return target;
-    };
-    /**
-     * Returns a boolean value representing whether there is any difference between the two given 3d matrices.
-     */
-    Matrix3D.compare = function (m1, m2) {
-        var r1 = m1._rawData;
-        var r2 = m2._rawData;
-        for (var i = 0; i < 16; ++i)
-            if (r1[i] != r2[i])
-                return false;
-        return true;
-    };
-    Object.defineProperty(Matrix3D.prototype, "determinant", {
-        /**
-         * [read-only] A number that determines whether a matrix is invertible.
-         */
-        get: function () {
-            return ((this._rawData[0] * this._rawData[5] - this._rawData[4] * this._rawData[1]) * (this._rawData[10] * this._rawData[15] - this._rawData[14] * this._rawData[11]) - (this._rawData[0] * this._rawData[9] - this._rawData[8] * this._rawData[1]) * (this._rawData[6] * this._rawData[15] - this._rawData[14] * this._rawData[7]) + (this._rawData[0] * this._rawData[13] - this._rawData[12] * this._rawData[1]) * (this._rawData[6] * this._rawData[11] - this._rawData[10] * this._rawData[7]) + (this._rawData[4] * this._rawData[9] - this._rawData[8] * this._rawData[5]) * (this._rawData[2] * this._rawData[15] - this._rawData[14] * this._rawData[3]) - (this._rawData[4] * this._rawData[13] - this._rawData[12] * this._rawData[5]) * (this._rawData[2] * this._rawData[11] - this._rawData[10] * this._rawData[3]) + (this._rawData[8] * this._rawData[13] - this._rawData[12] * this._rawData[9]) * (this._rawData[2] * this._rawData[7] - this._rawData[6] * this._rawData[3]));
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Matrix3D.prototype, "position", {
-        /**
-         * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
-         * transformation's frame of reference.
-         */
-        get: function () {
-            if (this._positionDirty) {
-                this._positionDirty = false;
-                this._position.x = this._rawData[12];
-                this._position.y = this._rawData[13];
-                this._position.z = this._rawData[14];
-            }
-            return this._position;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
-     */
-    Matrix3D.prototype.append = function (lhs) {
-        var lrd = lhs._rawData;
-        var m111 = this._rawData[0];
-        var m112 = this._rawData[1];
-        var m113 = this._rawData[2];
-        var m114 = this._rawData[3];
-        var m121 = this._rawData[4];
-        var m122 = this._rawData[5];
-        var m123 = this._rawData[6];
-        var m124 = this._rawData[7];
-        var m131 = this._rawData[8];
-        var m132 = this._rawData[9];
-        var m133 = this._rawData[10];
-        var m134 = this._rawData[11];
-        var m141 = this._rawData[12];
-        var m142 = this._rawData[13];
-        var m143 = this._rawData[14];
-        var m144 = this._rawData[15];
-        var m211 = lrd[0];
-        var m212 = lrd[1];
-        var m213 = lrd[2];
-        var m214 = lrd[3];
-        var m221 = lrd[4];
-        var m222 = lrd[5];
-        var m223 = lrd[6];
-        var m224 = lrd[7];
-        var m231 = lrd[8];
-        var m232 = lrd[9];
-        var m233 = lrd[10];
-        var m234 = lrd[11];
-        var m241 = lrd[12];
-        var m242 = lrd[13];
-        var m243 = lrd[14];
-        var m244 = lrd[15];
-        this._rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
-        this._rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
-        this._rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
-        this._rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
-        this._rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
-        this._rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
-        this._rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
-        this._rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
-        this._rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
-        this._rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
-        this._rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
-        this._rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
-        this._rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
-        this._rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
-        this._rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
-        this._rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
-        this._positionDirty = true;
-    };
-    /**
-     * Appends an incremental rotation to a Matrix3D object.
-     */
-    Matrix3D.prototype.appendRotation = function (degrees, axis) {
-        this.append(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
-    };
-    /**
-     * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
-     */
-    Matrix3D.prototype.appendSkew = function (xSkew, ySkew, zSkew) {
-        if (xSkew == 0 && ySkew == 0 && zSkew == 0)
-            return;
-        var rawData = Matrix3D._tempMatrix._rawData;
-        rawData[0] = 1;
-        rawData[1] = 0;
-        rawData[2] = 0;
-        rawData[3] = 0;
-        rawData[4] = xSkew;
-        rawData[5] = 1;
-        rawData[6] = 0;
-        rawData[7] = 0;
-        rawData[8] = ySkew;
-        rawData[9] = zSkew;
-        rawData[10] = 1;
-        rawData[11] = 0;
-        rawData[12] = 0;
-        rawData[13] = 0;
-        rawData[14] = 0;
-        rawData[15] = 1;
-        this.append(Matrix3D._tempMatrix);
-    };
-    /**
-     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-     */
-    Matrix3D.prototype.appendScale = function (xScale, yScale, zScale) {
-        if (xScale == 1 && yScale == 1 && zScale == 1)
-            return;
-        var rawData = Matrix3D._tempMatrix._rawData;
-        rawData[0] = xScale;
-        rawData[1] = 0;
-        rawData[2] = 0;
-        rawData[3] = 0;
-        rawData[4] = 0;
-        rawData[5] = yScale;
-        rawData[6] = 0;
-        rawData[7] = 0;
-        rawData[8] = 0;
-        rawData[9] = 0;
-        rawData[10] = zScale;
-        rawData[11] = 0;
-        rawData[12] = 0;
-        rawData[13] = 0;
-        rawData[14] = 0;
-        rawData[15] = 1;
-        this.append(Matrix3D._tempMatrix);
-    };
-    /**
-     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-     */
-    Matrix3D.prototype.appendTranslation = function (x, y, z) {
-        this._rawData[12] += x;
-        this._rawData[13] += y;
-        this._rawData[14] += z;
-        this._positionDirty = true;
-    };
-    /**
-     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
-     */
-    Matrix3D.prototype.clone = function () {
-        var matrix3D = new Matrix3D();
-        matrix3D.copyFrom(this);
-        return matrix3D;
-    };
-    /**
-     * Copies a Vector3D object into specific column of the calling Matrix3D object.
-     */
-    Matrix3D.prototype.copyColumnFrom = function (column, vector3D) {
-        if (column < 0 || column > 3)
-            throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
-        column *= 4;
-        this._rawData[column] = vector3D.x;
-        this._rawData[column + 1] = vector3D.y;
-        this._rawData[column + 2] = vector3D.z;
-        this._rawData[column + 3] = vector3D.w;
-        this._positionDirty = true;
-    };
-    /**
-     * Copies specific column of the calling Matrix3D object into the Vector3D object.
-     */
-    Matrix3D.prototype.copyColumnTo = function (column, vector3D, negate) {
-        if (negate === void 0) { negate = false; }
-        if (column < 0 || column > 3)
-            throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
-        column *= 4;
-        var sourceData = this._rawData;
-        if (negate) {
-            vector3D.x = -sourceData[column];
-            vector3D.y = -sourceData[column + 1];
-            vector3D.z = -sourceData[column + 2];
-            vector3D.w = -sourceData[column + 3];
-        }
-        else {
-            vector3D.x = sourceData[column];
-            vector3D.y = sourceData[column + 1];
-            vector3D.z = sourceData[column + 2];
-            vector3D.w = sourceData[column + 3];
-        }
-    };
-    /**
-     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
-     */
-    Matrix3D.prototype.copyFrom = function (source, transpose) {
-        if (transpose === void 0) { transpose = false; }
-        var sourceData = source._rawData, targetData = this._rawData;
-        targetData[0] = sourceData[0];
-        targetData[5] = sourceData[5];
-        targetData[10] = sourceData[10];
-        targetData[15] = sourceData[15];
-        if (transpose) {
-            targetData[1] = sourceData[4];
-            targetData[2] = sourceData[8];
-            targetData[3] = sourceData[12];
-            targetData[4] = sourceData[1];
-            targetData[6] = sourceData[9];
-            targetData[7] = sourceData[13];
-            targetData[8] = sourceData[2];
-            targetData[9] = sourceData[6];
-            targetData[11] = sourceData[14];
-            targetData[12] = sourceData[3];
-            targetData[13] = sourceData[7];
-            targetData[14] = sourceData[11];
-        }
-        else {
-            targetData[1] = sourceData[1];
-            targetData[2] = sourceData[2];
-            targetData[3] = sourceData[3];
-            targetData[4] = sourceData[4];
-            targetData[6] = sourceData[6];
-            targetData[7] = sourceData[7];
-            targetData[8] = sourceData[8];
-            targetData[9] = sourceData[9];
-            targetData[11] = sourceData[11];
-            targetData[12] = sourceData[12];
-            targetData[13] = sourceData[13];
-            targetData[14] = sourceData[14];
-        }
-        this._positionDirty = true;
-    };
-    /**
-     * Copies this Matrix3D object into a destination Matrix3D object.
-     */
-    Matrix3D.prototype.copyTo = function (target, transpose) {
-        if (transpose === void 0) { transpose = false; }
-        target.copyFrom(this, transpose);
-    };
-    Matrix3D.prototype.copyRawDataFrom = function (sourceData, offset, transpose) {
-        if (offset === void 0) { offset = 0; }
-        if (transpose === void 0) { transpose = false; }
-        var targetData = this._rawData;
-        targetData[0] = sourceData[offset + 0];
-        targetData[5] = sourceData[offset + 5];
-        targetData[10] = sourceData[offset + 10];
-        targetData[15] = sourceData[offset + 15];
-        if (transpose) {
-            targetData[offset + 1] = sourceData[4];
-            targetData[offset + 2] = sourceData[8];
-            targetData[offset + 3] = sourceData[12];
-            targetData[offset + 4] = sourceData[1];
-            targetData[offset + 6] = sourceData[9];
-            targetData[offset + 7] = sourceData[13];
-            targetData[offset + 8] = sourceData[2];
-            targetData[offset + 9] = sourceData[6];
-            targetData[offset + 11] = sourceData[14];
-            targetData[offset + 12] = sourceData[3];
-            targetData[offset + 13] = sourceData[7];
-            targetData[offset + 14] = sourceData[11];
-        }
-        else {
-            targetData[1] = sourceData[offset + 1];
-            targetData[2] = sourceData[offset + 2];
-            targetData[3] = sourceData[offset + 3];
-            targetData[4] = sourceData[offset + 4];
-            targetData[6] = sourceData[offset + 6];
-            targetData[7] = sourceData[offset + 7];
-            targetData[8] = sourceData[offset + 8];
-            targetData[9] = sourceData[offset + 9];
-            targetData[11] = sourceData[offset + 11];
-            targetData[12] = sourceData[offset + 12];
-            targetData[13] = sourceData[offset + 13];
-            targetData[14] = sourceData[offset + 14];
-        }
-        this._positionDirty = true;
-    };
-    Matrix3D.prototype.copyRawDataTo = function (targetData, offset, transpose) {
-        if (offset === void 0) { offset = 0; }
-        if (transpose === void 0) { transpose = false; }
-        var sourceData = this._rawData;
-        targetData[offset] = sourceData[0];
-        targetData[offset + 5] = sourceData[5];
-        targetData[offset + 10] = sourceData[10];
-        targetData[offset + 15] = sourceData[15];
-        if (transpose) {
-            targetData[offset + 1] = sourceData[4];
-            targetData[offset + 2] = sourceData[8];
-            targetData[offset + 3] = sourceData[12];
-            targetData[offset + 4] = sourceData[1];
-            targetData[offset + 6] = sourceData[9];
-            targetData[offset + 7] = sourceData[13];
-            targetData[offset + 8] = sourceData[2];
-            targetData[offset + 9] = sourceData[6];
-            targetData[offset + 11] = sourceData[14];
-            targetData[offset + 12] = sourceData[3];
-            targetData[offset + 13] = sourceData[7];
-            targetData[offset + 14] = sourceData[11];
-        }
-        else {
-            targetData[offset + 1] = sourceData[1];
-            targetData[offset + 2] = sourceData[2];
-            targetData[offset + 3] = sourceData[3];
-            targetData[offset + 4] = sourceData[4];
-            targetData[offset + 6] = sourceData[6];
-            targetData[offset + 7] = sourceData[7];
-            targetData[offset + 8] = sourceData[8];
-            targetData[offset + 9] = sourceData[9];
-            targetData[offset + 11] = sourceData[11];
-            targetData[offset + 12] = sourceData[12];
-            targetData[offset + 13] = sourceData[13];
-            targetData[offset + 14] = sourceData[14];
-        }
-    };
-    /**
-     * Copies a Vector3D object into specific row of the calling Matrix3D object.
-     */
-    Matrix3D.prototype.copyRowFrom = function (row, vector3D) {
-        if (row < 0 || row > 3)
-            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
-        this._rawData[row] = vector3D.x;
-        this._rawData[row + 4] = vector3D.y;
-        this._rawData[row + 8] = vector3D.z;
-        this._rawData[row + 12] = vector3D.w;
-        this._positionDirty = true;
-    };
-    /**
-     * Copies specific row of the calling Matrix3D object into the Vector3D object.
-     */
-    Matrix3D.prototype.copyRowTo = function (row, vector3D, negate) {
-        if (negate === void 0) { negate = false; }
-        if (row < 0 || row > 3)
-            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
-        var sourceData = this._rawData;
-        if (negate) {
-            vector3D.x = -sourceData[row];
-            vector3D.y = -sourceData[row + 4];
-            vector3D.z = -sourceData[row + 8];
-            vector3D.w = -sourceData[row + 12];
-        }
-        else {
-            vector3D.x = sourceData[row];
-            vector3D.y = sourceData[row + 4];
-            vector3D.z = sourceData[row + 8];
-            vector3D.w = sourceData[row + 12];
-        }
-    };
-    /**
-     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
-     */
-    Matrix3D.prototype.decompose = function (orientationStyle) {
-        if (orientationStyle === void 0) { orientationStyle = "eulerAngles"; }
-        var q;
-        if (this._components == null)
-            this._components = [null, new Vector3D(), new Vector3D(), new Vector3D()];
-        var colX = new Vector3D(this._rawData[0], this._rawData[1], this._rawData[2]);
-        var colY = new Vector3D(this._rawData[4], this._rawData[5], this._rawData[6]);
-        var colZ = new Vector3D(this._rawData[8], this._rawData[9], this._rawData[10]);
-        var scale = this._components[3];
-        var skew = this._components[2];
-        //compute X scale factor and normalise colX
-        scale.x = colX.length;
-        colX.scaleBy(1 / scale.x);
-        //compute XY shear factor and make colY orthogonal to colX
-        skew.x = colX.dotProduct(colY);
-        colY = Vector3D.combine(colY, colX, 1, -skew.x);
-        //compute Y scale factor and normalise colY
-        scale.y = colY.length;
-        colY.scaleBy(1 / scale.y);
-        skew.x /= scale.y;
-        //compute XZ and YZ shears and make colZ orthogonal to colX and colY
-        skew.y = colX.dotProduct(colZ);
-        colZ = Vector3D.combine(colZ, colX, 1, -skew.y);
-        skew.z = colY.dotProduct(colZ);
-        colZ = Vector3D.combine(colZ, colY, 1, -skew.z);
-        //compute Z scale and normalise colZ
-        scale.z = colZ.length;
-        colZ.scaleBy(1 / scale.z);
-        skew.y /= scale.z;
-        skew.z /= scale.z;
-        //at this point, the matrix (in cols) is orthonormal
-        //check for a coordinate system flip. If the determinant is -1, negate the z scaling factor
-        if (colX.dotProduct(colY.crossProduct(colZ)) < 0) {
-            scale.z = -scale.z;
-            colZ.x = -colZ.x;
-            colZ.y = -colZ.y;
-            colZ.z = -colZ.z;
-        }
-        var rot = this._components[1];
-        switch (orientationStyle) {
-            case Orientation3D.AXIS_ANGLE:
-                rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
-                var len = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
-                rot.x = (colY.z - colZ.y) / len;
-                rot.y = (colZ.x - colX.z) / len;
-                rot.z = (colX.y - colY.x) / len;
-                break;
-            case Orientation3D.QUATERNION:
-                var tr = colX.x + colY.y + colZ.z;
-                if (tr > 0) {
-                    rot.w = Math.sqrt(1 + tr) / 2;
-                    rot.x = (colY.z - colZ.y) / (4 * rot.w);
-                    rot.y = (colZ.x - colX.z) / (4 * rot.w);
-                    rot.z = (colX.y - colY.x) / (4 * rot.w);
-                }
-                else if ((colX.x > colY.y) && (colX.x > colZ.z)) {
-                    rot.x = Math.sqrt(1 + colX.x - colY.y - colZ.z) / 2;
-                    rot.w = (colY.z - colZ.y) / (4 * rot.x);
-                    rot.y = (colX.y + colY.x) / (4 * rot.x);
-                    rot.z = (colZ.x + colX.z) / (4 * rot.x);
-                }
-                else if (colY.y > colZ.z) {
-                    rot.y = Math.sqrt(1 + colY.y - colX.x - colZ.z) / 2;
-                    rot.x = (colX.y + colY.x) / (4 * rot.y);
-                    rot.w = (colZ.x - colX.z) / (4 * rot.y);
-                    rot.z = (colY.z + colZ.y) / (4 * rot.y);
-                }
-                else {
-                    rot.z = Math.sqrt(1 + colZ.z - colX.x - colY.y) / 2;
-                    rot.x = (colZ.x + colX.z) / (4 * rot.z);
-                    rot.y = (colY.z + colZ.y) / (4 * rot.z);
-                    rot.w = (colX.y - colY.x) / (4 * rot.z);
-                }
-                break;
-            case Orientation3D.EULER_ANGLES:
-                rot.y = Math.asin(-colX.z);
-                //var cos:number = Math.cos(rot.y);
-                if (colX.z != 1 && colX.z != -1) {
-                    rot.x = Math.atan2(colY.z, colZ.z);
-                    rot.z = Math.atan2(colX.y, colX.x);
-                }
-                else {
-                    rot.z = 0;
-                    rot.x = Math.atan2(colY.x, colY.y);
-                }
-                break;
-        }
-        this._components[0] = this.position;
-        return this._components;
-    };
-    /**
-     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
-     * coordinate to another.
-     */
-    Matrix3D.prototype.deltaTransformVector = function (v, t) {
-        if (t === void 0) { t = null; }
-        var x = v.x;
-        var y = v.y;
-        var z = v.z;
-        if (!t)
-            t = new Vector3D();
-        t.x = x * this._rawData[0] + y * this._rawData[4] + z * this._rawData[8];
-        t.y = x * this._rawData[1] + y * this._rawData[5] + z * this._rawData[9];
-        t.z = x * this._rawData[2] + y * this._rawData[6] + z * this._rawData[10];
-        t.w = x * this._rawData[3] + y * this._rawData[7] + z * this._rawData[11];
-        return t;
-    };
-    Matrix3D.prototype.deltaTransformVectors = function (vin, vout) {
-        var rawData = this._rawData;
-        var a = rawData[0];
-        var e = rawData[1];
-        var i = rawData[2];
-        var m = rawData[3];
-        var b = rawData[4];
-        var f = rawData[5];
-        var j = rawData[6];
-        var n = rawData[7];
-        var c = rawData[8];
-        var g = rawData[9];
-        var k = rawData[10];
-        var o = rawData[11];
-        var outIndex = 0;
-        var length = vin.length;
-        for (var index = 0; index < length; index += 3) {
-            var x = vin[index];
-            var y = vin[index + 1];
-            var z = vin[index + 2];
-            vout[outIndex++] = a * x + b * y + c * z;
-            vout[outIndex++] = e * x + f * y + g * z;
-            vout[outIndex++] = i * x + j * y + k * z;
-        }
-    };
-    /**
-     * Converts the current matrix to an identity or unit matrix.
-     */
-    Matrix3D.prototype.identity = function () {
-        this._rawData[0] = 1;
-        this._rawData[1] = 0;
-        this._rawData[2] = 0;
-        this._rawData[3] = 0;
-        this._rawData[4] = 0;
-        this._rawData[5] = 1;
-        this._rawData[6] = 0;
-        this._rawData[7] = 0;
-        this._rawData[8] = 0;
-        this._rawData[9] = 0;
-        this._rawData[10] = 1;
-        this._rawData[11] = 0;
-        this._rawData[12] = 0;
-        this._rawData[13] = 0;
-        this._rawData[14] = 0;
-        this._rawData[15] = 1;
-        this._positionDirty = true;
-    };
-    /**
-     * Inverts the current matrix.
-     */
-    Matrix3D.prototype.invert = function () {
-        var d = this.determinant;
-        var invertable = Math.abs(d) > 0.00000000001;
-        if (invertable) {
-            d = 1 / d;
-            var m11 = this._rawData[0];
-            var m12 = this._rawData[1];
-            var m13 = this._rawData[2];
-            var m14 = this._rawData[3];
-            var m21 = this._rawData[4];
-            var m22 = this._rawData[5];
-            var m23 = this._rawData[6];
-            var m24 = this._rawData[7];
-            var m31 = this._rawData[8];
-            var m32 = this._rawData[9];
-            var m33 = this._rawData[10];
-            var m34 = this._rawData[11];
-            var m41 = this._rawData[12];
-            var m42 = this._rawData[13];
-            var m43 = this._rawData[14];
-            var m44 = this._rawData[15];
-            this._rawData[0] = d * (m22 * (m33 * m44 - m43 * m34) - m32 * (m23 * m44 - m43 * m24) + m42 * (m23 * m34 - m33 * m24));
-            this._rawData[1] = -d * (m12 * (m33 * m44 - m43 * m34) - m32 * (m13 * m44 - m43 * m14) + m42 * (m13 * m34 - m33 * m14));
-            this._rawData[2] = d * (m12 * (m23 * m44 - m43 * m24) - m22 * (m13 * m44 - m43 * m14) + m42 * (m13 * m24 - m23 * m14));
-            this._rawData[3] = -d * (m12 * (m23 * m34 - m33 * m24) - m22 * (m13 * m34 - m33 * m14) + m32 * (m13 * m24 - m23 * m14));
-            this._rawData[4] = -d * (m21 * (m33 * m44 - m43 * m34) - m31 * (m23 * m44 - m43 * m24) + m41 * (m23 * m34 - m33 * m24));
-            this._rawData[5] = d * (m11 * (m33 * m44 - m43 * m34) - m31 * (m13 * m44 - m43 * m14) + m41 * (m13 * m34 - m33 * m14));
-            this._rawData[6] = -d * (m11 * (m23 * m44 - m43 * m24) - m21 * (m13 * m44 - m43 * m14) + m41 * (m13 * m24 - m23 * m14));
-            this._rawData[7] = d * (m11 * (m23 * m34 - m33 * m24) - m21 * (m13 * m34 - m33 * m14) + m31 * (m13 * m24 - m23 * m14));
-            this._rawData[8] = d * (m21 * (m32 * m44 - m42 * m34) - m31 * (m22 * m44 - m42 * m24) + m41 * (m22 * m34 - m32 * m24));
-            this._rawData[9] = -d * (m11 * (m32 * m44 - m42 * m34) - m31 * (m12 * m44 - m42 * m14) + m41 * (m12 * m34 - m32 * m14));
-            this._rawData[10] = d * (m11 * (m22 * m44 - m42 * m24) - m21 * (m12 * m44 - m42 * m14) + m41 * (m12 * m24 - m22 * m14));
-            this._rawData[11] = -d * (m11 * (m22 * m34 - m32 * m24) - m21 * (m12 * m34 - m32 * m14) + m31 * (m12 * m24 - m22 * m14));
-            this._rawData[12] = -d * (m21 * (m32 * m43 - m42 * m33) - m31 * (m22 * m43 - m42 * m23) + m41 * (m22 * m33 - m32 * m23));
-            this._rawData[13] = d * (m11 * (m32 * m43 - m42 * m33) - m31 * (m12 * m43 - m42 * m13) + m41 * (m12 * m33 - m32 * m13));
-            this._rawData[14] = -d * (m11 * (m22 * m43 - m42 * m23) - m21 * (m12 * m43 - m42 * m13) + m41 * (m12 * m23 - m22 * m13));
-            this._rawData[15] = d * (m11 * (m22 * m33 - m32 * m23) - m21 * (m12 * m33 - m32 * m13) + m31 * (m12 * m23 - m22 * m13));
-        }
-        this._positionDirty = true;
-        return invertable;
-    };
-    Matrix3D.prototype.isIdentity = function () {
-        if (this._rawData[0] == 1 &&
-            this._rawData[1] == 0 &&
-            this._rawData[2] == 0 &&
-            this._rawData[3] == 0 &&
-            this._rawData[4] == 0 &&
-            this._rawData[5] == 1 &&
-            this._rawData[6] == 0 &&
-            this._rawData[7] == 0 &&
-            this._rawData[8] == 0 &&
-            this._rawData[9] == 0 &&
-            this._rawData[10] == 1 &&
-            this._rawData[11] == 0 &&
-            this._rawData[12] == 0 &&
-            this._rawData[13] == 0 &&
-            this._rawData[14] == 0 &&
-            this._rawData[15] == 1)
-            return true;
-        return false;
-    };
-    /**
-     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
-     */
-    Matrix3D.prototype.prepend = function (rhs) {
-        var m111 = rhs._rawData[0];
-        var m112 = rhs._rawData[1];
-        var m113 = rhs._rawData[2];
-        var m114 = rhs._rawData[3];
-        var m121 = rhs._rawData[4];
-        var m122 = rhs._rawData[5];
-        var m123 = rhs._rawData[6];
-        var m124 = rhs._rawData[7];
-        var m131 = rhs._rawData[8];
-        var m132 = rhs._rawData[9];
-        var m133 = rhs._rawData[10];
-        var m134 = rhs._rawData[11];
-        var m141 = rhs._rawData[12];
-        var m142 = rhs._rawData[13];
-        var m143 = rhs._rawData[14];
-        var m144 = rhs._rawData[15];
-        var m211 = this._rawData[0];
-        var m212 = this._rawData[1];
-        var m213 = this._rawData[2];
-        var m214 = this._rawData[3];
-        var m221 = this._rawData[4];
-        var m222 = this._rawData[5];
-        var m223 = this._rawData[6];
-        var m224 = this._rawData[7];
-        var m231 = this._rawData[8];
-        var m232 = this._rawData[9];
-        var m233 = this._rawData[10];
-        var m234 = this._rawData[11];
-        var m241 = this._rawData[12];
-        var m242 = this._rawData[13];
-        var m243 = this._rawData[14];
-        var m244 = this._rawData[15];
-        this._rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
-        this._rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
-        this._rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
-        this._rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
-        this._rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
-        this._rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
-        this._rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
-        this._rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
-        this._rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
-        this._rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
-        this._rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
-        this._rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
-        this._rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
-        this._rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
-        this._rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
-        this._rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
-        this._positionDirty = true;
-    };
-    /**
-     * Prepends an incremental rotation to a Matrix3D object.
-     */
-    Matrix3D.prototype.prependRotation = function (degrees, axis) {
-        this.prepend(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
-    };
-    /**
-     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-     */
-    Matrix3D.prototype.prependScale = function (xScale, yScale, zScale) {
-        if (xScale == 1 && yScale == 1 && zScale == 1)
-            return;
-        var rawData = Matrix3D._tempMatrix._rawData;
-        rawData[0] = xScale;
-        rawData[1] = 0;
-        rawData[2] = 0;
-        rawData[3] = 0;
-        rawData[4] = 0;
-        rawData[5] = yScale;
-        rawData[6] = 0;
-        rawData[7] = 0;
-        rawData[8] = 0;
-        rawData[9] = 0;
-        rawData[10] = zScale;
-        rawData[11] = 0;
-        rawData[12] = 0;
-        rawData[13] = 0;
-        rawData[14] = 0;
-        rawData[15] = 1;
-        this.prepend(Matrix3D._tempMatrix);
-    };
-    /**
-     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-     */
-    Matrix3D.prototype.prependTranslation = function (x, y, z) {
-        var rawData = Matrix3D._tempMatrix._rawData;
-        rawData[0] = 1;
-        rawData[1] = 0;
-        rawData[2] = 0;
-        rawData[3] = 0;
-        rawData[4] = 0;
-        rawData[5] = 1;
-        rawData[6] = 0;
-        rawData[7] = 0;
-        rawData[8] = 0;
-        rawData[9] = 0;
-        rawData[10] = 1;
-        rawData[11] = 0;
-        rawData[12] = x;
-        rawData[13] = y;
-        rawData[14] = z;
-        rawData[15] = 1;
-        this.prepend(Matrix3D._tempMatrix);
-    };
-    // TODO orientationStyle
-    /**
-     * Sets the transformation matrix's translation, rotation, and scale settings.
-     */
-    Matrix3D.prototype.recompose = function (components) {
-        var pos = components[0] || this.position;
-        this.identity();
-        var scale = components[3];
-        if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
-            this.appendScale(scale.x, scale.y, scale.z);
-        var skew = components[2];
-        if (skew && (skew.x != 0 || skew.y != 0 || skew.z != 0))
-            this.appendSkew(skew.x, skew.y, skew.z);
-        var sin;
-        var cos;
-        var rawData = Matrix3D._tempMatrix._rawData;
-        rawData[12] = 0;
-        rawData[13] = 0;
-        rawData[14] = 0;
-        rawData[15] = 0;
-        var rotation = components[1];
-        if (rotation) {
-            var angle = -rotation.x;
-            if (angle != 0) {
-                sin = Math.sin(angle);
-                cos = Math.cos(angle);
-                rawData[0] = 1;
-                rawData[1] = 0;
-                rawData[2] = 0;
-                rawData[3] = 0;
-                rawData[4] = 0;
-                rawData[5] = cos;
-                rawData[6] = -sin;
-                rawData[7] = 0;
-                rawData[8] = 0;
-                rawData[9] = sin;
-                rawData[10] = cos;
-                rawData[11] = 0;
-                this.append(Matrix3D._tempMatrix);
-            }
-            angle = -rotation.y;
-            if (angle != 0) {
-                sin = Math.sin(angle);
-                cos = Math.cos(angle);
-                rawData[0] = cos;
-                rawData[1] = 0;
-                rawData[2] = sin;
-                rawData[3] = 0;
-                rawData[4] = 0;
-                rawData[5] = 1;
-                rawData[6] = 0;
-                rawData[7] = 0;
-                rawData[8] = -sin;
-                rawData[9] = 0;
-                rawData[10] = cos;
-                rawData[11] = 0;
-                this.append(Matrix3D._tempMatrix);
-            }
-            angle = -rotation.z;
-            if (angle != 0) {
-                sin = Math.sin(angle);
-                cos = Math.cos(angle);
-                rawData[0] = cos;
-                rawData[1] = -sin;
-                rawData[2] = 0;
-                rawData[3] = 0;
-                rawData[4] = sin;
-                rawData[5] = cos;
-                rawData[6] = 0;
-                rawData[7] = 0;
-                rawData[8] = 0;
-                rawData[9] = 0;
-                rawData[10] = 1;
-                rawData[11] = 0;
-                this.append(Matrix3D._tempMatrix);
-            }
-        }
-        this._rawData[12] = pos.x;
-        this._rawData[13] = pos.y;
-        this._rawData[14] = pos.z;
-        if (components[0])
-            this._positionDirty = true;
-        this._rawData[15] = 1;
-        return true;
-    };
-    Matrix3D.prototype.reflect = function (plane) {
-        var a = plane.a, b = plane.b, c = plane.c, d = plane.d;
-        var ab2 = -2 * a * b;
-        var ac2 = -2 * a * c;
-        var bc2 = -2 * b * c;
-        // reflection matrix
-        var rawData = this._rawData;
-        rawData[0] = 1 - 2 * a * a;
-        rawData[4] = ab2;
-        rawData[8] = ac2;
-        rawData[12] = -2 * a * d;
-        rawData[1] = ab2;
-        rawData[5] = 1 - 2 * b * b;
-        rawData[9] = bc2;
-        rawData[13] = -2 * b * d;
-        rawData[2] = ac2;
-        rawData[6] = bc2;
-        rawData[10] = 1 - 2 * c * c;
-        rawData[14] = -2 * c * d;
-        rawData[3] = 0;
-        rawData[7] = 0;
-        rawData[11] = 0;
-        rawData[15] = 1;
-        this._positionDirty = true;
-    };
-    Matrix3D.prototype.transformBox = function (box, target) {
-        if (target === void 0) { target = null; }
-        if (box == null)
-            throw new ArgumentError("ArgumentError, box cannot be null");
-        var minX, minY, minZ;
-        var maxX, maxY, maxZ;
-        maxX = box.width + (minX = box.x);
-        maxY = box.height + (minY = box.y);
-        maxZ = box.depth + (minZ = box.z);
-        if (!target)
-            target = new Box();
-        //TODO: take account of shear
-        target.width = maxX * this._rawData[0] + maxY * this._rawData[4] + maxZ * this._rawData[8] + this._rawData[12] - (target.x = minX * this._rawData[0] + minY * this._rawData[4] + minZ * this._rawData[8] + this._rawData[12]);
-        target.height = maxX * this._rawData[1] + maxY * this._rawData[5] + maxZ * this._rawData[9] + this._rawData[13] - (target.y = minX * this._rawData[1] + minY * this._rawData[5] + minZ * this._rawData[9] + this._rawData[13]);
-        target.depth = maxX * this._rawData[2] + maxY * this._rawData[6] + maxZ * this._rawData[10] + this._rawData[14] - (target.z = minX * this._rawData[2] + minY * this._rawData[6] + minZ * this._rawData[10] + this._rawData[14]);
-        return target;
-    };
-    Matrix3D.prototype.transformVector = function (vector, target) {
-        if (target === void 0) { target = null; }
-        if (vector == null)
-            throw new ArgumentError("ArgumentError, vector cannot be null");
-        var x = vector.x;
-        var y = vector.y;
-        var z = vector.z;
-        if (!target)
-            target = new Vector3D();
-        target.x = x * this._rawData[0] + y * this._rawData[4] + z * this._rawData[8] + this._rawData[12];
-        target.y = x * this._rawData[1] + y * this._rawData[5] + z * this._rawData[9] + this._rawData[13];
-        target.z = x * this._rawData[2] + y * this._rawData[6] + z * this._rawData[10] + this._rawData[14];
-        target.w = x * this._rawData[3] + y * this._rawData[7] + z * this._rawData[11] + this._rawData[15];
-        return target;
-    };
-    /**
-     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
-     */
-    Matrix3D.prototype.transformVectors = function (vin, vout) {
-        var i = 0;
-        var x = 0, y = 0, z = 0;
-        while (i + 3 <= vin.length) {
-            x = vin[i];
-            y = vin[i + 1];
-            z = vin[i + 2];
-            vout[i] = x * this._rawData[0] + y * this._rawData[4] + z * this._rawData[8] + this._rawData[12];
-            vout[i + 1] = x * this._rawData[1] + y * this._rawData[5] + z * this._rawData[9] + this._rawData[13];
-            vout[i + 2] = x * this._rawData[2] + y * this._rawData[6] + z * this._rawData[10] + this._rawData[14];
-            i += 3;
-        }
-    };
-    /**
-     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
-     */
-    Matrix3D.prototype.transpose = function () {
-        var rawData = Matrix3D._tempMatrix._rawData;
-        this.copyRawDataTo(rawData, 0, true);
-        this._rawData[1] = rawData[1];
-        this._rawData[2] = rawData[2];
-        this._rawData[3] = rawData[3];
-        this._rawData[4] = rawData[4];
-        this._rawData[6] = rawData[6];
-        this._rawData[7] = rawData[7];
-        this._rawData[8] = rawData[8];
-        this._rawData[9] = rawData[9];
-        this._rawData[11] = rawData[11];
-        this._rawData[12] = rawData[12];
-        this._rawData[13] = rawData[13];
-        this._rawData[14] = rawData[14];
-        this._positionDirty = true;
-    };
-    Matrix3D.prototype.invalidatePosition = function () {
-        this._positionDirty = true;
-    };
-    Matrix3D.prototype.toFixed = function (decimalPlace) {
-        var magnitude = Math.pow(10, decimalPlace);
-        return "matrix3d(" + Math.round(this._rawData[0] * magnitude) / magnitude + "," + Math.round(this._rawData[1] * magnitude) / magnitude + "," + Math.round(this._rawData[2] * magnitude) / magnitude + "," + Math.round(this._rawData[3] * magnitude) / magnitude + "," + Math.round(this._rawData[4] * magnitude) / magnitude + "," + Math.round(this._rawData[5] * magnitude) / magnitude + "," + Math.round(this._rawData[6] * magnitude) / magnitude + "," + Math.round(this._rawData[7] * magnitude) / magnitude + "," + Math.round(this._rawData[8] * magnitude) / magnitude + "," + Math.round(this._rawData[9] * magnitude) / magnitude + "," + Math.round(this._rawData[10] * magnitude) / magnitude + "," + Math.round(this._rawData[11] * magnitude) / magnitude + "," + Math.round(this._rawData[12] * magnitude) / magnitude + "," + Math.round(this._rawData[13] * magnitude) / magnitude + "," + Math.round(this._rawData[14] * magnitude) / magnitude + "," + Math.round(this._rawData[15] * magnitude) / magnitude + ")";
-    };
-    Matrix3D.prototype.toString = function () {
-        return "matrix3d(" + Math.round(this._rawData[0] * 1000) / 1000 + "," + Math.round(this._rawData[1] * 1000) / 1000 + "," + Math.round(this._rawData[2] * 1000) / 1000 + "," + Math.round(this._rawData[3] * 1000) / 1000 + "," + Math.round(this._rawData[4] * 1000) / 1000 + "," + Math.round(this._rawData[5] * 1000) / 1000 + "," + Math.round(this._rawData[6] * 1000) / 1000 + "," + Math.round(this._rawData[7] * 1000) / 1000 + "," + Math.round(this._rawData[8] * 1000) / 1000 + "," + Math.round(this._rawData[9] * 1000) / 1000 + "," + Math.round(this._rawData[10] * 1000) / 1000 + "," + Math.round(this._rawData[11] * 1000) / 1000 + "," + Math.round(this._rawData[12] * 1000) / 1000 + "," + Math.round(this._rawData[13] * 1000) / 1000 + "," + Math.round(this._rawData[14] * 1000) / 1000 + "," + Math.round(this._rawData[15] * 1000) / 1000 + ")";
-    };
-    return Matrix3D;
-}());
-/**
- * A reference to a Matrix3D to be used as a temporary data container, preventing object creation.
- */
-Matrix3D.CALCULATION_MATRIX = new Matrix3D();
-Matrix3D._tempMatrix = new Matrix3D();
 
 var PlaneClassification = (function () {
     function PlaneClassification() {
@@ -9618,131 +10242,199 @@ var ProjectionBase = (function (_super) {
     function ProjectionBase(coordinateSystem) {
         if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
         var _this = _super.call(this) || this;
-        _this._pMatrix = new Matrix3D();
-        _this._pScissorRect = new Rectangle();
-        _this._pViewPort = new Rectangle();
-        _this._pNear = 20;
-        _this._pFar = 3000;
-        _this._pAspectRatio = 1;
-        _this._pMatrixInvalid = true;
-        _this._pFrustumCorners = [];
-        _this._pOriginX = 0.5;
-        _this._pOriginY = 0.5;
-        _this._unprojectionInvalid = true;
-        _this.coordinateSystem = coordinateSystem;
+        _this._viewMatrix3D = new Matrix3D();
+        _this._inverseViewMatrix3D = new Matrix3D();
+        _this._frustumMatrix3D = new Matrix3D();
+        _this._viewRect = new Rectangle();
+        _this._stageRect = new Rectangle();
+        _this._near = 20;
+        _this._far = 3000;
+        _this._frustumCorners = [];
+        _this._originX = 0.5;
+        _this._originY = 0.5;
+        _this._viewMatrix3DDirty = true;
+        _this._inverseViewMatrix3DDirty = true;
+        _this._frustumMatrix3DDirty = true;
+        _this._frustumPlanesDirty = true;
+        _this._coordinateSystem = coordinateSystem;
+        _this._onInvalidateConcatenatedMatrix3DDelegate = function (event) { return _this._onInvalidateConcatenatedMatrix3D(event); };
         return _this;
     }
+    Object.defineProperty(ProjectionBase.prototype, "transform", {
+        get: function () {
+            return this._transform;
+        },
+        set: function (value) {
+            if (this._transform == value)
+                return;
+            if (this._transform)
+                this._transform.removeEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
+            this._transform = value;
+            if (this._transform)
+                this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
+            this._invalidateViewMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ProjectionBase.prototype, "coordinateSystem", {
         /**
          * The handedness of the coordinate system projection. The default is LEFT_HANDED.
          */
         get: function () {
-            return this._pCoordinateSystem;
+            return this._coordinateSystem;
         },
         set: function (value) {
-            if (this._pCoordinateSystem == value)
+            if (this._coordinateSystem == value)
                 return;
-            this._pCoordinateSystem = value;
-            this.pInvalidateMatrix();
+            this._coordinateSystem = value;
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ProjectionBase.prototype, "frustumCorners", {
+        /**
+         *
+         * @returns {number[]}
+         */
         get: function () {
-            return this._pFrustumCorners;
-        },
-        set: function (frustumCorners) {
-            this._pFrustumCorners = frustumCorners;
+            return this._frustumCorners;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ProjectionBase.prototype, "matrix", {
+    Object.defineProperty(ProjectionBase.prototype, "frustumMatrix3D", {
+        /**
+         *
+         * @returns {Matrix3D}
+         */
         get: function () {
-            if (this._pMatrixInvalid) {
-                this.pUpdateMatrix();
-                this._pMatrixInvalid = false;
-            }
-            return this._pMatrix;
+            if (this._frustumMatrix3DDirty)
+                this._updateFrustumMatrix3D();
+            return this._frustumMatrix3D;
         },
         set: function (value) {
-            this._pMatrix = value;
-            this.pInvalidateMatrix();
+            this._frustumMatrix3D = value;
+            this._invalidateViewMatrix3D();
+            this._invalidateProperties();
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ProjectionBase.prototype, "near", {
+        /**
+         *
+         * @returns {number}
+         */
         get: function () {
-            return this._pNear;
+            if (this._propertiesDirty)
+                this._updateProperties();
+            return this._near;
         },
         set: function (value) {
-            if (value == this._pNear) {
+            if (value == this._near)
                 return;
-            }
-            this._pNear = value;
-            this.pInvalidateMatrix();
+            this._near = value;
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ProjectionBase.prototype, "originX", {
+        /**
+         *
+         * @returns {number}
+         */
         get: function () {
-            return this._pOriginX;
+            if (this._propertiesDirty)
+                this._updateProperties();
+            return this._originX;
         },
         set: function (value) {
-            if (this._pOriginX == value)
+            if (this._originX == value)
                 return;
-            this._pOriginX = value;
+            this._originX = value;
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ProjectionBase.prototype, "originY", {
+        /**
+         *
+         * @returns {number}
+         */
         get: function () {
-            return this._pOriginY;
+            if (this._propertiesDirty)
+                this._updateProperties();
+            return this._originY;
         },
         set: function (value) {
-            if (this._pOriginY == value)
+            if (this._originY == value)
                 return;
-            this._pOriginY = value;
+            this._originY = value;
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ProjectionBase.prototype, "far", {
+        /**
+         *
+         * @returns {number}
+         */
         get: function () {
-            return this._pFar;
+            if (this._propertiesDirty)
+                this._updateProperties();
+            return this._far;
         },
         set: function (value) {
-            if (value == this._pFar) {
+            if (value == this._far)
                 return;
-            }
-            this._pFar = value;
-            this.pInvalidateMatrix();
+            this._far = value;
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
-    ProjectionBase.prototype.project = function (point3d) {
-        var v = this.matrix.transformVector(point3d);
+    /*
+    
+     */
+    ProjectionBase.prototype.project = function (vector3D) {
+        var v = this.viewMatrix3D.transformVector(vector3D);
         v.x = v.x / v.w;
         v.y = -v.y / v.w;
-        //z is unaffected by transform
-        v.z = point3d.z;
+        //z is remapped to w
+        v.z = v.w;
+        v.w = 1;
         return v;
     };
-    Object.defineProperty(ProjectionBase.prototype, "unprojectionMatrix", {
+    Object.defineProperty(ProjectionBase.prototype, "viewMatrix3D", {
         get: function () {
-            if (this._unprojectionInvalid) {
-                if (!this._unprojection)
-                    this._unprojection = new Matrix3D();
-                this._unprojection.copyFrom(this.matrix);
-                this._unprojection.invert();
-                this._unprojectionInvalid = false;
+            if (this._viewMatrix3DDirty) {
+                this._viewMatrix3DDirty = false;
+                if (this._transform) {
+                    this._viewMatrix3D.copyFrom(this._transform.inverseConcatenatedMatrix3D);
+                    this._viewMatrix3D.append(this.frustumMatrix3D);
+                }
+                else {
+                    this._viewMatrix3D.copyFrom(this.frustumMatrix3D);
+                }
             }
-            return this._unprojection;
+            return this._viewMatrix3D;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ProjectionBase.prototype, "inverseViewMatrix3D", {
+        get: function () {
+            if (this._inverseViewMatrix3DDirty) {
+                this._inverseViewMatrix3DDirty = false;
+                this._inverseViewMatrix3D.copyFrom(this.viewMatrix3D);
+                this._inverseViewMatrix3D.invert();
+            }
+            return this._inverseViewMatrix3D;
         },
         enumerable: true,
         configurable: true
@@ -9753,288 +10445,148 @@ var ProjectionBase = (function (_super) {
     ProjectionBase.prototype.clone = function () {
         throw new AbstractMethodError();
     };
-    Object.defineProperty(ProjectionBase.prototype, "_iAspectRatio", {
+    ProjectionBase.prototype._invalidateProperties = function () {
+        this._propertiesDirty = true;
+    };
+    ProjectionBase.prototype._invalidateViewMatrix3D = function () {
+        this._viewMatrix3DDirty = true;
+        this._inverseViewMatrix3DDirty = true;
+        this._frustumPlanesDirty = true;
+        this.dispatchEvent(new ProjectionEvent(ProjectionEvent.MATRIX_CHANGED, this));
+    };
+    ProjectionBase.prototype._invalidateFrustumMatrix3D = function () {
+        if (this._propertiesDirty)
+            this._updateProperties();
+        this._frustumMatrix3DDirty = true;
+        this._invalidateViewMatrix3D();
+    };
+    ProjectionBase.prototype.setViewRect = function (x, y, width, height) {
+        this._viewRect.x = x;
+        this._viewRect.y = y;
+        this._viewRect.width = width;
+        this._viewRect.height = height;
+        this._invalidateFrustumMatrix3D();
+    };
+    ProjectionBase.prototype.setStageRect = function (x, y, width, height) {
+        this._stageRect.x = x;
+        this._stageRect.y = y;
+        this._stageRect.width = width;
+        this._stageRect.height = height;
+        this._invalidateFrustumMatrix3D();
+    };
+    ProjectionBase.prototype._updateFrustumMatrix3D = function () {
+        this._frustumMatrix3DDirty = false;
+    };
+    ProjectionBase.prototype._updateProperties = function () {
+        this._propertiesDirty = false;
+    };
+    Object.defineProperty(ProjectionBase.prototype, "frustumPlanes", {
         get: function () {
-            return this._pAspectRatio;
-        },
-        set: function (value) {
-            if (this._pAspectRatio == value)
-                return;
-            this._pAspectRatio = value;
-            this.pInvalidateMatrix();
+            if (this._frustumPlanesDirty)
+                this._updateFrustumPlanes();
+            return this._frustumPlanes;
         },
         enumerable: true,
         configurable: true
     });
-    ProjectionBase.prototype.pInvalidateMatrix = function () {
-        this._pMatrixInvalid = true;
-        this._unprojectionInvalid = true;
-        this.dispatchEvent(new ProjectionEvent(ProjectionEvent.MATRIX_CHANGED, this));
+    ProjectionBase.prototype._updateFrustumPlanes = function () {
+        this._frustumPlanesDirty = false;
+        if (!this._frustumPlanes) {
+            this._frustumPlanes = [];
+            for (var i = 0; i < 6; ++i)
+                this._frustumPlanes[i] = new Plane3D();
+        }
+        var a, b, c;
+        //var d : Number;
+        var c11, c12, c13, c14;
+        var c21, c22, c23, c24;
+        var c31, c32, c33, c34;
+        var c41, c42, c43, c44;
+        var p;
+        var raw = this.viewMatrix3D._rawData;
+        var invLen;
+        c11 = raw[0];
+        c12 = raw[4];
+        c13 = raw[8];
+        c14 = raw[12];
+        c21 = raw[1];
+        c22 = raw[5];
+        c23 = raw[9];
+        c24 = raw[13];
+        c31 = raw[2];
+        c32 = raw[6];
+        c33 = raw[10];
+        c34 = raw[14];
+        c41 = raw[3];
+        c42 = raw[7];
+        c43 = raw[11];
+        c44 = raw[15];
+        // left plane
+        p = this._frustumPlanes[0];
+        a = c41 + c11;
+        b = c42 + c12;
+        c = c43 + c13;
+        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+        p.a = a * invLen;
+        p.b = b * invLen;
+        p.c = c * invLen;
+        p.d = -(c44 + c14) * invLen;
+        // right plane
+        p = this._frustumPlanes[1];
+        a = c41 - c11;
+        b = c42 - c12;
+        c = c43 - c13;
+        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+        p.a = a * invLen;
+        p.b = b * invLen;
+        p.c = c * invLen;
+        p.d = (c14 - c44) * invLen;
+        // bottom
+        p = this._frustumPlanes[2];
+        a = c41 + c21;
+        b = c42 + c22;
+        c = c43 + c23;
+        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+        p.a = a * invLen;
+        p.b = b * invLen;
+        p.c = c * invLen;
+        p.d = -(c44 + c24) * invLen;
+        // top
+        p = this._frustumPlanes[3];
+        a = c41 - c21;
+        b = c42 - c22;
+        c = c43 - c23;
+        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+        p.a = a * invLen;
+        p.b = b * invLen;
+        p.c = c * invLen;
+        p.d = (c24 - c44) * invLen;
+        // near
+        p = this._frustumPlanes[4];
+        a = c31;
+        b = c32;
+        c = c33;
+        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+        p.a = a * invLen;
+        p.b = b * invLen;
+        p.c = c * invLen;
+        p.d = -c34 * invLen;
+        // far
+        p = this._frustumPlanes[5];
+        a = c41 - c31;
+        b = c42 - c32;
+        c = c43 - c33;
+        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+        p.a = a * invLen;
+        p.b = b * invLen;
+        p.c = c * invLen;
+        p.d = (c34 - c44) * invLen;
     };
-    ProjectionBase.prototype.pUpdateMatrix = function () {
-        throw new AbstractMethodError();
-    };
-    ProjectionBase.prototype._iUpdateScissorRect = function (x, y, width, height) {
-        this._pScissorRect.x = x;
-        this._pScissorRect.y = y;
-        this._pScissorRect.width = width;
-        this._pScissorRect.height = height;
-        this.pInvalidateMatrix();
-    };
-    ProjectionBase.prototype._iUpdateViewport = function (x, y, width, height) {
-        this._pViewPort.x = x;
-        this._pViewPort.y = y;
-        this._pViewPort.width = width;
-        this._pViewPort.height = height;
-        this.pInvalidateMatrix();
+    ProjectionBase.prototype._onInvalidateConcatenatedMatrix3D = function (event) {
+        this._invalidateViewMatrix3D();
     };
     return ProjectionBase;
 }(EventDispatcher));
-
-var PerspectiveProjection = (function (_super) {
-    __extends(PerspectiveProjection, _super);
-    function PerspectiveProjection(fieldOfView, coordinateSystem) {
-        if (fieldOfView === void 0) { fieldOfView = 60; }
-        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
-        var _this = _super.call(this, coordinateSystem) || this;
-        _this._fieldOfView = 60;
-        _this._focalLength = 1000;
-        _this._hFieldOfView = 60;
-        _this._hFocalLength = 1000;
-        _this._preserveAspectRatio = true;
-        _this._preserveFocalLength = false;
-        _this.fieldOfView = fieldOfView;
-        return _this;
-    }
-    Object.defineProperty(PerspectiveProjection.prototype, "preserveAspectRatio", {
-        /**
-         *
-         */
-        get: function () {
-            return this._preserveAspectRatio;
-        },
-        set: function (value) {
-            if (this._preserveAspectRatio == value)
-                return;
-            this._preserveAspectRatio = value;
-            if (this._preserveAspectRatio)
-                this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PerspectiveProjection.prototype, "preserveFocalLength", {
-        /**
-         *
-         */
-        get: function () {
-            return this._preserveFocalLength;
-        },
-        set: function (value) {
-            if (this._preserveFocalLength == value)
-                return;
-            this._preserveFocalLength = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PerspectiveProjection.prototype, "fieldOfView", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._pMatrixInvalid && this._preserveFocalLength)
-                this.pUpdateMatrix();
-            return this._fieldOfView;
-        },
-        set: function (value) {
-            if (this._fieldOfView == value)
-                return;
-            this._fieldOfView = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PerspectiveProjection.prototype, "focalLength", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._pMatrixInvalid && !this._preserveFocalLength)
-                this.pUpdateMatrix();
-            return this._focalLength;
-        },
-        set: function (value) {
-            if (this._focalLength == value)
-                return;
-            this._focalLength = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PerspectiveProjection.prototype, "hFieldOfView", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._pMatrixInvalid && this._preserveFocalLength)
-                this.pUpdateMatrix();
-            return this._hFieldOfView;
-        },
-        set: function (value) {
-            if (this._hFieldOfView == value)
-                return;
-            this._hFieldOfView = value;
-            this._hFocalLength = 1 / Math.tan(this._hFieldOfView * Math.PI / 360);
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PerspectiveProjection.prototype, "hFocalLength", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._pMatrixInvalid && !this._preserveFocalLength)
-                this.pUpdateMatrix();
-            return this._hFocalLength;
-        },
-        set: function (value) {
-            if (this._hFocalLength == value)
-                return;
-            this._hFocalLength = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    //@override
-    PerspectiveProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D(nX, -nY, sZ, 1.0);
-        v.x *= sZ;
-        v.y *= sZ;
-        v = this.unprojectionMatrix.transformVector(v);
-        //z is unaffected by transform
-        v.z = sZ;
-        return v;
-    };
-    //@override
-    PerspectiveProjection.prototype.clone = function () {
-        var clone = new PerspectiveProjection(this._fieldOfView);
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
-        clone._pCoordinateSystem = this._pCoordinateSystem;
-        return clone;
-    };
-    //@override
-    PerspectiveProjection.prototype.pUpdateMatrix = function () {
-        var raw = Matrix3D.CALCULATION_MATRIX._rawData;
-        if (this._preserveFocalLength) {
-            if (this._preserveAspectRatio)
-                this._hFocalLength = this._focalLength;
-            this._fieldOfView = Math.atan(0.5 * this._pScissorRect.height / this._focalLength) * 360 / Math.PI;
-            this._hFieldOfView = Math.atan(0.5 * this._pScissorRect.width / this._hFocalLength) * 360 / Math.PI;
-        }
-        else {
-            this._focalLength = 0.5 * this._pScissorRect.height / Math.tan(this._fieldOfView * Math.PI / 360);
-            if (this._preserveAspectRatio)
-                this._hFocalLength = this._focalLength;
-            else
-                this._hFocalLength = 0.5 * this._pScissorRect.width / Math.tan(this._hFieldOfView * Math.PI / 360);
-        }
-        var tanMinX = -this._pOriginX / this._hFocalLength;
-        var tanMaxX = (1 - this._pOriginX) / this._hFocalLength;
-        var tanMinY = -this._pOriginY / this._focalLength;
-        var tanMaxY = (1 - this._pOriginY) / this._focalLength;
-        var left;
-        var right;
-        var top;
-        var bottom;
-        // assume scissored frustum
-        var center = -((tanMinX - tanMaxX) * this._pScissorRect.x + tanMinX * this._pScissorRect.width);
-        var middle = ((tanMinY - tanMaxY) * this._pScissorRect.y + tanMinY * this._pScissorRect.height);
-        left = center - (tanMaxX - tanMinX) * this._pViewPort.width;
-        right = center;
-        top = middle;
-        bottom = middle + (tanMaxY - tanMinY) * this._pViewPort.height;
-        raw[0] = 2 / (right - left);
-        raw[5] = 2 / (bottom - top);
-        raw[8] = (right + left) / (right - left);
-        raw[9] = (bottom + top) / (bottom - top);
-        raw[10] = (this._pFar + this._pNear) / (this._pFar - this._pNear);
-        raw[11] = 1;
-        raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[12] = raw[13] = raw[15] = 0;
-        raw[14] = -2 * this._pFar * this._pNear / (this._pFar - this._pNear);
-        if (this._pCoordinateSystem == exports.CoordinateSystem.RIGHT_HANDED)
-            raw[5] = -raw[5];
-        this._pMatrix.copyRawDataFrom(raw);
-        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pNear * left;
-        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pNear * right;
-        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pNear * top;
-        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pNear * bottom;
-        this._pFrustumCorners[12] = this._pFrustumCorners[21] = this._pFar * left;
-        this._pFrustumCorners[15] = this._pFrustumCorners[18] = this._pFar * right;
-        this._pFrustumCorners[13] = this._pFrustumCorners[16] = this._pFar * top;
-        this._pFrustumCorners[19] = this._pFrustumCorners[22] = this._pFar * bottom;
-        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
-        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
-        this._pMatrixInvalid = false;
-    };
-    return PerspectiveProjection;
-}(ProjectionBase));
-
-var FreeMatrixProjection = (function (_super) {
-    __extends(FreeMatrixProjection, _super);
-    function FreeMatrixProjection() {
-        var _this = _super.call(this) || this;
-        _this._pMatrix.copyFrom(new PerspectiveProjection().matrix);
-        return _this;
-    }
-    Object.defineProperty(FreeMatrixProjection.prototype, "near", {
-        //@override
-        set: function (value) {
-            this._pNear = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FreeMatrixProjection.prototype, "far", {
-        //@override
-        set: function (value) {
-            this._pFar = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FreeMatrixProjection.prototype, "iAspectRatio", {
-        //@override
-        set: function (value) {
-            this._pAspectRatio = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    //@override
-    FreeMatrixProjection.prototype.clone = function () {
-        var clone = new FreeMatrixProjection();
-        clone._pMatrix.copyFrom(this._pMatrix);
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
-        clone.pInvalidateMatrix();
-        return clone;
-    };
-    //@override
-    FreeMatrixProjection.prototype.pUpdateMatrix = function () {
-        this._pMatrixInvalid = false;
-    };
-    return FreeMatrixProjection;
-}(ProjectionBase));
 
 var ObliqueNearPlaneProjection = (function (_super) {
     __extends(ObliqueNearPlaneProjection, _super);
@@ -10077,49 +10629,36 @@ var ObliqueNearPlaneProjection = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "iAspectRatio", {
-        //@override
-        get: function () {
-            return this._baseProjection._iAspectRatio;
-        },
-        //@override
-        set: function (value) {
-            this._baseProjection._iAspectRatio = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(ObliqueNearPlaneProjection.prototype, "plane", {
         get: function () {
             return this._plane;
         },
         set: function (value) {
             this._plane = value;
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ObliqueNearPlaneProjection.prototype, "baseProjection", {
         set: function (value) {
-            if (this._baseProjection) {
+            if (this._baseProjection)
                 this._baseProjection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-            }
             this._baseProjection = value;
-            if (this._baseProjection) {
+            if (this._baseProjection)
                 this._baseProjection.addEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-            }
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     ObliqueNearPlaneProjection.prototype.onProjectionMatrixChanged = function (event) {
-        this.pInvalidateMatrix();
+        this._invalidateFrustumMatrix3D();
     };
     //@override
-    ObliqueNearPlaneProjection.prototype.pUpdateMatrix = function () {
-        this._pMatrix.copyFrom(this._baseProjection.matrix);
+    ObliqueNearPlaneProjection.prototype._updateFrustumMatrix3D = function () {
+        _super.prototype._updateFrustumMatrix3D.call(this);
+        this._frustumMatrix3D.copyFrom(this._baseProjection.frustumMatrix3D);
         var cx = this._plane.a;
         var cy = this._plane.b;
         var cz = this._plane.c;
@@ -10127,12 +10666,12 @@ var ObliqueNearPlaneProjection = (function (_super) {
         var signX = cx >= 0 ? 1 : -1;
         var signY = cy >= 0 ? 1 : -1;
         var p = new Vector3D(signX, signY, 1, 1);
-        var inverse = this._pMatrix.clone();
+        var inverse = this._frustumMatrix3D.clone();
         inverse.invert();
         var q = inverse.transformVector(p);
-        this._pMatrix.copyRowTo(3, p);
+        this._frustumMatrix3D.copyRowTo(3, p);
         var a = (q.x * p.x + q.y * p.y + q.z * p.z + q.w * p.w) / (cx * q.x + cy * q.y + cz * q.z + cw * q.w);
-        this._pMatrix.copyRowFrom(2, new Vector3D(cx * a, cy * a, cz * a, cw * a));
+        this._frustumMatrix3D.copyRowFrom(2, new Vector3D(cx * a, cy * a, cz * a, cw * a));
     };
     return ObliqueNearPlaneProjection;
 }(ProjectionBase));
@@ -10153,7 +10692,7 @@ var OrthographicOffCenterProjection = (function (_super) {
         },
         set: function (value) {
             this._minX = value;
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
@@ -10164,7 +10703,7 @@ var OrthographicOffCenterProjection = (function (_super) {
         },
         set: function (value) {
             this._maxX = value;
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
@@ -10175,7 +10714,7 @@ var OrthographicOffCenterProjection = (function (_super) {
         },
         set: function (value) {
             this._minY = value;
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
@@ -10186,7 +10725,7 @@ var OrthographicOffCenterProjection = (function (_super) {
         },
         set: function (value) {
             this._maxY = value;
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
@@ -10194,7 +10733,7 @@ var OrthographicOffCenterProjection = (function (_super) {
     //@override
     OrthographicOffCenterProjection.prototype.unproject = function (nX, nY, sZ) {
         var v = new Vector3D(nX, -nY, sZ, 1.0);
-        v = this.unprojectionMatrix.transformVector(v);
+        v = this.inverseViewMatrix3D.transformVector(v);
         //z is unaffected by transform
         v.z = sZ;
         return v;
@@ -10202,33 +10741,32 @@ var OrthographicOffCenterProjection = (function (_super) {
     //@override
     OrthographicOffCenterProjection.prototype.clone = function () {
         var clone = new OrthographicOffCenterProjection(this._minX, this._maxX, this._minY, this._maxY);
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
+        clone._near = this._near;
+        clone._far = this._far;
         return clone;
     };
     //@override
-    OrthographicOffCenterProjection.prototype.pUpdateMatrix = function () {
+    OrthographicOffCenterProjection.prototype._updateFrustumMatrix3D = function () {
+        _super.prototype._updateFrustumMatrix3D.call(this);
         var raw = Matrix3D.CALCULATION_MATRIX._rawData;
         var w = 1 / (this._maxX - this._minX);
         var h = 1 / (this._maxY - this._minY);
-        var d = 1 / (this._pFar - this._pNear);
+        var d = 1 / (this._far - this._near);
         raw[0] = 2 * w;
         raw[5] = 2 * h;
         raw[10] = d;
         raw[12] = -(this._maxX + this._minX) * w;
         raw[13] = -(this._maxY + this._minY) * h;
-        raw[14] = -this._pNear * d;
+        raw[14] = -this._near * d;
         raw[15] = 1;
         raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
-        this._pMatrix.copyRawDataFrom(raw);
-        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = this._minX;
-        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = this._maxX;
-        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = this._minY;
-        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = this._maxY;
-        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
-        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
-        this._pMatrixInvalid = false;
+        this._frustumMatrix3D.copyRawDataFrom(raw);
+        this._frustumCorners[0] = this._frustumCorners[9] = this._frustumCorners[12] = this._frustumCorners[21] = this._minX;
+        this._frustumCorners[3] = this._frustumCorners[6] = this._frustumCorners[15] = this._frustumCorners[18] = this._maxX;
+        this._frustumCorners[1] = this._frustumCorners[4] = this._frustumCorners[13] = this._frustumCorners[16] = this._minY;
+        this._frustumCorners[7] = this._frustumCorners[10] = this._frustumCorners[19] = this._frustumCorners[22] = this._maxY;
+        this._frustumCorners[2] = this._frustumCorners[5] = this._frustumCorners[8] = this._frustumCorners[11] = this._near;
+        this._frustumCorners[14] = this._frustumCorners[17] = this._frustumCorners[20] = this._frustumCorners[23] = this._far;
     };
     return OrthographicOffCenterProjection;
 }(ProjectionBase));
@@ -10246,19 +10784,18 @@ var OrthographicProjection = (function (_super) {
             return this._projectionHeight;
         },
         set: function (value) {
-            if (value == this._projectionHeight) {
+            if (value == this._projectionHeight)
                 return;
-            }
             this._projectionHeight = value;
-            this.pInvalidateMatrix();
+            this._invalidateFrustumMatrix3D();
         },
         enumerable: true,
         configurable: true
     });
     //@override
     OrthographicProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D(nX + this.matrix._rawData[12], -nY + this.matrix._rawData[13], sZ, 1.0);
-        v = this.unprojectionMatrix.transformVector(v);
+        var v = new Vector3D(nX + this.viewMatrix3D._rawData[12], -nY + this.viewMatrix3D._rawData[13], sZ, 1.0);
+        v = this.inverseViewMatrix3D.transformVector(v);
         //z is unaffected by transform
         v.z = sZ;
         return v;
@@ -10266,62 +10803,263 @@ var OrthographicProjection = (function (_super) {
     //@override
     OrthographicProjection.prototype.clone = function () {
         var clone = new OrthographicProjection();
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
+        clone._near = this._near;
+        clone._far = this._far;
         clone.projectionHeight = this._projectionHeight;
         return clone;
     };
     //@override
-    OrthographicProjection.prototype.pUpdateMatrix = function () {
+    OrthographicProjection.prototype._updateFrustumMatrix3D = function () {
+        _super.prototype._updateFrustumMatrix3D.call(this);
         var raw = Matrix3D.CALCULATION_MATRIX._rawData;
         this._yMax = this._projectionHeight * .5;
-        this._xMax = this._yMax * this._pAspectRatio;
+        this._xMax = this._yMax * this._viewRect.width / this._viewRect.height;
         var left;
         var right;
         var top;
         var bottom;
-        if (this._pScissorRect.x == 0 && this._pScissorRect.y == 0 && this._pScissorRect.width == this._pViewPort.width && this._pScissorRect.height == this._pViewPort.height) {
+        if (this._viewRect.x == 0 && this._viewRect.y == 0 && this._viewRect.width == this._stageRect.width && this._viewRect.height == this._stageRect.height) {
             // assume symmetric frustum
             left = -this._xMax;
             right = this._xMax;
             top = -this._yMax;
             bottom = this._yMax;
-            raw[0] = 2 / (this._projectionHeight * this._pAspectRatio);
+            raw[0] = 2 / (this._projectionHeight * this._viewRect.width / this._viewRect.height);
             raw[5] = 2 / this._projectionHeight;
-            raw[10] = 1 / (this._pFar - this._pNear);
-            raw[14] = this._pNear / (this._pNear - this._pFar);
+            raw[10] = 1 / (this._far - this._near);
+            raw[14] = this._near / (this._near - this._far);
             raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = raw[12] = raw[13] = 0;
             raw[15] = 1;
         }
         else {
-            var xWidth = this._xMax * (this._pViewPort.width / this._pScissorRect.width);
-            var yHgt = this._yMax * (this._pViewPort.height / this._pScissorRect.height);
-            var center = this._xMax * (this._pScissorRect.x * 2 - this._pViewPort.width) / this._pScissorRect.width + this._xMax;
-            var middle = -this._yMax * (this._pScissorRect.y * 2 - this._pViewPort.height) / this._pScissorRect.height - this._yMax;
+            var xWidth = this._xMax * (this._stageRect.width / this._viewRect.width);
+            var yHgt = this._yMax * (this._stageRect.height / this._viewRect.height);
+            var center = this._xMax * (this._viewRect.x * 2 - this._stageRect.width) / this._viewRect.width + this._xMax;
+            var middle = -this._yMax * (this._viewRect.y * 2 - this._stageRect.height) / this._viewRect.height - this._yMax;
             left = center - xWidth;
             right = center + xWidth;
             top = middle - yHgt;
             bottom = middle + yHgt;
             raw[0] = 2 * 1 / (right - left);
             raw[5] = -2 * 1 / (top - bottom);
-            raw[10] = 1 / (this._pFar - this._pNear);
+            raw[10] = 1 / (this._far - this._near);
             raw[12] = (right + left) / (right - left);
             raw[13] = (bottom + top) / (bottom - top);
-            raw[14] = this._pNear / (this.near - this.far);
+            raw[14] = this._near / (this.near - this.far);
             raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
             raw[15] = 1;
         }
-        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = left;
-        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = right;
-        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = top;
-        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = bottom;
-        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
-        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
-        this._pMatrix.copyRawDataFrom(raw);
-        this._pMatrixInvalid = false;
+        this._frustumCorners[0] = this._frustumCorners[9] = this._frustumCorners[12] = this._frustumCorners[21] = left;
+        this._frustumCorners[3] = this._frustumCorners[6] = this._frustumCorners[15] = this._frustumCorners[18] = right;
+        this._frustumCorners[1] = this._frustumCorners[4] = this._frustumCorners[13] = this._frustumCorners[16] = top;
+        this._frustumCorners[7] = this._frustumCorners[10] = this._frustumCorners[19] = this._frustumCorners[22] = bottom;
+        this._frustumCorners[2] = this._frustumCorners[5] = this._frustumCorners[8] = this._frustumCorners[11] = this._near;
+        this._frustumCorners[14] = this._frustumCorners[17] = this._frustumCorners[20] = this._frustumCorners[23] = this._far;
+        this._frustumMatrix3D.copyRawDataFrom(raw);
     };
     return OrthographicProjection;
+}(ProjectionBase));
+
+var PerspectiveProjection = (function (_super) {
+    __extends(PerspectiveProjection, _super);
+    function PerspectiveProjection(fieldOfView, coordinateSystem) {
+        if (fieldOfView === void 0) { fieldOfView = 60; }
+        if (coordinateSystem === void 0) { coordinateSystem = exports.CoordinateSystem.LEFT_HANDED; }
+        var _this = _super.call(this, coordinateSystem) || this;
+        _this._fieldOfView = 60;
+        _this._focalLength = 1000;
+        _this._hFieldOfView = 60;
+        _this._hFocalLength = 1000;
+        _this._preserveAspectRatio = true;
+        _this._preserveFocalLength = false;
+        _this.fieldOfView = fieldOfView;
+        return _this;
+    }
+    Object.defineProperty(PerspectiveProjection.prototype, "preserveAspectRatio", {
+        /**
+         *
+         */
+        get: function () {
+            return this._preserveAspectRatio;
+        },
+        set: function (value) {
+            if (this._preserveAspectRatio == value)
+                return;
+            this._preserveAspectRatio = value;
+            if (this._preserveAspectRatio)
+                this._invalidateFrustumMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PerspectiveProjection.prototype, "preserveFocalLength", {
+        /**
+         *
+         */
+        get: function () {
+            return this._preserveFocalLength;
+        },
+        set: function (value) {
+            if (this._preserveFocalLength == value)
+                return;
+            this._preserveFocalLength = value;
+            this._invalidateFrustumMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PerspectiveProjection.prototype, "fieldOfView", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._frustumMatrix3DDirty && this._preserveFocalLength)
+                this._updateFrustumMatrix3D();
+            return this._fieldOfView;
+        },
+        set: function (value) {
+            if (this._fieldOfView == value)
+                return;
+            this._fieldOfView = value;
+            this._invalidateFrustumMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PerspectiveProjection.prototype, "focalLength", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._frustumMatrix3DDirty && !this._preserveFocalLength)
+                this._updateFrustumMatrix3D();
+            return this._focalLength;
+        },
+        set: function (value) {
+            if (this._focalLength == value)
+                return;
+            this._focalLength = value;
+            this._invalidateFrustumMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PerspectiveProjection.prototype, "hFieldOfView", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._frustumMatrix3DDirty && this._preserveFocalLength)
+                this._updateFrustumMatrix3D();
+            return this._hFieldOfView;
+        },
+        set: function (value) {
+            if (this._hFieldOfView == value)
+                return;
+            this._hFieldOfView = value;
+            this._hFocalLength = 1 / Math.tan(this._hFieldOfView * Math.PI / 360);
+            this._invalidateFrustumMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PerspectiveProjection.prototype, "hFocalLength", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._frustumMatrix3DDirty && !this._preserveFocalLength)
+                this._updateFrustumMatrix3D();
+            return this._hFocalLength;
+        },
+        set: function (value) {
+            if (this._hFocalLength == value)
+                return;
+            this._hFocalLength = value;
+            this._invalidateFrustumMatrix3D();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    //@override
+    PerspectiveProjection.prototype.unproject = function (nX, nY, sZ) {
+        var v = new Vector3D(nX * sZ, -nY * sZ, (this._far + this._near) / (this._far - this._near) * sZ - 2 * this._far * this._near / (this._far - this._near), sZ);
+        v = this.inverseViewMatrix3D.transformVector(v, v);
+        v.w = 1;
+        return v;
+    };
+    /**
+     *
+     * @returns {PerspectiveProjection}
+     */
+    PerspectiveProjection.prototype.clone = function () {
+        var clone = new PerspectiveProjection(this._fieldOfView, this._coordinateSystem);
+        clone._hFieldOfView = this.hFieldOfView;
+        clone._preserveAspectRatio = this._preserveAspectRatio;
+        clone._preserveFocalLength = this._preserveFocalLength;
+        clone._near = this._near;
+        clone._far = this._far;
+        clone._coordinateSystem = this._coordinateSystem;
+        return clone;
+    };
+    /**
+     *
+     * @private
+     */
+    PerspectiveProjection.prototype._updateFrustumMatrix3D = function () {
+        _super.prototype._updateFrustumMatrix3D.call(this);
+        var raw = Matrix3D.CALCULATION_MATRIX._rawData;
+        if (this._preserveFocalLength) {
+            if (this._preserveAspectRatio)
+                this._hFocalLength = this._focalLength;
+            this._fieldOfView = Math.atan(0.5 * this._viewRect.height / this._focalLength) * 360 / Math.PI;
+            this._hFieldOfView = Math.atan(0.5 * this._viewRect.width / this._hFocalLength) * 360 / Math.PI;
+        }
+        else {
+            this._focalLength = 0.5 * this._viewRect.height / Math.tan(this._fieldOfView * Math.PI / 360);
+            if (this._preserveAspectRatio)
+                this._hFocalLength = this._focalLength;
+            else
+                this._hFocalLength = 0.5 * this._viewRect.width / Math.tan(this._hFieldOfView * Math.PI / 360);
+        }
+        // assume scissored frustum
+        var right = (this._viewRect.x + this._originX * this._viewRect.width) / this._hFocalLength;
+        var top = -(this._viewRect.y + this._originY * this._viewRect.height) / this._focalLength;
+        var left = right - this._stageRect.width / this._hFocalLength;
+        var bottom = top + this._stageRect.height / this._focalLength;
+        raw[0] = 2 / (right - left);
+        raw[5] = 2 / (bottom - top);
+        raw[8] = (right + left) / (right - left);
+        raw[9] = (bottom + top) / (bottom - top);
+        raw[10] = (this._far + this._near) / (this._far - this._near);
+        raw[11] = 1;
+        raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[12] = raw[13] = raw[15] = 0;
+        raw[14] = -2 * this._far * this._near / (this._far - this._near);
+        if (this._coordinateSystem == exports.CoordinateSystem.RIGHT_HANDED)
+            raw[5] = -raw[5];
+        this._frustumMatrix3D.copyRawDataFrom(raw);
+        this._frustumCorners[0] = this._frustumCorners[9] = this._near * left;
+        this._frustumCorners[3] = this._frustumCorners[6] = this._near * right;
+        this._frustumCorners[1] = this._frustumCorners[4] = this._near * top;
+        this._frustumCorners[7] = this._frustumCorners[10] = this._near * bottom;
+        this._frustumCorners[12] = this._frustumCorners[21] = this._far * left;
+        this._frustumCorners[15] = this._frustumCorners[18] = this._far * right;
+        this._frustumCorners[13] = this._frustumCorners[16] = this._far * top;
+        this._frustumCorners[19] = this._frustumCorners[22] = this._far * bottom;
+        this._frustumCorners[2] = this._frustumCorners[5] = this._frustumCorners[8] = this._frustumCorners[11] = this._near;
+        this._frustumCorners[14] = this._frustumCorners[17] = this._frustumCorners[20] = this._frustumCorners[23] = this._far;
+    };
+    PerspectiveProjection.prototype._updateProperties = function () {
+        _super.prototype._updateProperties.call(this);
+        var rawData = this._frustumMatrix3D._rawData;
+        this._near = rawData[14] / (-1 - rawData[10]);
+        this._far = rawData[14] / (1 - rawData[10]);
+        //rawData[8] = 2*(this._viewRect.x + this._originX*this._viewRect.width)/this._stageRect.width - 1;
+        this._originX = ((rawData[8] + 1) * this._stageRect.width / 2 - this._viewRect.x) / this._viewRect.width;
+        //rawData[9] = 1 - 2*(this._viewRect.y + this._originY*this._viewRect.height)/this._stageRect.height;
+        this._originY = ((1 - rawData[9]) * this._stageRect.height / 2 - this._viewRect.y) / this._viewRect.height;
+    };
+    return PerspectiveProjection;
 }(ProjectionBase));
 
 var Keyboard = (function () {
@@ -12165,570 +12903,6 @@ var Style = (function (_super) {
         this.dispatchEvent(new StyleEvent(StyleEvent.INVALIDATE_PROPERTIES, this));
     };
     return Style;
-}(EventDispatcher));
-
-var TransformEvent = (function (_super) {
-    __extends(TransformEvent, _super);
-    function TransformEvent(type, transform) {
-        var _this = _super.call(this, type) || this;
-        _this._transform = transform;
-        return _this;
-    }
-    Object.defineProperty(TransformEvent.prototype, "transform", {
-        get: function () {
-            return this._transform;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Clones the event.
-     * @return An exact duplicate of the current object.
-     */
-    TransformEvent.prototype.clone = function () {
-        return new TransformEvent(this.type, this._transform);
-    };
-    return TransformEvent;
-}(EventBase));
-/**
- *
- */
-TransformEvent.INVALIDATE_MATRIX3D = "invalidateMatrix3D";
-/**
- *
- */
-TransformEvent.INVALIDATE_COLOR_TRANSFORM = "invalidateColorTransform";
-
-/**
- * The Transform class provides access to color adjustment properties and two-
- * or three-dimensional transformation objects that can be applied to a
- * display object. During the transformation, the color or the orientation and
- * position of a display object is adjusted(offset) from the current values
- * or coordinates to new values or coordinates. The Transform class also
- * collects data about color and two-dimensional matrix transformations that
- * are applied to a display object and all of its parent objects. You can
- * access these combined transformations through the
- * <code>concatenatedColorTransform</code> and <code>concatenatedMatrix</code>
- * properties.
- *
- * <p>To apply color transformations: create a ColorTransform object, set the
- * color adjustments using the object's methods and properties, and then
- * assign the <code>colorTransformation</code> property of the
- * <code>transform</code> property of the display object to the new
- * ColorTransformation object.</p>
- *
- * <p>To apply two-dimensional transformations: create a Matrix object, set
- * the matrix's two-dimensional transformation, and then assign the
- * <code>transform.matrix</code> property of the display object to the new
- * Matrix object.</p>
- *
- * <p>To apply three-dimensional transformations: start with a
- * three-dimensional display object. A three-dimensional display object has a
- * <code>z</code> property value other than zero. You do not need to create
- * the Matrix3D object. For all three-dimensional objects, a Matrix3D object
- * is created automatically when you assign a <code>z</code> value to a
- * display object. You can access the display object's Matrix3D object through
- * the display object's <code>transform</code> property. Using the methods of
- * the Matrix3D class, you can add to or modify the existing transformation
- * settings. Also, you can create a custom Matrix3D object, set the custom
- * Matrix3D object's transformation elements, and then assign the new Matrix3D
- * object to the display object using the <code>transform.matrix</code>
- * property.</p>
- *
- * <p>To modify a perspective projection of the stage or root object: use the
- * <code>transform.matrix</code> property of the root display object to gain
- * access to the PerspectiveProjection object. Or, apply different perspective
- * projection properties to a display object by setting the perspective
- * projection properties of the display object's parent. The child display
- * object inherits the new properties. Specifically, create a
- * PerspectiveProjection object and set its properties, then assign the
- * PerspectiveProjection object to the <code>perspectiveProjection</code>
- * property of the parent display object's <code>transform</code> property.
- * The specified projection transformation then applies to all the display
- * object's three-dimensional children.</p>
- *
- * <p>Since both PerspectiveProjection and Matrix3D objects perform
- * perspective transformations, do not assign both to a display object at the
- * same time. Use the PerspectiveProjection object for focal length and
- * projection center changes. For more control over the perspective
- * transformation, create a perspective projection Matrix3D object.</p>
- */
-var Transform = (function (_super) {
-    __extends(Transform, _super);
-    function Transform(rawData) {
-        if (rawData === void 0) { rawData = null; }
-        var _this = _super.call(this) || this;
-        _this._rotation = new Vector3D();
-        _this._skew = new Vector3D();
-        _this._scale = new Vector3D(1, 1, 1);
-        _this._rawData = rawData || new Float32Array(24);
-        //create the view for matrix3D
-        _this._matrix3D = new Matrix3D(new Float32Array(_this._rawData.buffer, 0, 16));
-        //create the view for colorTransform
-        _this._colorTransform = new ColorTransform(new Float32Array(_this._rawData.buffer, 64, 8));
-        if (rawData == null) {
-            _this._matrix3D.identity();
-            _this._colorTransform.clear();
-        }
-        // Cached vector of transformation components used when
-        // recomposing the transform matrix in updateTransform()
-        _this._components = new Array(4);
-        _this._components[1] = _this._rotation;
-        _this._components[2] = _this._skew;
-        _this._components[3] = _this._scale;
-        _this.invalidateComponents();
-        return _this;
-    }
-    Object.defineProperty(Transform.prototype, "rawData", {
-        get: function () {
-            if (this._matrix3DDirty)
-                this._updateMatrix3D();
-            return this._rawData;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "backVector", {
-        /**
-         *
-         */
-        get: function () {
-            if (!this._backVector)
-                this._backVector = new Vector3D();
-            this._matrix3D.copyColumnTo(2, this._backVector, true);
-            return this._backVector;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "colorTransform", {
-        /**
-         * A ColorTransform object containing values that universally adjust the
-         * colors in the display object.
-         *
-         * @throws TypeError The colorTransform is null when being set
-         */
-        get: function () {
-            return this._colorTransform;
-        },
-        set: function (val) {
-            var sourceData = val._rawData, targetData = this._matrix3D._rawData;
-            targetData[0] = sourceData[0];
-            targetData[1] = sourceData[1];
-            targetData[2] = sourceData[2];
-            targetData[3] = sourceData[3];
-            targetData[4] = sourceData[4];
-            targetData[5] = sourceData[5];
-            targetData[6] = sourceData[6];
-            targetData[7] = sourceData[7];
-            this.invalidateColorTransform();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "downVector", {
-        /**
-         *
-         */
-        get: function () {
-            if (!this._downVector)
-                this._downVector = new Vector3D();
-            this._matrix3D.copyColumnTo(1, this._downVector, true);
-            return this._downVector;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "forwardVector", {
-        /**
-         *
-         */
-        get: function () {
-            if (!this._forwardVector)
-                this._forwardVector = new Vector3D();
-            this._matrix3D.copyColumnTo(2, this._forwardVector);
-            return this._forwardVector;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "leftVector", {
-        /**
-         *
-         */
-        get: function () {
-            if (!this._leftVector)
-                this._leftVector = new Vector3D();
-            this._matrix3D.copyColumnTo(0, this._backVector, true);
-            return this._leftVector;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "matrix3D", {
-        /**
-         * Provides access to the Matrix3D object of a three-dimensional display
-         * object. The Matrix3D object represents a transformation matrix that
-         * determines the display object's position and orientation. A Matrix3D
-         * object can also perform perspective projection.
-         *
-         * <p>If the <code>matrix</code> property is set to a value(not
-         * <code>null</code>), the <code>matrix3D</code> property is
-         * <code>null</code>. And if the <code>matrix3D</code> property is set to a
-         * value(not <code>null</code>), the <code>matrix</code> property is
-         * <code>null</code>.</p>
-         */
-        get: function () {
-            if (this._matrix3DDirty)
-                this._updateMatrix3D();
-            return this._matrix3D;
-        },
-        set: function (val) {
-            var sourceData = val._rawData, targetData = this._matrix3D._rawData;
-            targetData[0] = sourceData[0];
-            targetData[1] = sourceData[1];
-            targetData[2] = sourceData[2];
-            targetData[3] = sourceData[3];
-            targetData[4] = sourceData[4];
-            targetData[5] = sourceData[5];
-            targetData[6] = sourceData[6];
-            targetData[7] = sourceData[7];
-            targetData[8] = sourceData[8];
-            targetData[9] = sourceData[9];
-            targetData[10] = sourceData[10];
-            targetData[11] = sourceData[11];
-            targetData[12] = sourceData[12];
-            targetData[13] = sourceData[13];
-            targetData[14] = sourceData[14];
-            targetData[15] = sourceData[15];
-            this.invalidateComponents();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "pixelBounds", {
-        /**
-         * A Rectangle object that defines the bounding rectangle of the display
-         * object on the stage.
-         */
-        get: function () {
-            return this._pixelBounds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "position", {
-        /**
-         * Defines the position of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
-         */
-        get: function () {
-            return this._matrix3D.position;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "rightVector", {
-        /**
-         *
-         */
-        get: function () {
-            if (!this._rightVector)
-                this._rightVector = new Vector3D();
-            this._matrix3D.copyColumnTo(0, this._rightVector);
-            return this._rightVector;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Transform.prototype, "rotation", {
-        /**
-         * Defines the rotation of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
-         */
-        get: function () {
-            if (this._componentsDirty)
-                this._updateComponents();
-            return this._rotation;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Rotates the 3d object directly to a euler angle
-     *
-     * @param    ax        The angle in degrees of the rotation around the x axis.
-     * @param    ay        The angle in degrees of the rotation around the y axis.
-     * @param    az        The angle in degrees of the rotation around the z axis.
-     */
-    Transform.prototype.rotateTo = function (ax, ay, az) {
-        if (this._componentsDirty)
-            this._updateComponents();
-        this._rotation.x = ax;
-        this._rotation.y = ay;
-        this._rotation.z = az;
-        this.invalidateMatrix3D();
-    };
-    Object.defineProperty(Transform.prototype, "scale", {
-        /**
-         * Defines the scale of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
-         */
-        get: function () {
-            if (this._componentsDirty)
-                this._updateComponents();
-            return this._scale;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Transform.prototype.scaleTo = function (sx, sy, sz) {
-        if (this._componentsDirty)
-            this._updateComponents();
-        this._scale.x = sx;
-        this._scale.y = sy;
-        this._scale.z = sz;
-        this.invalidateMatrix3D();
-    };
-    Object.defineProperty(Transform.prototype, "skew", {
-        /**
-         * Defines the scale of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
-         */
-        get: function () {
-            if (this._componentsDirty)
-                this._updateComponents();
-            return this._skew;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Transform.prototype.skewTo = function (sx, sy, sz) {
-        if (this._componentsDirty)
-            this._updateComponents();
-        this._skew.x = sx;
-        this._skew.y = sy;
-        this._skew.z = sz;
-        this.invalidateMatrix3D();
-    };
-    Object.defineProperty(Transform.prototype, "upVector", {
-        /**
-         *
-         */
-        get: function () {
-            if (!this._upVector)
-                this._upVector = new Vector3D();
-            this._matrix3D.copyColumnTo(1, this._upVector);
-            return this._upVector;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Transform.prototype.copyRawDataFrom = function (transform) {
-        var targetData = this._rawData;
-        var sourceData = transform.rawData;
-        //Matrix3D data
-        targetData[0] = sourceData[0];
-        targetData[1] = sourceData[1];
-        targetData[2] = sourceData[2];
-        targetData[3] = sourceData[3];
-        targetData[4] = sourceData[4];
-        targetData[5] = sourceData[5];
-        targetData[6] = sourceData[6];
-        targetData[7] = sourceData[7];
-        targetData[8] = sourceData[8];
-        targetData[9] = sourceData[9];
-        targetData[10] = sourceData[10];
-        targetData[11] = sourceData[11];
-        targetData[12] = sourceData[12];
-        targetData[13] = sourceData[13];
-        targetData[14] = sourceData[14];
-        targetData[15] = sourceData[15];
-        //ColorTransform data
-        targetData[16] = sourceData[16];
-        targetData[17] = sourceData[17];
-        targetData[18] = sourceData[18];
-        targetData[19] = sourceData[19];
-        targetData[20] = sourceData[20];
-        targetData[21] = sourceData[21];
-        targetData[22] = sourceData[22];
-        targetData[23] = sourceData[23];
-    };
-    Transform.prototype.dispose = function () {
-    };
-    /**
-     * Moves the 3d object forwards along it's local z axis
-     *
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.moveForward = function (distance) {
-        this.translateLocal(Vector3D.Z_AXIS, distance);
-    };
-    /**
-     * Moves the 3d object backwards along it's local z axis
-     *
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.moveBackward = function (distance) {
-        this.translateLocal(Vector3D.Z_AXIS, -distance);
-    };
-    /**
-     * Moves the 3d object backwards along it's local x axis
-     *
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.moveLeft = function (distance) {
-        this.translateLocal(Vector3D.X_AXIS, -distance);
-    };
-    /**
-     * Moves the 3d object forwards along it's local x axis
-     *
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.moveRight = function (distance) {
-        this.translateLocal(Vector3D.X_AXIS, distance);
-    };
-    /**
-     * Moves the 3d object forwards along it's local y axis
-     *
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.moveUp = function (distance) {
-        this.translateLocal(Vector3D.Y_AXIS, distance);
-    };
-    /**
-     * Moves the 3d object backwards along it's local y axis
-     *
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.moveDown = function (distance) {
-        this.translateLocal(Vector3D.Y_AXIS, -distance);
-    };
-    /**
-     * Moves the 3d object directly to a point in space
-     *
-     * @param    dx        The amount of movement along the local x axis.
-     * @param    dy        The amount of movement along the local y axis.
-     * @param    dz        The amount of movement along the local z axis.
-     */
-    Transform.prototype.moveTo = function (dx, dy, dz) {
-        this._matrix3D._rawData[12] = dx;
-        this._matrix3D._rawData[13] = dy;
-        this._matrix3D._rawData[14] = dz;
-        this.invalidatePosition();
-    };
-    /**
-     * Rotates the 3d object around it's local x-axis
-     *
-     * @param    angle        The amount of rotation in degrees
-     */
-    Transform.prototype.pitch = function (angle) {
-        this.rotate(Vector3D.X_AXIS, angle);
-    };
-    /**
-     * Rotates the 3d object around it's local z-axis
-     *
-     * @param    angle        The amount of rotation in degrees
-     */
-    Transform.prototype.roll = function (angle) {
-        this.rotate(Vector3D.Z_AXIS, angle);
-    };
-    /**
-     * Rotates the 3d object around it's local y-axis
-     *
-     * @param    angle        The amount of rotation in degrees
-     */
-    Transform.prototype.yaw = function (angle) {
-        this.rotate(Vector3D.Y_AXIS, angle);
-    };
-    /**
-     * Rotates the 3d object around an axis by a defined angle
-     *
-     * @param    axis        The vector defining the axis of rotation
-     * @param    angle        The amount of rotation in degrees
-     */
-    Transform.prototype.rotate = function (axis, angle) {
-        this.matrix3D.prependRotation(angle, axis);
-        this.invalidateComponents();
-    };
-    /**
-     * Moves the 3d object along a vector by a defined length
-     *
-     * @param    axis        The vector defining the axis of movement
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.translate = function (axis, distance) {
-        var x = axis.x, y = axis.y, z = axis.z;
-        var len = distance / Math.sqrt(x * x + y * y + z * z);
-        this.matrix3D.appendTranslation(x * len, y * len, z * len);
-        this.invalidatePosition();
-    };
-    /**
-     * Moves the 3d object along a vector by a defined length
-     *
-     * @param    axis        The vector defining the axis of movement
-     * @param    distance    The length of the movement
-     */
-    Transform.prototype.translateLocal = function (axis, distance) {
-        var x = axis.x, y = axis.y, z = axis.z;
-        var len = distance / Math.sqrt(x * x + y * y + z * z);
-        this.matrix3D.prependTranslation(x * len, y * len, z * len);
-        this.invalidatePosition();
-    };
-    Transform.prototype.clearMatrix3D = function () {
-        this._matrix3D.identity();
-        this.invalidateComponents();
-    };
-    Transform.prototype.clearColorTransform = function () {
-        if (!this._colorTransform)
-            return;
-        this._colorTransform.clear();
-        this.invalidateColorTransform();
-    };
-    /**
-     * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
-     *
-     * @private
-     */
-    Transform.prototype.invalidateMatrix3D = function () {
-        this._matrix3DDirty = true;
-        this.dispatchEvent(new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this));
-    };
-    Transform.prototype.invalidateComponents = function () {
-        this.invalidatePosition();
-        this._componentsDirty = true;
-    };
-    /**
-     *
-     */
-    Transform.prototype.invalidatePosition = function () {
-        this._matrix3D.invalidatePosition();
-        this.dispatchEvent(new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this));
-    };
-    Transform.prototype.invalidateColorTransform = function () {
-        this.dispatchEvent(new TransformEvent(TransformEvent.INVALIDATE_COLOR_TRANSFORM, this));
-    };
-    /**
-     *
-     */
-    Transform.prototype._updateMatrix3D = function () {
-        this._matrix3D.recompose(this._components);
-        this._matrix3DDirty = false;
-    };
-    Transform.prototype._updateComponents = function () {
-        var elements = this._matrix3D.decompose();
-        var vec;
-        vec = elements[1];
-        this._rotation.x = vec.x;
-        this._rotation.y = vec.y;
-        this._rotation.z = vec.z;
-        vec = elements[2];
-        this._skew.x = vec.x;
-        this._skew.y = vec.y;
-        this._skew.z = vec.z;
-        vec = elements[3];
-        this._scale.x = vec.x;
-        this._scale.y = vec.y;
-        this._scale.z = vec.z;
-        this._componentsDirty = false;
-    };
-    return Transform;
 }(EventDispatcher));
 
 /**
@@ -22556,6 +22730,637 @@ AGLSLParser.maxstreams = 8;
 AGLSLParser.maxtextures = 8;
 
 /**
+ * A single register element (an entire register or a single register's component) used by the RegisterPool.
+ */
+var ShaderRegisterElement = (function () {
+    /**
+     * Creates a new ShaderRegisterElement object.
+     *
+     * @param regName The name of the register.
+     * @param index The index of the register.
+     * @param component The register's component, if not the entire register is represented.
+     */
+    function ShaderRegisterElement(regName, index, component) {
+        if (component === void 0) { component = -1; }
+        this._component = component;
+        this._regName = regName;
+        this._index = index;
+        this._toStr = this._regName;
+        if (this._index >= 0)
+            this._toStr += this._index;
+        if (component > -1)
+            this._toStr += "." + ShaderRegisterElement.COMPONENTS[component];
+    }
+    /**
+     * Converts the register or the components AGAL string representation.
+     */
+    ShaderRegisterElement.prototype.toString = function () {
+        return this._toStr;
+    };
+    Object.defineProperty(ShaderRegisterElement.prototype, "regName", {
+        /**
+         * The register's name.
+         */
+        get: function () {
+            return this._regName;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderRegisterElement.prototype, "index", {
+        /**
+         * The register's index.
+         */
+        get: function () {
+            return this._index;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ShaderRegisterElement;
+}());
+ShaderRegisterElement.COMPONENTS = ["x", "y", "z", "w"];
+
+/**
+ * ...
+ */
+var AnimationRegisterData = (function () {
+    function AnimationRegisterData() {
+        this.indexDictionary = new Object();
+    }
+    AnimationRegisterData.prototype.reset = function (registerCache, sharedRegisters, needVelocity) {
+        this.rotationRegisters = new Array();
+        this.positionAttribute = sharedRegisters.animatableAttributes[0];
+        this.scaleAndRotateTarget = sharedRegisters.animationTargetRegisters[0];
+        for (var i = 1; i < sharedRegisters.animationTargetRegisters.length; i++)
+            this.rotationRegisters.push(sharedRegisters.animationTargetRegisters[i]);
+        //allot const register
+        this.vertexZeroConst = registerCache.getFreeVertexConstant();
+        this.vertexZeroConst = new ShaderRegisterElement(this.vertexZeroConst.regName, this.vertexZeroConst.index, 0);
+        this.vertexOneConst = new ShaderRegisterElement(this.vertexZeroConst.regName, this.vertexZeroConst.index, 1);
+        this.vertexTwoConst = new ShaderRegisterElement(this.vertexZeroConst.regName, this.vertexZeroConst.index, 2);
+        //allot temp register
+        this.positionTarget = registerCache.getFreeVertexVectorTemp();
+        registerCache.addVertexTempUsages(this.positionTarget, 1);
+        this.positionTarget = new ShaderRegisterElement(this.positionTarget.regName, this.positionTarget.index);
+        if (needVelocity) {
+            this.velocityTarget = registerCache.getFreeVertexVectorTemp();
+            registerCache.addVertexTempUsages(this.velocityTarget, 1);
+            this.velocityTarget = new ShaderRegisterElement(this.velocityTarget.regName, this.velocityTarget.index);
+            this.vertexTime = new ShaderRegisterElement(this.velocityTarget.regName, this.velocityTarget.index, 3);
+            this.vertexLife = new ShaderRegisterElement(this.positionTarget.regName, this.positionTarget.index, 3);
+        }
+        else {
+            var tempTime = registerCache.getFreeVertexVectorTemp();
+            registerCache.addVertexTempUsages(tempTime, 1);
+            this.vertexTime = new ShaderRegisterElement(tempTime.regName, tempTime.index, 0);
+            this.vertexLife = new ShaderRegisterElement(tempTime.regName, tempTime.index, 1);
+        }
+    };
+    AnimationRegisterData.prototype.setUVSourceAndTarget = function (sharedRegisters) {
+        this.uvVar = sharedRegisters.uvTarget;
+        this.uvAttribute = sharedRegisters.uvSource;
+        //uv action is processed after normal actions,so use offsetTarget as uvTarget
+        this.uvTarget = new ShaderRegisterElement(this.positionTarget.regName, this.positionTarget.index);
+    };
+    AnimationRegisterData.prototype.setRegisterIndex = function (node, parameterIndex, registerIndex) {
+        //8 should be enough for any node.
+        var t = this.indexDictionary[node.id];
+        if (t == null)
+            t = this.indexDictionary[node.id] = new Array(8);
+        t[parameterIndex] = registerIndex;
+    };
+    AnimationRegisterData.prototype.getRegisterIndex = function (node, parameterIndex) {
+        return this.indexDictionary[node.id][parameterIndex];
+    };
+    return AnimationRegisterData;
+}());
+
+var AnimationSetError = (function (_super) {
+    __extends(AnimationSetError, _super);
+    function AnimationSetError(message) {
+        return _super.call(this, message) || this;
+    }
+    return AnimationSetError;
+}(ErrorBase));
+
+/**
+ * Provides an abstract base class for data set classes that hold animation data for use in animator classes.
+ *
+ * @see away.animators.AnimatorBase
+ */
+var AnimationSetBase = (function (_super) {
+    __extends(AnimationSetBase, _super);
+    function AnimationSetBase() {
+        var _this = _super.call(this) || this;
+        _this._animations = new Array();
+        _this._animationNames = new Array();
+        _this._animationDictionary = new Object();
+        return _this;
+    }
+    /**
+     * Retrieves a temporary GPU register that's still free.
+     *
+     * @param exclude An array of non-free temporary registers.
+     * @param excludeAnother An additional register that's not free.
+     * @return A temporary register that can be used.
+     */
+    AnimationSetBase.prototype._pFindTempReg = function (exclude, excludeAnother) {
+        if (excludeAnother === void 0) { excludeAnother = null; }
+        var i = 0;
+        var reg;
+        while (true) {
+            reg = "vt" + i;
+            if (exclude.indexOf(reg) == -1 && excludeAnother != reg)
+                return reg;
+            ++i;
+        }
+    };
+    Object.defineProperty(AnimationSetBase.prototype, "usesCPU", {
+        /**
+         * Indicates whether the properties of the animation data contained within the set combined with
+         * the vertex registers already in use on shading materials allows the animation data to utilise
+         * GPU calls.
+         */
+        get: function () {
+            return this._usesCPU;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Called by the material to reset the GPU indicator before testing whether register space in the shader
+     * is available for running GPU-based animation code.
+     *
+     * @private
+     */
+    AnimationSetBase.prototype.resetGPUCompatibility = function () {
+        this._usesCPU = false;
+    };
+    AnimationSetBase.prototype.cancelGPUCompatibility = function () {
+        this._usesCPU = true;
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimationSetBase.prototype.getAGALVertexCode = function (shader, registerCache, sharedRegisters) {
+        throw new AbstractMethodError();
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimationSetBase.prototype.getAGALFragmentCode = function (shader, registerCache, shadedTarget) {
+        throw new AbstractMethodError();
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimationSetBase.prototype.getAGALUVCode = function (shader, registerCache, sharedRegisters) {
+        throw new AbstractMethodError();
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimationSetBase.prototype.doneAGALCode = function (shader) {
+        throw new AbstractMethodError();
+    };
+    Object.defineProperty(AnimationSetBase.prototype, "assetType", {
+        /**
+         * @inheritDoc
+         */
+        get: function () {
+            return AnimationSetBase.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimationSetBase.prototype, "animations", {
+        /**
+         * Returns a vector of animation state objects that make up the contents of the animation data set.
+         */
+        get: function () {
+            return this._animations;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimationSetBase.prototype, "animationNames", {
+        /**
+         * Returns a vector of animation state objects that make up the contents of the animation data set.
+         */
+        get: function () {
+            return this._animationNames;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Check to determine whether a state is registered in the animation set under the given name.
+     *
+     * @param stateName The name of the animation state object to be checked.
+     */
+    AnimationSetBase.prototype.hasAnimation = function (name) {
+        return this._animationDictionary[name] != null;
+    };
+    /**
+     * Retrieves the animation state object registered in the animation data set under the given name.
+     *
+     * @param stateName The name of the animation state object to be retrieved.
+     */
+    AnimationSetBase.prototype.getAnimation = function (name) {
+        return this._animationDictionary[name];
+    };
+    /**
+     * Adds an animation state object to the aniamtion data set under the given name.
+     *
+     * @param stateName The name under which the animation state object will be stored.
+     * @param animationState The animation state object to be staored in the set.
+     */
+    AnimationSetBase.prototype.addAnimation = function (node) {
+        if (this._animationDictionary[node.name])
+            throw new AnimationSetError("root node name '" + node.name + "' already exists in the set");
+        this._animationDictionary[node.name] = node;
+        this._animations.push(node);
+        this._animationNames.push(node.name);
+    };
+    /**
+     * Cleans up any resources used by the current object.
+     */
+    AnimationSetBase.prototype.dispose = function () {
+    };
+    return AnimationSetBase;
+}(AssetBase));
+AnimationSetBase.assetType = "[asset AnimationSet]";
+
+/**
+ * Dispatched to notify changes in an animator's state.
+ */
+var AnimatorEvent = (function (_super) {
+    __extends(AnimatorEvent, _super);
+    /**
+     * Create a new <code>AnimatorEvent</code> object.
+     *
+     * @param type The event type.
+     * @param animator The animator object that is the subject of this event.
+     */
+    function AnimatorEvent(type, animator) {
+        var _this = _super.call(this, type) || this;
+        _this._animator = animator;
+        return _this;
+    }
+    Object.defineProperty(AnimatorEvent.prototype, "animator", {
+        get: function () {
+            return this._animator;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Clones the event.
+     *
+     * @return An exact duplicate of the current event object.
+     */
+    AnimatorEvent.prototype.clone = function () {
+        return new AnimatorEvent(this.type, this._animator);
+    };
+    return AnimatorEvent;
+}(EventBase));
+/**
+ * Defines the value of the type property of a start event object.
+ */
+AnimatorEvent.START = "animatorStart";
+/**
+ * Defines the value of the type property of a stop event object.
+ */
+AnimatorEvent.STOP = "animatorStop";
+/**
+ * Defines the value of the type property of a cycle complete event object.
+ */
+AnimatorEvent.CYCLE_COMPLETE = "animatorCycleComplete";
+
+/**
+ * Dispatched when playback of an animation inside the animator object starts.
+ *
+ * @eventType away3d.events.AnimatorEvent
+ */
+//[Event(name="start", type="away3d.events.AnimatorEvent")]
+/**
+ * Dispatched when playback of an animation inside the animator object stops.
+ *
+ * @eventType away3d.events.AnimatorEvent
+ */
+//[Event(name="stop", type="away3d.events.AnimatorEvent")]
+/**
+ * Dispatched when playback of an animation reaches the end of an animation.
+ *
+ * @eventType away3d.events.AnimatorEvent
+ */
+//[Event(name="cycle_complete", type="away3d.events.AnimatorEvent")]
+/**
+ * Provides an abstract base class for animator classes that control animation output from a data set subtype of <code>AnimationSetBase</code>.
+ *
+ * @see away.animators.AnimationSetBase
+ */
+var AnimatorBase = (function (_super) {
+    __extends(AnimatorBase, _super);
+    /**
+     * Creates a new <code>AnimatorBase</code> object.
+     *
+     * @param animationSet The animation data set to be used by the animator object.
+     */
+    function AnimatorBase(animationSet) {
+        var _this = _super.call(this) || this;
+        _this._autoUpdate = true;
+        _this._time = 0;
+        _this._playbackSpeed = 1;
+        _this._pOwners = new Array();
+        _this._pAbsoluteTime = 0;
+        _this._animationStates = new Object();
+        /**
+         * Enables translation of the animated graphics from data returned per frame via the positionDelta property of the active animation node. Defaults to true.
+         *
+         * @see away.animators.IAnimationState#positionDelta
+         */
+        _this.updatePosition = true;
+        _this._pAnimationSet = animationSet;
+        _this._broadcaster = new RequestAnimationFrame(_this.onEnterFrame, _this);
+        return _this;
+    }
+    AnimatorBase.prototype.getAnimationState = function (node) {
+        var className = node.stateClass;
+        var uID = node.id;
+        if (this._animationStates[uID] == null)
+            this._animationStates[uID] = new className(this, node);
+        return this._animationStates[uID];
+    };
+    AnimatorBase.prototype.getAnimationStateByName = function (name) {
+        return this.getAnimationState(this._pAnimationSet.getAnimation(name));
+    };
+    Object.defineProperty(AnimatorBase.prototype, "absoluteTime", {
+        /**
+         * Returns the internal absolute time of the animator, calculated by the current time and the playback speed.
+         *
+         * @see #time
+         * @see #playbackSpeed
+         */
+        get: function () {
+            return this._pAbsoluteTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimatorBase.prototype, "animationSet", {
+        /**
+         * Returns the animation data set in use by the animator.
+         */
+        get: function () {
+            return this._pAnimationSet;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimatorBase.prototype, "activeState", {
+        /**
+         * Returns the current active animation state.
+         */
+        get: function () {
+            return this._pActiveState;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimatorBase.prototype, "activeAnimation", {
+        /**
+         * Returns the current active animation node.
+         */
+        get: function () {
+            return this._pAnimationSet.getAnimation(this._pActiveAnimationName);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimatorBase.prototype, "activeAnimationName", {
+        /**
+         * Returns the current active animation node.
+         */
+        get: function () {
+            return this._pActiveAnimationName;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimatorBase.prototype, "autoUpdate", {
+        /**
+         * Determines whether the animators internal update mechanisms are active. Used in cases
+         * where manual updates are required either via the <code>time</code> property or <code>update()</code> method.
+         * Defaults to true.
+         *
+         * @see #time
+         * @see #update()
+         */
+        get: function () {
+            return this._autoUpdate;
+        },
+        set: function (value) {
+            if (this._autoUpdate == value)
+                return;
+            this._autoUpdate = value;
+            if (this._autoUpdate)
+                this.start();
+            else
+                this.stop();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AnimatorBase.prototype, "time", {
+        /**
+         * Gets and sets the internal time clock of the animator.
+         */
+        get: function () {
+            return this._time;
+        },
+        set: function (value) {
+            if (this._time == value)
+                return;
+            this.update(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Sets the animation phase of the current active state's animation clip(s).
+     *
+     * @param value The phase value to use. 0 represents the beginning of an animation clip, 1 represents the end.
+     */
+    AnimatorBase.prototype.phase = function (value) {
+        this._pActiveState.phase(value);
+    };
+    Object.defineProperty(AnimatorBase.prototype, "playbackSpeed", {
+        /**
+         * The amount by which passed time should be scaled. Used to slow down or speed up animations. Defaults to 1.
+         */
+        get: function () {
+            return this._playbackSpeed;
+        },
+        set: function (value) {
+            this._playbackSpeed = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AnimatorBase.prototype.setRenderState = function (shader, renderable, stage, projection) {
+        throw new AbstractMethodError();
+    };
+    /**
+     * Resumes the automatic playback clock controling the active state of the animator.
+     */
+    AnimatorBase.prototype.start = function () {
+        if (this._isPlaying || !this._autoUpdate)
+            return;
+        this._time = this._pAbsoluteTime = getTimer();
+        this._isPlaying = true;
+        this._broadcaster.start();
+        if (!this.hasEventListener(AnimatorEvent.START))
+            return;
+        if (this._startEvent == null)
+            this._startEvent = new AnimatorEvent(AnimatorEvent.START, this);
+        this.dispatchEvent(this._startEvent);
+    };
+    /**
+     * Pauses the automatic playback clock of the animator, in case manual updates are required via the
+     * <code>time</code> property or <code>update()</code> method.
+     *
+     * @see #time
+     * @see #update()
+     */
+    AnimatorBase.prototype.stop = function () {
+        if (!this._isPlaying)
+            return;
+        this._isPlaying = false;
+        this._broadcaster.stop();
+        if (!this.hasEventListener(AnimatorEvent.STOP))
+            return;
+        if (this._stopEvent == null)
+            this._stopEvent = new AnimatorEvent(AnimatorEvent.STOP, this);
+        this.dispatchEvent(this._stopEvent);
+    };
+    /**
+     * Provides a way to manually update the active state of the animator when automatic
+     * updates are disabled.
+     *
+     * @see #stop()
+     * @see #autoUpdate
+     */
+    AnimatorBase.prototype.update = function (time) {
+        var dt = (time - this._time) * this.playbackSpeed;
+        this._pUpdateDeltaTime(dt);
+        this._time = time;
+    };
+    AnimatorBase.prototype.reset = function (name, offset) {
+        if (offset === void 0) { offset = 0; }
+        this.getAnimationState(this._pAnimationSet.getAnimation(name)).offset(offset + this._pAbsoluteTime);
+    };
+    /**
+     * Used by the graphics object to which the animator is applied, registers the owner for internal use.
+     *
+     * @private
+     */
+    AnimatorBase.prototype.addOwner = function (entity) {
+        this._pOwners.push(entity);
+    };
+    /**
+     * Used by the graphics object from which the animator is removed, unregisters the owner for internal use.
+     *
+     * @private
+     */
+    AnimatorBase.prototype.removeOwner = function (entity) {
+        this._pOwners.splice(this._pOwners.indexOf(entity), 1);
+    };
+    /**
+     * Internal abstract method called when the time delta property of the animator's contents requires updating.
+     *
+     * @private
+     */
+    AnimatorBase.prototype._pUpdateDeltaTime = function (dt) {
+        this._pAbsoluteTime += dt;
+        this._pActiveState.update(this._pAbsoluteTime);
+        if (this.updatePosition)
+            this.applyPositionDelta();
+    };
+    /**
+     * Enter frame event handler for automatically updating the active state of the animator.
+     */
+    AnimatorBase.prototype.onEnterFrame = function (event) {
+        if (event === void 0) { event = null; }
+        this.update(getTimer());
+    };
+    AnimatorBase.prototype.applyPositionDelta = function () {
+        var delta = this._pActiveState.positionDelta;
+        var dist = delta.length;
+        var len;
+        if (dist > 0) {
+            len = this._pOwners.length;
+            for (var i = 0; i < len; ++i)
+                this._pOwners[i].transform.translateLocal(delta, dist);
+        }
+    };
+    /**
+     *  for internal use.
+     *
+     * @private
+     */
+    AnimatorBase.prototype.dispatchCycleEvent = function () {
+        if (this.hasEventListener(AnimatorEvent.CYCLE_COMPLETE)) {
+            if (this._cycleEvent == null)
+                this._cycleEvent = new AnimatorEvent(AnimatorEvent.CYCLE_COMPLETE, this);
+            this.dispatchEvent(this._cycleEvent);
+        }
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimatorBase.prototype.clone = function () {
+        throw new AbstractMethodError();
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimatorBase.prototype.dispose = function () {
+    };
+    AnimatorBase.prototype.invalidateElements = function () {
+        var entity;
+        var len = this._pOwners.length;
+        for (var i = 0; i < len; i++) {
+            entity = this._pOwners[i];
+            entity.invalidateElements();
+        }
+    };
+    /**
+     * @inheritDoc
+     */
+    AnimatorBase.prototype.testGPUCompatibility = function (shader) {
+        throw new AbstractMethodError();
+    };
+    Object.defineProperty(AnimatorBase.prototype, "assetType", {
+        /**
+         * @inheritDoc
+         */
+        get: function () {
+            return AnimatorBase.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AnimatorBase.prototype.getRenderableElements = function (renderable, sourceElements) {
+        //nothing to do here
+        return sourceElements;
+    };
+    return AnimatorBase;
+}(AssetBase));
+AnimatorBase.assetType = "[asset Animator]";
+
+/**
  *
  * @class away.pool.GL_AttributesBuffer
  */
@@ -22742,6 +23547,365 @@ var SamplerState = (function () {
     return SamplerState;
 }());
 
+/**
+ *
+ * @class away.pool.GL_ElementsBaseBase
+ */
+var GL_ElementsBase = (function (_super) {
+    __extends(GL_ElementsBase, _super);
+    function GL_ElementsBase(elements, stage) {
+        var _this = _super.call(this, elements, stage) || this;
+        _this.usages = 0;
+        _this._vertices = new Object();
+        _this._verticesUpdated = new Object();
+        _this._indexMappings = Array();
+        _this._numIndices = 0;
+        _this._elements = elements;
+        _this._stage = stage;
+        _this._onInvalidateIndicesDelegate = function (event) { return _this._onInvalidateIndices(event); };
+        _this._onClearIndicesDelegate = function (event) { return _this._onClearIndices(event); };
+        _this._onInvalidateVerticesDelegate = function (event) { return _this._onInvalidateVertices(event); };
+        _this._onClearVerticesDelegate = function (event) { return _this._onClearVertices(event); };
+        _this._elements.addEventListener(ElementsEvent.CLEAR_INDICES, _this._onClearIndicesDelegate);
+        _this._elements.addEventListener(ElementsEvent.INVALIDATE_INDICES, _this._onInvalidateIndicesDelegate);
+        _this._elements.addEventListener(ElementsEvent.CLEAR_VERTICES, _this._onClearVerticesDelegate);
+        _this._elements.addEventListener(ElementsEvent.INVALIDATE_VERTICES, _this._onInvalidateVerticesDelegate);
+        return _this;
+    }
+    Object.defineProperty(GL_ElementsBase.prototype, "elementsType", {
+        get: function () {
+            throw new AbstractMethodError();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_ElementsBase.prototype, "elementsClass", {
+        get: function () {
+            throw new AbstractMethodError();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_ElementsBase.prototype, "elements", {
+        get: function () {
+            return this._elements;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_ElementsBase.prototype, "numIndices", {
+        /**
+         *
+         */
+        get: function () {
+            return this._numIndices;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_ElementsBase.prototype, "numVertices", {
+        /**
+         *
+         */
+        get: function () {
+            return this._numVertices;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     */
+    GL_ElementsBase.prototype.getIndexMappings = function () {
+        if (!this._indicesUpdated)
+            this._updateIndices();
+        return this._indexMappings;
+    };
+    /**
+     *
+     */
+    GL_ElementsBase.prototype.getIndexBufferGL = function () {
+        if (!this._indicesUpdated)
+            this._updateIndices();
+        return this._indices;
+    };
+    /**
+     *
+     */
+    GL_ElementsBase.prototype.getVertexBufferGL = function (attributesView) {
+        //first check if indices need updating which may affect vertices
+        if (!this._indicesUpdated)
+            this._updateIndices();
+        var bufferId = attributesView.attributesBuffer.id;
+        if (!this._verticesUpdated[bufferId])
+            this._updateVertices(attributesView);
+        return this._vertices[bufferId];
+    };
+    /**
+     *
+     */
+    GL_ElementsBase.prototype.activateVertexBufferVO = function (index, attributesView, dimensions, offset) {
+        if (dimensions === void 0) { dimensions = 0; }
+        if (offset === void 0) { offset = 0; }
+        this.getVertexBufferGL(attributesView).activate(index, attributesView.size, dimensions || attributesView.dimensions, attributesView.offset + offset, attributesView.unsigned);
+    };
+    /**
+     *
+     */
+    GL_ElementsBase.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._elements.removeEventListener(ElementsEvent.CLEAR_INDICES, this._onClearIndicesDelegate);
+        this._elements.removeEventListener(ElementsEvent.INVALIDATE_INDICES, this._onInvalidateIndicesDelegate);
+        this._elements.removeEventListener(ElementsEvent.CLEAR_VERTICES, this._onClearVerticesDelegate);
+        this._elements.removeEventListener(ElementsEvent.INVALIDATE_VERTICES, this._onInvalidateVerticesDelegate);
+        this._elements = null;
+        if (this._overflow) {
+            this._overflow.onClear(event);
+            this._overflow = null;
+        }
+    };
+    GL_ElementsBase.prototype._setRenderState = function (renderable, shader, projection) {
+        if (!this._verticesUpdated)
+            this._updateIndices();
+        //TODO replace overflow system with something sensible
+        //this._render(renderable, camera, viewProjection);
+        //
+        // if (this._overflow)
+        // 	this._overflow._iRender(renderable, camera, viewProjection);
+    };
+    GL_ElementsBase.prototype.draw = function (renderable, shader, projection, count, offset) {
+        throw new AbstractMethodError();
+    };
+    /**
+     * //TODO
+     *
+     * @private
+     */
+    GL_ElementsBase.prototype._updateIndices = function (indexOffset) {
+        if (indexOffset === void 0) { indexOffset = 0; }
+        var indices = this._elements.indices;
+        if (indices) {
+            this._indices = this._stage.getAbstraction(ElementsUtils.getSubIndices(indices, this._elements.numVertices, this._indexMappings, indexOffset));
+            this._numIndices = this._indices._attributesBuffer.count * indices.dimensions;
+        }
+        else {
+            this._indices = null;
+            this._numIndices = 0;
+            this._indexMappings = Array();
+        }
+        indexOffset += this._numIndices;
+        //check if there is more to split
+        if (indices && indexOffset < indices.count * this._elements.indices.dimensions) {
+            if (!this._overflow)
+                this._overflow = this._pGetOverflowElements();
+            this._overflow._updateIndices(indexOffset);
+        }
+        else if (this._overflow) {
+            this._overflow.onClear(new AssetEvent(AssetEvent.CLEAR, this._elements));
+            this._overflow = null;
+        }
+        this._indicesUpdated = true;
+        //invalidate vertices if index mappings exist
+        if (this._indexMappings.length)
+            for (var key in this._verticesUpdated)
+                this._verticesUpdated[key] = false;
+    };
+    /**
+     * //TODO
+     *
+     * @param attributesView
+     * @private
+     */
+    GL_ElementsBase.prototype._updateVertices = function (attributesView) {
+        this._numVertices = this._elements.numVertices;
+        var bufferId = attributesView.attributesBuffer.id;
+        this._vertices[bufferId] = this._stage.getAbstraction(ElementsUtils.getSubVertices(attributesView.attributesBuffer, this._indexMappings));
+        this._verticesUpdated[bufferId] = true;
+    };
+    /**
+     * //TODO
+     *
+     * @param event
+     * @private
+     */
+    GL_ElementsBase.prototype._onInvalidateIndices = function (event) {
+        if (!event.attributesView)
+            return;
+        this._indicesUpdated = false;
+    };
+    /**
+     * //TODO
+     *
+     * @param event
+     * @private
+     */
+    GL_ElementsBase.prototype._onClearIndices = function (event) {
+        if (!event.attributesView)
+            return;
+        this._indices.onClear(new AssetEvent(AssetEvent.CLEAR, event.attributesView));
+        this._indices = null;
+    };
+    /**
+     * //TODO
+     *
+     * @param event
+     * @private
+     */
+    GL_ElementsBase.prototype._onInvalidateVertices = function (event) {
+        if (!event.attributesView)
+            return;
+        var bufferId = event.attributesView.attributesBuffer.id;
+        this._verticesUpdated[bufferId] = false;
+    };
+    /**
+     * //TODO
+     *
+     * @param event
+     * @private
+     */
+    GL_ElementsBase.prototype._onClearVertices = function (event) {
+        if (!event.attributesView)
+            return;
+        var bufferId = event.attributesView.attributesBuffer.id;
+        if (this._vertices[bufferId]) {
+            this._vertices[bufferId].onClear(new AssetEvent(AssetEvent.CLEAR, event.attributesView));
+            delete this._vertices[bufferId];
+            delete this._verticesUpdated[bufferId];
+        }
+    };
+    /**
+     * //TODO
+     *
+     * @param pool
+     * @param renderable
+     * @param level
+     * @param indexOffset
+     * @returns {away.pool.GL_ShapeRenderable}
+     * @protected
+     */
+    GL_ElementsBase.prototype._pGetOverflowElements = function () {
+        throw new AbstractMethodError();
+    };
+    return GL_ElementsBase;
+}(AbstractionBase));
+
+/**
+ *
+ * @class away.pool.GL_TriangleElements
+ */
+var GL_TriangleElements = (function (_super) {
+    __extends(GL_TriangleElements, _super);
+    function GL_TriangleElements(triangleElements, stage) {
+        var _this = _super.call(this, triangleElements, stage) || this;
+        _this._triangleElements = triangleElements;
+        return _this;
+    }
+    Object.defineProperty(GL_TriangleElements.prototype, "elementsType", {
+        get: function () {
+            return GL_TriangleElements.elementsType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_TriangleElements.prototype, "elementsClass", {
+        get: function () {
+            return GL_TriangleElements;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    GL_TriangleElements._iIncludeDependencies = function (shader) {
+    };
+    GL_TriangleElements._iGetVertexCode = function (shader, registerCache, sharedRegisters) {
+        var code = "";
+        //get the projection coordinates
+        var position = (shader.globalPosDependencies > 0) ? sharedRegisters.globalPositionVertex : sharedRegisters.animatedPosition;
+        //reserving vertex constants for projection matrix
+        var viewMatrixReg = registerCache.getFreeVertexConstant();
+        registerCache.getFreeVertexConstant();
+        registerCache.getFreeVertexConstant();
+        registerCache.getFreeVertexConstant();
+        shader.viewMatrixIndex = viewMatrixReg.index * 4;
+        if (shader.projectionDependencies > 0) {
+            sharedRegisters.projectionFragment = registerCache.getFreeVarying();
+            var temp = registerCache.getFreeVertexVectorTemp();
+            code += "m44 " + temp + ", " + position + ", " + viewMatrixReg + "\n" +
+                "mov " + sharedRegisters.projectionFragment + ", " + temp + "\n" +
+                "mov op, " + temp + "\n";
+        }
+        else {
+            code += "m44 op, " + position + ", " + viewMatrixReg + "\n";
+        }
+        return code;
+    };
+    GL_TriangleElements._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    GL_TriangleElements.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._triangleElements = null;
+    };
+    GL_TriangleElements.prototype._setRenderState = function (renderable, shader, projection) {
+        _super.prototype._setRenderState.call(this, renderable, shader, projection);
+        //set buffers
+        //TODO: find a better way to update a concatenated buffer when autoderiving
+        if (shader.normalIndex >= 0 && this._triangleElements.autoDeriveNormals)
+            this._triangleElements.normals;
+        if (shader.tangentIndex >= 0 && this._triangleElements.autoDeriveTangents)
+            this._triangleElements.tangents;
+        if (shader.curvesIndex >= 0)
+            this.activateVertexBufferVO(shader.curvesIndex, this._triangleElements.getCustomAtributes("curves"));
+        if (shader.uvIndex >= 0)
+            this.activateVertexBufferVO(shader.uvIndex, this._triangleElements.uvs || this._triangleElements.positions);
+        if (shader.secondaryUVIndex >= 0)
+            this.activateVertexBufferVO(shader.secondaryUVIndex, this._triangleElements.getCustomAtributes("secondaryUVs") || this._triangleElements.uvs || this._triangleElements.positions);
+        if (shader.normalIndex >= 0)
+            this.activateVertexBufferVO(shader.normalIndex, this._triangleElements.normals);
+        if (shader.tangentIndex >= 0)
+            this.activateVertexBufferVO(shader.tangentIndex, this._triangleElements.tangents);
+        if (shader.jointIndexIndex >= 0)
+            this.activateVertexBufferVO(shader.jointIndexIndex, this._triangleElements.jointIndices);
+        if (shader.jointWeightIndex >= 0)
+            this.activateVertexBufferVO(shader.jointIndexIndex, this._triangleElements.jointWeights);
+        this.activateVertexBufferVO(0, this._triangleElements.positions);
+    };
+    GL_TriangleElements.prototype.draw = function (renderable, shader, projection, count, offset) {
+        //set constants
+        if (shader.sceneMatrixIndex >= 0) {
+            shader.sceneMatrix.copyFrom(renderable.renderSceneTransform, true);
+            shader.viewMatrix.copyFrom(projection.viewMatrix3D, true);
+        }
+        else {
+            var matrix3D = Matrix3D.CALCULATION_MATRIX;
+            matrix3D.copyFrom(renderable.renderSceneTransform);
+            matrix3D.append(projection.viewMatrix3D);
+            shader.viewMatrix.copyFrom(matrix3D, true);
+        }
+        var context = this._stage.context;
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.VERTEX, shader.vertexConstantData);
+        context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, shader.fragmentConstantData);
+        if (this._indices)
+            this.getIndexBufferGL().draw(exports.ContextGLDrawMode.TRIANGLES, offset * 3, count * 3 || this.numIndices);
+        else
+            this._stage.context.drawVertices(exports.ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
+    };
+    /**
+     * //TODO
+     *
+     * @param pool
+     * @param renderable
+     * @param level
+     * @param indexOffset
+     * @returns {away.pool.GL_ShapeRenderable}
+     * @protected
+     */
+    GL_TriangleElements.prototype._pGetOverflowElements = function () {
+        return new GL_TriangleElements(this._triangleElements, this._stage);
+    };
+    return GL_TriangleElements;
+}(GL_ElementsBase));
+GL_TriangleElements.elementsType = "[elements Triangle]";
+
 var StageEvent = (function (_super) {
     __extends(StageEvent, _super);
     function StageEvent(type, stage) {
@@ -22787,6 +23951,36 @@ StageEvent.CONTEXT_RECREATED = "contextRecreated";
  *
  */
 StageEvent.VIEWPORT_UPDATED = "viewportUpdated";
+
+var PassEvent = (function (_super) {
+    __extends(PassEvent, _super);
+    function PassEvent(type, pass) {
+        var _this = _super.call(this, type) || this;
+        _this._pass = pass;
+        return _this;
+    }
+    Object.defineProperty(PassEvent.prototype, "pass", {
+        /**
+         *
+         */
+        get: function () {
+            return this._pass;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     */
+    PassEvent.prototype.clone = function () {
+        return new PassEvent(this.type, this._pass);
+    };
+    return PassEvent;
+}(EventBase));
+/**
+ *
+ */
+PassEvent.INVALIDATE = "invalidatePass";
 
 var OpCodes = (function () {
     function OpCodes() {
@@ -22847,6 +24041,11 @@ OpCodes.setSamplerStateAt = 87;
 OpCodes.enableStencil = 88;
 OpCodes.disableStencil = 89;
 OpCodes.setStencilActionsMasks = 90;
+//public static passBitmapToCpp:number = 91; //reserved for java message
+OpCodes.uploadTextureFromURL = 92;
+OpCodes.startSound = 101;
+OpCodes.stopSound = 102;
+OpCodes.updateSound = 103;
 
 var ResourceBaseFlash = (function () {
     function ResourceBaseFlash() {
@@ -23638,7 +24837,17 @@ var TextureGLES = (function (_super) {
     };
     TextureGLES.prototype.uploadFromURL = function (urlRequest, miplevel) {
         if (miplevel === void 0) { miplevel = 0; }
-        //TODO:
+        var newSendbytes = new Byte32Array();
+        newSendbytes.writeInt(1); //tells cpp that this is a create-bytes chunk
+        newSendbytes.writeInt(OpCodes.uploadTextureFromURL | miplevel << 8);
+        newSendbytes.writeInt(this.id);
+        var myURLString = urlRequest.url.replace(/[^a-zA-Z0-9]/g, '');
+        console.log("urlRequest.url " + myURLString);
+        newSendbytes.writeUTFBytes(myURLString);
+        newSendbytes.bytePosition = 0;
+        var localInt32View = new Int32Array(newSendbytes.byteLength / 4);
+        newSendbytes.readInt32Array(localInt32View);
+        GLESConnector.gles.sendGLESCommands(localInt32View.buffer);
     };
     TextureGLES.prototype.uploadCompressedTextureFromByteArray = function (data, byteArrayOffset /*uint*/, async) {
         if (async === void 0) { async = false; }
@@ -23670,7 +24879,7 @@ var VertexBufferGLES = (function (_super) {
     };
     VertexBufferGLES.prototype.uploadFromByteArray = function (data, startVertex, numVertices) {
         var newSendbytes = new Byte32Array();
-        newSendbytes.writeInt(2); //send vertex_data
+        newSendbytes.writeInt(1); //send create bytes
         newSendbytes.writeInt(OpCodes.uploadArrayVertexBuffer);
         newSendbytes.writeInt(this.id);
         newSendbytes.writeInt(startVertex);
@@ -23736,6 +24945,8 @@ var ContextGLES = (function () {
         this._container = canvas;
         this._cmdBytes = new Byte32Array();
         this._createBytes = new Byte32Array();
+        ContextGLES._soundBytes = new Byte32Array();
+        ContextGLES._soundBytes.writeUnsignedInt(100); //id for sending sound data
         this._cmdBytes.writeUnsignedInt(0); //id for sending cmd data
         this._createBytes.writeUnsignedInt(1); //id for sending create data
         this._blendFactorDictionary[exports.ContextGLBlendFactor.ONE] = 0;
@@ -23785,6 +24996,23 @@ var ContextGLES = (function () {
         this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPLINEAR] = 5;
         this._mipmapFilterDictionary[exports.ContextGLTextureFilter.NEAREST][exports.ContextGLMipFilter.MIPNONE] = 1;
     }
+    // soundcommands are excuted on @away/player/AS2SoundAdapter, and stored here as binary data
+    // when context is executed, they get send to java along woth the oother data
+    ContextGLES.startSound = function (name, id, volume, loop) {
+        ContextGLES._soundBytes.writeInt(OpCodes.startSound | ((loop ? 1 : 0) << 8));
+        ContextGLES._soundBytes.writeFloat(volume);
+        ContextGLES._soundBytes.writeInt(id);
+        ContextGLES._soundBytes.writeUTFBytes(name);
+    };
+    ContextGLES.stopSound = function (id) {
+        ContextGLES._soundBytes.writeInt(OpCodes.stopSound);
+        ContextGLES._soundBytes.writeInt(id);
+    };
+    ContextGLES.updateSound = function (id, volume, loop) {
+        ContextGLES._soundBytes.writeInt(OpCodes.updateSound | ((loop ? 1 : 0) << 8));
+        ContextGLES._soundBytes.writeFloat(volume);
+        ContextGLES._soundBytes.writeInt(id);
+    };
     Object.defineProperty(ContextGLES.prototype, "container", {
         get: function () {
             return this._container;
@@ -24042,7 +25270,7 @@ var ContextGLES = (function () {
         }
     };
     ContextGLES.prototype.execute = function () {
-        if (this._createBytes.byteLength > 0) {
+        if (this._createBytes.bytePosition > 4) {
             this._createBytes.bytePosition = 0;
             var localInt32View1 = new Int32Array(this._createBytes.byteLength / 4);
             this._createBytes.readInt32Array(localInt32View1);
@@ -24051,7 +25279,7 @@ var ContextGLES = (function () {
             this._createBytes.bytePosition = 0;
             this._createBytes.writeUnsignedInt(1); // make sure first int in bytearray is the id (1 for create bytes)
         }
-        if (this._cmdBytes.byteLength > 0) {
+        if (this._cmdBytes.bytePosition > 4) {
             this._cmdBytes.bytePosition = 0;
             var localInt32View = new Int32Array(this._cmdBytes.byteLength / 4);
             this._cmdBytes.readInt32Array(localInt32View);
@@ -24059,6 +25287,15 @@ var ContextGLES = (function () {
             this._cmdBytes.byteLength = 0;
             this._cmdBytes.bytePosition = 0;
             this._cmdBytes.writeUnsignedInt(0); // make sure first int in bytearray is the id (0 for cmd bytes)
+        }
+        if (ContextGLES._soundBytes.bytePosition > 4) {
+            ContextGLES._soundBytes.bytePosition = 0;
+            var localInt32View2 = new Int32Array(ContextGLES._soundBytes.byteLength / 4);
+            ContextGLES._soundBytes.readInt32Array(localInt32View2);
+            GLESConnector.gles.sendGLESCommands(localInt32View2.buffer);
+            ContextGLES._soundBytes.byteLength = 0;
+            ContextGLES._soundBytes.bytePosition = 0;
+            ContextGLES._soundBytes.writeUnsignedInt(100); // make sure first int in bytearray is the id (100 for cmd soundbytes)
         }
     };
     return ContextGLES;
@@ -27726,6 +28963,2384 @@ StageManager.STAGE_MAX_QUANTITY = 8;
 StageManager._numStages = 0;
 
 /**
+ * RegisterPool is used by the shader compilers process to keep track of which registers of a certain type are
+ * currently used and should not be allowed to be written to. Either entire registers can be requested and locked,
+ * or single components (x, y, z, w) of a single register.
+ * It is used by ShaderRegisterCache to track usages of individual register types.
+ *
+ * @see away.materials.ShaderRegisterCache
+ */
+var RegisterPool = (function () {
+    /**
+     * Creates a new RegisterPool object.
+     * @param regName The base name of the register type ("ft" for fragment temporaries, "vc" for vertex constants, etc)
+     * @param regCount The amount of available registers of this type.
+     * @param persistent Whether or not registers, once reserved, can be freed again. For example, temporaries are not persistent, but constants are.
+     */
+    function RegisterPool(regName, regCount, persistent) {
+        if (persistent === void 0) { persistent = true; }
+        this._regName = regName;
+        this._regCount = regCount;
+        this._persistent = persistent;
+        this.initRegisters(regName, regCount);
+    }
+    /**
+     * Retrieve an entire vector register that's still available.
+     */
+    RegisterPool.prototype.requestFreeVectorReg = function () {
+        for (var i = 0; i < this._regCount; ++i) {
+            if (!this.isRegisterUsed(i)) {
+                if (this._persistent)
+                    this._usedVectorCount[i]++;
+                return this._vectorRegisters[i];
+            }
+        }
+        throw new Error("Register overflow!");
+    };
+    /**
+     * Retrieve a single vector component that's still available.
+     */
+    RegisterPool.prototype.requestFreeRegComponent = function () {
+        for (var i = 0; i < this._regCount; ++i) {
+            if (this._usedVectorCount[i] > 0)
+                continue;
+            for (var j = 0; j < 4; ++j) {
+                if (this._usedSingleCount[j][i] == 0) {
+                    if (this._persistent)
+                        this._usedSingleCount[j][i]++;
+                    return this._registerComponents[j][i];
+                }
+            }
+        }
+        throw new Error("Register overflow!");
+    };
+    /**
+     * Marks a register as used, so it cannot be retrieved. The register won't be able to be used until removeUsage
+     * has been called usageCount times again.
+     * @param register The register to mark as used.
+     * @param usageCount The amount of usages to add.
+     */
+    RegisterPool.prototype.addUsage = function (register, usageCount) {
+        if (register._component > -1)
+            this._usedSingleCount[register._component][register.index] += usageCount;
+        else
+            this._usedVectorCount[register.index] += usageCount;
+    };
+    /**
+     * Removes a usage from a register. When usages reach 0, the register is freed again.
+     * @param register The register for which to remove a usage.
+     */
+    RegisterPool.prototype.removeUsage = function (register) {
+        if (register._component > -1) {
+            if (--this._usedSingleCount[register._component][register.index] < 0)
+                throw new Error("More usages removed than exist!");
+        }
+        else {
+            if (--this._usedVectorCount[register.index] < 0)
+                throw new Error("More usages removed than exist!");
+        }
+    };
+    /**
+     * Disposes any resources used by the current RegisterPool object.
+     */
+    RegisterPool.prototype.dispose = function () {
+        this._vectorRegisters = null;
+        this._registerComponents = null;
+        this._usedSingleCount = null;
+        this._usedVectorCount = null;
+    };
+    /**
+     * Indicates whether or not any registers are in use.
+     */
+    RegisterPool.prototype.hasRegisteredRegs = function () {
+        for (var i = 0; i < this._regCount; ++i)
+            if (this.isRegisterUsed(i))
+                return true;
+        return false;
+    };
+    /**
+     * Initializes all registers.
+     */
+    RegisterPool.prototype.initRegisters = function (regName, regCount) {
+        var hash = RegisterPool._initPool(regName, regCount);
+        this._vectorRegisters = RegisterPool._regPool[hash];
+        this._registerComponents = RegisterPool._regCompsPool[hash];
+        this._usedVectorCount = this._initArray(Array(regCount), 0);
+        this._usedSingleCount = new Array(4);
+        this._usedSingleCount[0] = this._initArray(new Array(regCount), 0);
+        this._usedSingleCount[1] = this._initArray(new Array(regCount), 0);
+        this._usedSingleCount[2] = this._initArray(new Array(regCount), 0);
+        this._usedSingleCount[3] = this._initArray(new Array(regCount), 0);
+    };
+    RegisterPool._initPool = function (regName, regCount) {
+        var hash = regName + regCount;
+        if (RegisterPool._regPool[hash] != undefined)
+            return hash;
+        var vectorRegisters = new Array(regCount);
+        RegisterPool._regPool[hash] = vectorRegisters;
+        var registerComponents = [
+            [],
+            [],
+            [],
+            []
+        ];
+        RegisterPool._regCompsPool[hash] = registerComponents;
+        for (var i = 0; i < regCount; ++i) {
+            vectorRegisters[i] = new ShaderRegisterElement(regName, i);
+            for (var j = 0; j < 4; ++j)
+                registerComponents[j][i] = new ShaderRegisterElement(regName, i, j);
+        }
+        return hash;
+    };
+    /**
+     * Check if the temp register is either used for single or vector use
+     */
+    RegisterPool.prototype.isRegisterUsed = function (index) {
+        if (this._usedVectorCount[index] > 0)
+            return true;
+        for (var i = 0; i < 4; ++i)
+            if (this._usedSingleCount[i][index] > 0)
+                return true;
+        return false;
+    };
+    RegisterPool.prototype._initArray = function (a, val) {
+        var l = a.length;
+        for (var c = 0; c < l; c++)
+            a[c] = val;
+        return a;
+    };
+    return RegisterPool;
+}());
+RegisterPool._regPool = new Object();
+RegisterPool._regCompsPool = new Object();
+
+/**
+ * ShaderRegister Cache provides the usage management system for all registers during shading compilers.
+ */
+var ShaderRegisterCache = (function () {
+    /**
+     * Create a new ShaderRegisterCache object.
+     *
+     * @param profile The compatibility profile used by the renderer.
+     */
+    function ShaderRegisterCache(profile) {
+        this._numUsedVertexConstants = 0;
+        this._numUsedFragmentConstants = 0;
+        this._numUsedStreams = 0;
+        this._numUsedTextures = 0;
+        this._numUsedVaryings = 0;
+        this._profile = profile;
+        this.reset();
+    }
+    /**
+     * Resets all registers.
+     */
+    ShaderRegisterCache.prototype.reset = function () {
+        this._fragmentTempCache = new RegisterPool("ft", 8, false);
+        this._vertexTempCache = new RegisterPool("vt", 8, false);
+        this._varyingCache = new RegisterPool("v", 8);
+        this._textureCache = new RegisterPool("fs", 8);
+        this._vertexAttributesCache = new RegisterPool("va", 8);
+        this._fragmentConstantsCache = new RegisterPool("fc", 28);
+        this._vertexConstantsCache = new RegisterPool("vc", 128);
+        this._fragmentOutputRegister = new ShaderRegisterElement("oc", -1);
+        this._vertexOutputRegister = new ShaderRegisterElement("op", -1);
+        this._numUsedVertexConstants = 0;
+        this._numUsedStreams = 0;
+        this._numUsedTextures = 0;
+        this._numUsedVaryings = 0;
+        this._numUsedFragmentConstants = 0;
+    };
+    /**
+     * Disposes all resources used.
+     */
+    ShaderRegisterCache.prototype.dispose = function () {
+        this._fragmentTempCache.dispose();
+        this._vertexTempCache.dispose();
+        this._varyingCache.dispose();
+        this._fragmentConstantsCache.dispose();
+        this._vertexAttributesCache.dispose();
+        this._fragmentTempCache = null;
+        this._vertexTempCache = null;
+        this._varyingCache = null;
+        this._fragmentConstantsCache = null;
+        this._vertexAttributesCache = null;
+        this._fragmentOutputRegister = null;
+        this._vertexOutputRegister = null;
+    };
+    /**
+     * Marks a fragment temporary register as used, so it cannot be retrieved. The register won't be able to be used until removeUsage
+     * has been called usageCount times again.
+     * @param register The register to mark as used.
+     * @param usageCount The amount of usages to add.
+     */
+    ShaderRegisterCache.prototype.addFragmentTempUsages = function (register, usageCount) {
+        this._fragmentTempCache.addUsage(register, usageCount);
+    };
+    /**
+     * Removes a usage from a fragment temporary register. When usages reach 0, the register is freed again.
+     * @param register The register for which to remove a usage.
+     */
+    ShaderRegisterCache.prototype.removeFragmentTempUsage = function (register) {
+        this._fragmentTempCache.removeUsage(register);
+    };
+    /**
+     * Marks a vertex temporary register as used, so it cannot be retrieved. The register won't be able to be used
+     * until removeUsage has been called usageCount times again.
+     * @param register The register to mark as used.
+     * @param usageCount The amount of usages to add.
+     */
+    ShaderRegisterCache.prototype.addVertexTempUsages = function (register, usageCount) {
+        this._vertexTempCache.addUsage(register, usageCount);
+    };
+    /**
+     * Removes a usage from a vertex temporary register. When usages reach 0, the register is freed again.
+     * @param register The register for which to remove a usage.
+     */
+    ShaderRegisterCache.prototype.removeVertexTempUsage = function (register) {
+        this._vertexTempCache.removeUsage(register);
+    };
+    /**
+     * Retrieve an entire fragment temporary register that's still available. The register won't be able to be used until removeUsage
+     * has been called usageCount times again.
+     */
+    ShaderRegisterCache.prototype.getFreeFragmentVectorTemp = function () {
+        return this._fragmentTempCache.requestFreeVectorReg();
+    };
+    /**
+     * Retrieve a single component from a fragment temporary register that's still available.
+     */
+    ShaderRegisterCache.prototype.getFreeFragmentSingleTemp = function () {
+        return this._fragmentTempCache.requestFreeRegComponent();
+    };
+    /**
+     * Retrieve an available varying register
+     */
+    ShaderRegisterCache.prototype.getFreeVarying = function () {
+        ++this._numUsedVaryings;
+        return this._varyingCache.requestFreeVectorReg();
+    };
+    /**
+     * Retrieve an available fragment constant register
+     */
+    ShaderRegisterCache.prototype.getFreeFragmentConstant = function () {
+        ++this._numUsedFragmentConstants;
+        return this._fragmentConstantsCache.requestFreeVectorReg();
+    };
+    /**
+     * Retrieve an available vertex constant register
+     */
+    ShaderRegisterCache.prototype.getFreeVertexConstant = function () {
+        ++this._numUsedVertexConstants;
+        return this._vertexConstantsCache.requestFreeVectorReg();
+    };
+    /**
+     * Retrieve an entire vertex temporary register that's still available.
+     */
+    ShaderRegisterCache.prototype.getFreeVertexVectorTemp = function () {
+        return this._vertexTempCache.requestFreeVectorReg();
+    };
+    /**
+     * Retrieve a single component from a vertex temporary register that's still available.
+     */
+    ShaderRegisterCache.prototype.getFreeVertexSingleTemp = function () {
+        return this._vertexTempCache.requestFreeRegComponent();
+    };
+    /**
+     * Retrieve an available vertex attribute register
+     */
+    ShaderRegisterCache.prototype.getFreeVertexAttribute = function () {
+        ++this._numUsedStreams;
+        return this._vertexAttributesCache.requestFreeVectorReg();
+    };
+    /**
+     * Retrieve an available texture register
+     */
+    ShaderRegisterCache.prototype.getFreeTextureReg = function () {
+        ++this._numUsedTextures;
+        return this._textureCache.requestFreeVectorReg();
+    };
+    Object.defineProperty(ShaderRegisterCache.prototype, "fragmentOutputRegister", {
+        /**
+         * The fragment output register.
+         */
+        get: function () {
+            return this._fragmentOutputRegister;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedVertexConstants", {
+        /**
+         * The amount of used vertex constant registers.
+         */
+        get: function () {
+            return this._numUsedVertexConstants;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedFragmentConstants", {
+        /**
+         * The amount of used fragment constant registers.
+         */
+        get: function () {
+            return this._numUsedFragmentConstants;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedStreams", {
+        /**
+         * The amount of used vertex streams.
+         */
+        get: function () {
+            return this._numUsedStreams;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedTextures", {
+        /**
+         * The amount of used texture slots.
+         */
+        get: function () {
+            return this._numUsedTextures;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedVaryings", {
+        /**
+         * The amount of used varying registers.
+         */
+        get: function () {
+            return this._numUsedVaryings;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ShaderRegisterCache;
+}());
+
+/**
+ * ShaderRegisterData contains the "named" registers, generated by the compiler and to be passed on to the methods.
+ */
+var ShaderRegisterData = (function () {
+    function ShaderRegisterData() {
+        this.textures = new Array();
+        this.animatableAttributes = new Array();
+        this.animationTargetRegisters = new Array();
+    }
+    return ShaderRegisterData;
+}());
+
+/**
+ * CompilerBase is an abstract base class for shader compilers that use modular shader methods to assemble a
+ * material. Concrete subclasses are used by the default materials.
+ *
+ * @see away.materials.ShadingMethodBase
+ */
+var CompilerBase = (function () {
+    /**
+     * Creates a new CompilerBase object.
+     * @param profile The compatibility profile of the renderer.
+     */
+    function CompilerBase(elementsClass, pass, shader) {
+        this._pVertexCode = ''; // Changed to emtpy string- AwayTS
+        this._pFragmentCode = ''; // Changed to emtpy string - AwayTS
+        this._pPostAnimationFragmentCode = ''; // Changed to emtpy string - AwayTS
+        this._pElementsClass = elementsClass;
+        this._pRenderPass = pass;
+        this._pShader = shader;
+        this._pSharedRegisters = new ShaderRegisterData();
+        this._pRegisterCache = new ShaderRegisterCache(shader.profile);
+    }
+    /**
+     * Compiles the code after all setup on the compiler has finished.
+     */
+    CompilerBase.prototype.compile = function () {
+        this._pShader.reset();
+        this._pShader._iIncludeDependencies();
+        this.pInitRegisterIndices();
+        this.pCompileDependencies();
+        //compile custom vertex & fragment codes
+        this._pVertexCode += this._pRenderPass._iGetVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+        this._pPostAnimationFragmentCode += this._pRenderPass._iGetFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+        //assign the final output color to the output register
+        this._pPostAnimationFragmentCode += "mov " + this._pRegisterCache.fragmentOutputRegister + ", " + this._pSharedRegisters.shadedTarget + "\n";
+        this._pRegisterCache.removeFragmentTempUsage(this._pSharedRegisters.shadedTarget);
+    };
+    /**
+     * Calculate the transformed colours
+     */
+    CompilerBase.prototype.compileColorTransformCode = function () {
+        // rm, gm, bm, am - multiplier
+        // ro, go, bo, ao - offset
+        var ct1 = this._pRegisterCache.getFreeFragmentConstant();
+        var ct2 = this._pRegisterCache.getFreeFragmentConstant();
+        this._pShader.colorTransformIndex = ct1.index * 4;
+        this._pPostAnimationFragmentCode += "mul " + this._pSharedRegisters.shadedTarget + ", " + this._pSharedRegisters.shadedTarget + ", " + ct1 + "\n";
+        this._pPostAnimationFragmentCode += "add " + this._pSharedRegisters.shadedTarget + ", " + this._pSharedRegisters.shadedTarget + ", " + ct2 + "\n";
+    };
+    /**
+     * Compile the code for the methods.
+     */
+    CompilerBase.prototype.pCompileDependencies = function () {
+        this._pSharedRegisters.shadedTarget = this._pRegisterCache.getFreeFragmentVectorTemp();
+        this._pRegisterCache.addFragmentTempUsages(this._pSharedRegisters.shadedTarget, 1);
+        //compile the world-space position if required
+        if (this._pShader.globalPosDependencies > 0)
+            this.compileGlobalPositionCode();
+        //compile the local-space position if required
+        if (this._pShader.usesPositionFragment)
+            this.compilePositionCode();
+        if (this._pShader.usesCurves)
+            this.compileCurvesCode();
+        if (this._pShader.usesColorTransform)
+            this.compileColorTransformCode();
+        //Calculate the (possibly animated) UV coordinates.
+        if (this._pShader.uvDependencies > 0)
+            this.compileUVCode();
+        if (this._pShader.secondaryUVDependencies > 0)
+            this.compileSecondaryUVCode();
+        if (this._pShader.normalDependencies > 0)
+            this.compileNormalCode();
+        if (this._pShader.viewDirDependencies > 0)
+            this.compileViewDirCode();
+        //collect code from material
+        this._pVertexCode += this._pElementsClass._iGetVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+        this._pFragmentCode += this._pElementsClass._iGetFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+        //collect code from pass
+        this._pVertexCode += this._pRenderPass._iGetPreLightingVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+        this._pFragmentCode += this._pRenderPass._iGetPreLightingFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+    };
+    CompilerBase.prototype.compileGlobalPositionCode = function () {
+        this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.globalPositionVertex = this._pRegisterCache.getFreeVertexVectorTemp(), this._pShader.globalPosDependencies);
+        var sceneMatrixReg = this._pRegisterCache.getFreeVertexConstant();
+        this._pRegisterCache.getFreeVertexConstant();
+        this._pRegisterCache.getFreeVertexConstant();
+        this._pRegisterCache.getFreeVertexConstant();
+        this._pShader.sceneMatrixIndex = sceneMatrixReg.index * 4;
+        this._pVertexCode += "m44 " + this._pSharedRegisters.globalPositionVertex + ", " + this._pSharedRegisters.animatedPosition + ", " + sceneMatrixReg + "\n";
+        if (this._pShader.usesGlobalPosFragment) {
+            this._pSharedRegisters.globalPositionVarying = this._pRegisterCache.getFreeVarying();
+            this._pVertexCode += "mov " + this._pSharedRegisters.globalPositionVarying + ", " + this._pSharedRegisters.globalPositionVertex + "\n";
+        }
+    };
+    CompilerBase.prototype.compilePositionCode = function () {
+        this._pSharedRegisters.positionVarying = this._pRegisterCache.getFreeVarying();
+        this._pVertexCode += "mov " + this._pSharedRegisters.positionVarying + ", " + this._pSharedRegisters.animatedPosition + "\n";
+    };
+    CompilerBase.prototype.compileCurvesCode = function () {
+        this._pSharedRegisters.curvesInput = this._pRegisterCache.getFreeVertexAttribute();
+        this._pShader.curvesIndex = this._pSharedRegisters.curvesInput.index;
+        this._pSharedRegisters.curvesVarying = this._pRegisterCache.getFreeVarying();
+        this._pVertexCode += "mov " + this._pSharedRegisters.curvesVarying + ", " + this._pSharedRegisters.curvesInput + "\n";
+        var temp = this._pRegisterCache.getFreeFragmentSingleTemp();
+        this._pFragmentCode += "mul " + temp + ", " + this._pSharedRegisters.curvesVarying + ".y, " + this._pSharedRegisters.curvesVarying + ".y\n" +
+            "sub " + temp + ", " + temp + ", " + this._pSharedRegisters.curvesVarying + ".z\n" +
+            "mul " + temp + ", " + temp + ", " + this._pSharedRegisters.curvesVarying + ".x\n" +
+            "kil " + temp + "\n";
+        // var temp:ShaderRegisterElement = this._pRegisterCache.getFreeFragmentVectorTemp();
+        //
+        // this._pPostAnimationFragmentCode += "mul " + temp + ".x, " + this._pSharedRegisters.curvesVarying + ".y, " + this._pSharedRegisters.curvesVarying + ".y\n" +
+        // 					"sub " + temp + ".x, " + temp + ".x, " + this._pSharedRegisters.curvesVarying + ".z\n" +
+        // 					"mul " + temp + ".x, " + temp + ".x, " + this._pSharedRegisters.curvesVarying + ".x\n" +
+        // 					"ddx " + temp + ".y," + temp + ".x\n" +
+        // 					"ddy " + temp + ".z," + temp + ".x\n" +
+        // 					"mul " + temp + ".y, " + temp + ".y, " + temp + ".y\n" +
+        // 					"mul " + temp + ".z, " + temp + ".z, " + temp + ".z\n" +
+        // 					"add " + this._pSharedRegisters.shadedTarget + ".w, " + temp + ".y, " + temp + ".z\n" +
+        // 					"sqt " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.shadedTarget + ".w\n" +
+        // 					"div " + this._pSharedRegisters.shadedTarget + ".w, " + temp + ".x, " + this._pSharedRegisters.shadedTarget + ".w\n" +
+        // 					"max " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.commons + ".y\n" +
+        // 					"min " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.commons + ".w\n";
+    };
+    /**
+     * Calculate the (possibly animated) UV coordinates.
+     */
+    CompilerBase.prototype.compileUVCode = function () {
+        var uvAttributeReg = this._pRegisterCache.getFreeVertexAttribute();
+        this._pShader.uvIndex = uvAttributeReg.index;
+        var varying = this._pSharedRegisters.uvVarying = this._pRegisterCache.getFreeVarying();
+        if (this._pShader.usesUVTransform) {
+            // a, b, 0, tx
+            // c, d, 0, ty
+            var uvTransform1 = this._pRegisterCache.getFreeVertexConstant();
+            var uvTransform2 = this._pRegisterCache.getFreeVertexConstant();
+            this._pShader.uvMatrixIndex = uvTransform1.index * 4;
+            this._pVertexCode += "dp4 " + varying + ".x, " + uvAttributeReg + ", " + uvTransform1 + "\n" +
+                "dp4 " + varying + ".y, " + uvAttributeReg + ", " + uvTransform2 + "\n" +
+                "mov " + varying + ".zw, " + uvAttributeReg + ".zw \n";
+        }
+        else {
+            this._pShader.uvMatrixIndex = -1;
+            this._pSharedRegisters.uvTarget = varying;
+            this._pSharedRegisters.uvSource = uvAttributeReg;
+        }
+    };
+    /**
+     * Provide the secondary UV coordinates.
+     */
+    CompilerBase.prototype.compileSecondaryUVCode = function () {
+        var uvAttributeReg = this._pRegisterCache.getFreeVertexAttribute();
+        this._pShader.secondaryUVIndex = uvAttributeReg.index;
+        this._pSharedRegisters.secondaryUVVarying = this._pRegisterCache.getFreeVarying();
+        this._pVertexCode += "mov " + this._pSharedRegisters.secondaryUVVarying + ", " + uvAttributeReg + "\n";
+    };
+    /**
+     * Calculate the view direction.
+     */
+    CompilerBase.prototype.compileViewDirCode = function () {
+        var cameraPositionReg = this._pRegisterCache.getFreeVertexConstant();
+        this._pSharedRegisters.viewDirVarying = this._pRegisterCache.getFreeVarying();
+        this._pSharedRegisters.viewDirFragment = this._pRegisterCache.getFreeFragmentVectorTemp();
+        this._pRegisterCache.addFragmentTempUsages(this._pSharedRegisters.viewDirFragment, this._pShader.viewDirDependencies);
+        this._pShader.cameraPositionIndex = cameraPositionReg.index * 4;
+        if (this._pShader.usesTangentSpace) {
+            var temp = this._pRegisterCache.getFreeVertexVectorTemp();
+            this._pVertexCode += "sub " + temp + ", " + cameraPositionReg + ", " + this._pSharedRegisters.animatedPosition + "\n" +
+                "m33 " + this._pSharedRegisters.viewDirVarying + ".xyz, " + temp + ", " + this._pSharedRegisters.animatedTangent + "\n" +
+                "mov " + this._pSharedRegisters.viewDirVarying + ".w, " + this._pSharedRegisters.animatedPosition + ".w\n";
+        }
+        else {
+            this._pVertexCode += "sub " + this._pSharedRegisters.viewDirVarying + ", " + cameraPositionReg + ", " + this._pSharedRegisters.globalPositionVertex + "\n";
+            this._pRegisterCache.removeVertexTempUsage(this._pSharedRegisters.globalPositionVertex);
+        }
+        //TODO is this required in all cases? (re: distancemappass)
+        this._pFragmentCode += "nrm " + this._pSharedRegisters.viewDirFragment + ".xyz, " + this._pSharedRegisters.viewDirVarying + "\n" +
+            "mov " + this._pSharedRegisters.viewDirFragment + ".w,   " + this._pSharedRegisters.viewDirVarying + ".w\n";
+    };
+    /**
+     * Calculate the normal.
+     */
+    CompilerBase.prototype.compileNormalCode = function () {
+        this._pSharedRegisters.normalFragment = this._pRegisterCache.getFreeFragmentVectorTemp();
+        this._pRegisterCache.addFragmentTempUsages(this._pSharedRegisters.normalFragment, this._pShader.normalDependencies);
+        //simple normal aquisition if no tangent space is being used
+        if (this._pShader.outputsNormals && !this._pShader.outputsTangentNormals) {
+            this._pVertexCode += this._pRenderPass._iGetNormalVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+            this._pFragmentCode += this._pRenderPass._iGetNormalFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+            return;
+        }
+        var normalMatrix;
+        if (!this._pShader.outputsNormals || !this._pShader.usesTangentSpace) {
+            normalMatrix = new Array(3);
+            normalMatrix[0] = this._pRegisterCache.getFreeVertexConstant();
+            normalMatrix[1] = this._pRegisterCache.getFreeVertexConstant();
+            normalMatrix[2] = this._pRegisterCache.getFreeVertexConstant();
+            this._pRegisterCache.getFreeVertexConstant();
+            this._pShader.sceneNormalMatrixIndex = normalMatrix[0].index * 4;
+            this._pSharedRegisters.normalVarying = this._pRegisterCache.getFreeVarying();
+        }
+        if (this._pShader.outputsNormals) {
+            if (this._pShader.usesTangentSpace) {
+                // normalize normal + tangent vector and generate (approximated) bitangent used in m33 operation for view
+                this._pVertexCode += "nrm " + this._pSharedRegisters.animatedNormal + ".xyz, " + this._pSharedRegisters.animatedNormal + "\n" +
+                    "nrm " + this._pSharedRegisters.animatedTangent + ".xyz, " + this._pSharedRegisters.animatedTangent + "\n" +
+                    "crs " + this._pSharedRegisters.bitangent + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + this._pSharedRegisters.animatedTangent + "\n";
+                this._pFragmentCode += this._pRenderPass._iGetNormalFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
+            }
+            else {
+                //Compiles the vertex shader code for tangent-space normal maps.
+                this._pSharedRegisters.tangentVarying = this._pRegisterCache.getFreeVarying();
+                this._pSharedRegisters.bitangentVarying = this._pRegisterCache.getFreeVarying();
+                var temp = this._pRegisterCache.getFreeVertexVectorTemp();
+                this._pVertexCode += "m33 " + temp + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + normalMatrix[0] + "\n" +
+                    "nrm " + this._pSharedRegisters.animatedNormal + ".xyz, " + temp + "\n" +
+                    "m33 " + temp + ".xyz, " + this._pSharedRegisters.animatedTangent + ", " + normalMatrix[0] + "\n" +
+                    "nrm " + this._pSharedRegisters.animatedTangent + ".xyz, " + temp + "\n" +
+                    "mov " + this._pSharedRegisters.tangentVarying + ".x, " + this._pSharedRegisters.animatedTangent + ".x  \n" +
+                    "mov " + this._pSharedRegisters.tangentVarying + ".z, " + this._pSharedRegisters.animatedNormal + ".x  \n" +
+                    "mov " + this._pSharedRegisters.tangentVarying + ".w, " + this._pSharedRegisters.normalInput + ".w  \n" +
+                    "mov " + this._pSharedRegisters.bitangentVarying + ".x, " + this._pSharedRegisters.animatedTangent + ".y  \n" +
+                    "mov " + this._pSharedRegisters.bitangentVarying + ".z, " + this._pSharedRegisters.animatedNormal + ".y  \n" +
+                    "mov " + this._pSharedRegisters.bitangentVarying + ".w, " + this._pSharedRegisters.normalInput + ".w  \n" +
+                    "mov " + this._pSharedRegisters.normalVarying + ".x, " + this._pSharedRegisters.animatedTangent + ".z  \n" +
+                    "mov " + this._pSharedRegisters.normalVarying + ".z, " + this._pSharedRegisters.animatedNormal + ".z  \n" +
+                    "mov " + this._pSharedRegisters.normalVarying + ".w, " + this._pSharedRegisters.normalInput + ".w  \n" +
+                    "crs " + temp + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + this._pSharedRegisters.animatedTangent + "\n" +
+                    "mov " + this._pSharedRegisters.tangentVarying + ".y, " + temp + ".x    \n" +
+                    "mov " + this._pSharedRegisters.bitangentVarying + ".y, " + temp + ".y  \n" +
+                    "mov " + this._pSharedRegisters.normalVarying + ".y, " + temp + ".z    \n";
+                this._pRegisterCache.removeVertexTempUsage(this._pSharedRegisters.animatedTangent);
+                //Compiles the fragment shader code for tangent-space normal maps.
+                var t;
+                var b;
+                var n;
+                t = this._pRegisterCache.getFreeFragmentVectorTemp();
+                this._pRegisterCache.addFragmentTempUsages(t, 1);
+                b = this._pRegisterCache.getFreeFragmentVectorTemp();
+                this._pRegisterCache.addFragmentTempUsages(b, 1);
+                n = this._pRegisterCache.getFreeFragmentVectorTemp();
+                this._pRegisterCache.addFragmentTempUsages(n, 1);
+                this._pFragmentCode += "nrm " + t + ".xyz, " + this._pSharedRegisters.tangentVarying + "\n" +
+                    "mov " + t + ".w, " + this._pSharedRegisters.tangentVarying + ".w	\n" +
+                    "nrm " + b + ".xyz, " + this._pSharedRegisters.bitangentVarying + "\n" +
+                    "nrm " + n + ".xyz, " + this._pSharedRegisters.normalVarying + "\n";
+                //compile custom fragment code for normal calcs
+                this._pFragmentCode += this._pRenderPass._iGetNormalFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters) +
+                    "m33 " + this._pSharedRegisters.normalFragment + ".xyz, " + this._pSharedRegisters.normalFragment + ", " + t + "\n" +
+                    "mov " + this._pSharedRegisters.normalFragment + ".w, " + this._pSharedRegisters.normalVarying + ".w\n";
+                this._pRegisterCache.removeFragmentTempUsage(b);
+                this._pRegisterCache.removeFragmentTempUsage(t);
+                this._pRegisterCache.removeFragmentTempUsage(n);
+            }
+        }
+        else {
+            // no output, world space is enough
+            this._pVertexCode += "m33 " + this._pSharedRegisters.normalVarying + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + normalMatrix[0] + "\n" +
+                "mov " + this._pSharedRegisters.normalVarying + ".w, " + this._pSharedRegisters.animatedNormal + ".w\n";
+            this._pFragmentCode += "nrm " + this._pSharedRegisters.normalFragment + ".xyz, " + this._pSharedRegisters.normalVarying + "\n" +
+                "mov " + this._pSharedRegisters.normalFragment + ".w, " + this._pSharedRegisters.normalVarying + ".w\n";
+            if (this._pShader.tangentDependencies > 0) {
+                this._pSharedRegisters.tangentVarying = this._pRegisterCache.getFreeVarying();
+                this._pVertexCode += "m33 " + this._pSharedRegisters.tangentVarying + ".xyz, " + this._pSharedRegisters.animatedTangent + ", " + normalMatrix[0] + "\n" +
+                    "mov " + this._pSharedRegisters.tangentVarying + ".w, " + this._pSharedRegisters.animatedTangent + ".w\n";
+            }
+        }
+        if (!this._pShader.usesTangentSpace)
+            this._pRegisterCache.removeVertexTempUsage(this._pSharedRegisters.animatedNormal);
+    };
+    /**
+     * Reset all the indices to "unused".
+     */
+    CompilerBase.prototype.pInitRegisterIndices = function () {
+        this._pShader.pInitRegisterIndices();
+        this._pSharedRegisters.animatedPosition = this._pRegisterCache.getFreeVertexVectorTemp();
+        this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.animatedPosition, 1);
+        this._pSharedRegisters.animatableAttributes.push(this._pRegisterCache.getFreeVertexAttribute());
+        this._pSharedRegisters.animationTargetRegisters.push(this._pSharedRegisters.animatedPosition);
+        this._pVertexCode = "";
+        this._pFragmentCode = "";
+        this._pPostAnimationFragmentCode = "";
+        //create commonly shared constant registers
+        if (this._pShader.usesCommonData || this._pShader.normalDependencies > 0) {
+            this._pSharedRegisters.commons = this._pRegisterCache.getFreeFragmentConstant();
+            this._pShader.commonsDataIndex = this._pSharedRegisters.commons.index * 4;
+        }
+        //Creates the registers to contain the tangent data.
+        //Needs to be created FIRST and in this order (for when using tangent space)
+        if (this._pShader.tangentDependencies > 0 || this._pShader.outputsNormals) {
+            this._pSharedRegisters.tangentInput = this._pRegisterCache.getFreeVertexAttribute();
+            this._pShader.tangentIndex = this._pSharedRegisters.tangentInput.index;
+            this._pSharedRegisters.animatedTangent = this._pRegisterCache.getFreeVertexVectorTemp();
+            this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.animatedTangent, 1);
+            if (this._pShader.usesTangentSpace) {
+                this._pSharedRegisters.bitangent = this._pRegisterCache.getFreeVertexVectorTemp();
+                this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.bitangent, 1);
+            }
+            this._pSharedRegisters.animatableAttributes.push(this._pSharedRegisters.tangentInput);
+            this._pSharedRegisters.animationTargetRegisters.push(this._pSharedRegisters.animatedTangent);
+        }
+        if (this._pShader.normalDependencies > 0) {
+            this._pSharedRegisters.normalInput = this._pRegisterCache.getFreeVertexAttribute();
+            this._pShader.normalIndex = this._pSharedRegisters.normalInput.index;
+            this._pSharedRegisters.animatedNormal = this._pRegisterCache.getFreeVertexVectorTemp();
+            this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.animatedNormal, 1);
+            this._pSharedRegisters.animatableAttributes.push(this._pSharedRegisters.normalInput);
+            this._pSharedRegisters.animationTargetRegisters.push(this._pSharedRegisters.animatedNormal);
+        }
+        if (this._pShader.colorDependencies > 0) {
+            this._pSharedRegisters.colorInput = this._pRegisterCache.getFreeVertexAttribute();
+            this._pShader.colorBufferIndex = this._pSharedRegisters.colorInput.index;
+            this._pSharedRegisters.colorVarying = this._pRegisterCache.getFreeVarying();
+            this._pVertexCode += "mov " + this._pSharedRegisters.colorVarying + ", " + this._pSharedRegisters.colorInput + "\n";
+        }
+    };
+    /**
+     * Disposes all resources used by the compiler.
+     */
+    CompilerBase.prototype.dispose = function () {
+        this._pRegisterCache.dispose();
+        this._pRegisterCache = null;
+        this._pSharedRegisters = null;
+    };
+    Object.defineProperty(CompilerBase.prototype, "vertexCode", {
+        /**
+         * The generated vertex code.
+         */
+        get: function () {
+            return this._pVertexCode;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CompilerBase.prototype, "fragmentCode", {
+        /**
+         * The generated fragment code.
+         */
+        get: function () {
+            return this._pFragmentCode;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CompilerBase.prototype, "postAnimationFragmentCode", {
+        /**
+         * The generated fragment code.
+         */
+        get: function () {
+            return this._pPostAnimationFragmentCode;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CompilerBase.prototype, "shadedTarget", {
+        /**
+         * The register containing the final shaded colour.
+         */
+        get: function () {
+            return this._pSharedRegisters.shadedTarget;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return CompilerBase;
+}());
+
+/**
+ * ShaderBase keeps track of the number of dependencies for "named registers" used across a pass.
+ * Named registers are that are not necessarily limited to a single method. They are created by the compiler and
+ * passed on to methods. The compiler uses the results to reserve usages through RegisterPool, which can be removed
+ * each time a method has been compiled into the shader.
+ *
+ * @see RegisterPool.addUsage
+ */
+var ShaderBase = (function () {
+    /**
+     * Creates a new MethodCompilerVO object.
+     */
+    function ShaderBase(elementsClass, pass, stage) {
+        this._abstractionPool = new Object();
+        this._blendFactorSource = exports.ContextGLBlendFactor.ONE;
+        this._blendFactorDest = exports.ContextGLBlendFactor.ZERO;
+        this._invalidProgram = true;
+        this._animationVertexCode = "";
+        this._animationFragmentCode = "";
+        this.usesBlending = false;
+        this.useImageRect = false;
+        this.usesCurves = false;
+        /**
+         * The depth compare mode used to render the renderables using this material.
+         *
+         * @see away.stagegl.ContextGLCompareMode
+         */
+        this.depthCompareMode = exports.ContextGLCompareMode.LESS_EQUAL;
+        /**
+         * Indicate whether the shader should write to the depth buffer or not. Ignored when blending is enabled.
+         */
+        this.writeDepth = true;
+        this._defaultCulling = exports.ContextGLTriangleFace.BACK;
+        this._pInverseSceneMatrix = new Float32Array(16);
+        //set ambient values to default
+        this.ambientR = 0xFF;
+        this.ambientG = 0xFF;
+        this.ambientB = 0xFF;
+        /**
+         * Indicates whether there are any dependencies on the world-space position vector.
+         */
+        this.usesGlobalPosFragment = false;
+        /**
+         * Indicates whether there are any dependencies on the local position vector.
+         */
+        this.usesPositionFragment = false;
+        /**
+         *
+         */
+        this.imageIndices = new Array();
+        this._elementsClass = elementsClass;
+        this._pass = pass;
+        this._stage = stage;
+        this.profile = this._stage.profile;
+    }
+    Object.defineProperty(ShaderBase.prototype, "programData", {
+        get: function () {
+            if (this._invalidProgram)
+                this._updateProgram();
+            return this._programData;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderBase.prototype, "usesAnimation", {
+        get: function () {
+            return this._usesAnimation;
+        },
+        set: function (value) {
+            if (this._usesAnimation == value)
+                return;
+            this._usesAnimation = value;
+            this.invalidateProgram();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderBase.prototype, "numUsedVertexConstants", {
+        get: function () {
+            if (this._invalidProgram)
+                this._updateProgram();
+            return this._numUsedVertexConstants;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderBase.prototype, "numUsedFragmentConstants", {
+        get: function () {
+            if (this._invalidProgram)
+                this._updateProgram();
+            return this._numUsedFragmentConstants;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderBase.prototype, "numUsedStreams", {
+        /**
+         * The amount of used vertex streams in the vertex code. Used by the animation code generation to know from which index on streams are available.
+         */
+        get: function () {
+            if (this._invalidProgram)
+                this._updateProgram();
+            return this._numUsedStreams;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ShaderBase.prototype, "numUsedTextures", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._invalidProgram)
+                this._updateProgram();
+            return this._numUsedTextures;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ShaderBase.prototype.getAbstraction = function (texture) {
+        return (this._abstractionPool[texture.id] || (this._abstractionPool[texture.id] = new ShaderBase._abstractionClassPool[texture.assetType](texture, this)));
+    };
+    /**
+     *
+     * @param image
+     */
+    ShaderBase.prototype.clearAbstraction = function (texture) {
+        this._abstractionPool[texture.id] = null;
+    };
+    /**
+     *
+     * @param imageObjectClass
+     */
+    ShaderBase.registerAbstraction = function (gl_assetClass, assetClass) {
+        ShaderBase._abstractionClassPool[assetClass.assetType] = gl_assetClass;
+    };
+    ShaderBase.prototype.getImageIndex = function (texture, index) {
+        if (index === void 0) { index = 0; }
+        return this._pass.getImageIndex(texture, index);
+    };
+    ShaderBase.prototype._iIncludeDependencies = function () {
+        this._pass._iIncludeDependencies(this);
+        //this.usesCommonData = this.usesCurves || this.usesCommonData;
+    };
+    /**
+     * Factory method to create a concrete compiler object for this object
+     *
+     * @param elementsClass
+     * @param pass
+     * @param stage
+     * @returns {CompilerBase}
+     */
+    ShaderBase.prototype.createCompiler = function (elementsClass, pass) {
+        return new CompilerBase(elementsClass, pass, this);
+    };
+    /**
+     * Clears dependency counts for all registers. Called when recompiling a pass.
+     */
+    ShaderBase.prototype.reset = function () {
+        this.projectionDependencies = 0;
+        this.normalDependencies = 0;
+        this.colorDependencies = 0;
+        this.viewDirDependencies = 0;
+        this.uvDependencies = 0;
+        this.secondaryUVDependencies = 0;
+        this.globalPosDependencies = 0;
+        this.tangentDependencies = 0;
+        this.usesCommonData = false;
+        this.usesGlobalPosFragment = false;
+        this.usesPositionFragment = false;
+        this.usesFragmentAnimation = false;
+        this.usesTangentSpace = false;
+        this.outputsNormals = false;
+        this.outputsTangentNormals = false;
+    };
+    ShaderBase.prototype.pInitRegisterIndices = function () {
+        this.commonsDataIndex = -1;
+        this.cameraPositionIndex = -1;
+        this.curvesIndex = -1;
+        this.uvIndex = -1;
+        this.uvMatrixIndex = -1;
+        this.colorTransformIndex = -1;
+        this.secondaryUVIndex = -1;
+        this.normalIndex = -1;
+        this.colorBufferIndex = -1;
+        this.tangentIndex = -1;
+        this.sceneMatrixIndex = -1;
+        this.sceneNormalMatrixIndex = -1;
+        this.jointIndexIndex = -1;
+        this.jointWeightIndex = -1;
+        this.imageIndices.length = 0;
+    };
+    /**
+     * Initializes the unchanging constant data for this shader object.
+     */
+    ShaderBase.prototype.initConstantData = function (registerCache) {
+        //Updates the amount of used register indices.
+        this._numUsedVertexConstants = registerCache.numUsedVertexConstants;
+        this._numUsedFragmentConstants = registerCache.numUsedFragmentConstants;
+        this._numUsedStreams = registerCache.numUsedStreams;
+        this._numUsedTextures = registerCache.numUsedTextures;
+        this.vertexConstantData = new Float32Array(registerCache.numUsedVertexConstants * 4);
+        this.fragmentConstantData = new Float32Array(registerCache.numUsedFragmentConstants * 4);
+        //Initialies viewMatrix
+        if (this.viewMatrixIndex >= 0) {
+            this.viewMatrix = new Matrix3D(new Float32Array(this.vertexConstantData.buffer, this.viewMatrixIndex * 4, 16));
+        }
+        else if (this.viewMatrix) {
+            this.viewMatrix = null;
+        }
+        //Initialies sceneMatrix
+        if (this.sceneMatrixIndex >= 0) {
+            this.sceneMatrix = new Matrix3D(new Float32Array(this.vertexConstantData.buffer, this.sceneMatrixIndex * 4, 16));
+        }
+        else if (this.sceneMatrix) {
+            this.sceneMatrix = null;
+        }
+        //Initializes commonly required constant values.
+        if (this.commonsDataIndex >= 0) {
+            this.fragmentConstantData[this.commonsDataIndex] = .5;
+            this.fragmentConstantData[this.commonsDataIndex + 1] = 0;
+            this.fragmentConstantData[this.commonsDataIndex + 2] = 1 / 255;
+            this.fragmentConstantData[this.commonsDataIndex + 3] = 1;
+        }
+        //Initializes the default UV transformation matrix.
+        if (this.uvMatrixIndex >= 0) {
+            this.vertexConstantData[this.uvMatrixIndex] = 1;
+            this.vertexConstantData[this.uvMatrixIndex + 1] = 0;
+            this.vertexConstantData[this.uvMatrixIndex + 2] = 0;
+            this.vertexConstantData[this.uvMatrixIndex + 3] = 0;
+            this.vertexConstantData[this.uvMatrixIndex + 4] = 0;
+            this.vertexConstantData[this.uvMatrixIndex + 5] = 1;
+            this.vertexConstantData[this.uvMatrixIndex + 6] = 0;
+            this.vertexConstantData[this.uvMatrixIndex + 7] = 0;
+        }
+        //Initializes the default colorTransform.
+        if (this.colorTransformIndex >= 0) {
+            this.fragmentConstantData[this.colorTransformIndex] = 1;
+            this.fragmentConstantData[this.colorTransformIndex + 1] = 1;
+            this.fragmentConstantData[this.colorTransformIndex + 2] = 1;
+            this.fragmentConstantData[this.colorTransformIndex + 3] = 1;
+            this.fragmentConstantData[this.colorTransformIndex + 4] = 0;
+            this.fragmentConstantData[this.colorTransformIndex + 5] = 0;
+            this.fragmentConstantData[this.colorTransformIndex + 6] = 0;
+            this.fragmentConstantData[this.colorTransformIndex + 7] = 0;
+        }
+        if (this.sceneNormalMatrixIndex >= 0) {
+            this.sceneNormalMatrix = new Matrix3D(new Float32Array(this.vertexConstantData.buffer, this.sceneNormalMatrixIndex * 4, 16));
+        }
+        else if (this.sceneNormalMatrix) {
+            this.sceneNormalMatrix = null;
+        }
+        if (this.cameraPositionIndex >= 0)
+            this.vertexConstantData[this.cameraPositionIndex + 3] = 1;
+        // init constant data in pass
+        this._pass._iInitConstantData(this);
+        //init constant data in animation
+        if (this.usesAnimation)
+            this._pass.animationSet.doneAGALCode(this);
+    };
+    /**
+     * The blend mode to use when drawing this renderable. The following blend modes are supported:
+     * <ul>
+     * <li>BlendMode.NORMAL: No blending, unless the material inherently needs it</li>
+     * <li>BlendMode.LAYER: Force blending. This will draw the object the same as NORMAL, but without writing depth writes.</li>
+     * <li>BlendMode.MULTIPLY</li>
+     * <li>BlendMode.ADD</li>
+     * <li>BlendMode.ALPHA</li>
+     * </ul>
+     */
+    ShaderBase.prototype.setBlendMode = function (value) {
+        switch (value) {
+            case BlendMode.NORMAL:
+                this._blendFactorSource = exports.ContextGLBlendFactor.ONE;
+                this._blendFactorDest = exports.ContextGLBlendFactor.ZERO;
+                this.usesBlending = false;
+                break;
+            case BlendMode.LAYER:
+                this._blendFactorSource = exports.ContextGLBlendFactor.SOURCE_ALPHA;
+                this._blendFactorDest = exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA;
+                this.usesBlending = true;
+                break;
+            case BlendMode.MULTIPLY:
+                this._blendFactorSource = exports.ContextGLBlendFactor.ZERO;
+                this._blendFactorDest = exports.ContextGLBlendFactor.SOURCE_COLOR;
+                this.usesBlending = true;
+                break;
+            case BlendMode.ADD:
+                this._blendFactorSource = exports.ContextGLBlendFactor.SOURCE_ALPHA;
+                this._blendFactorDest = exports.ContextGLBlendFactor.ONE;
+                this.usesBlending = true;
+                break;
+            case BlendMode.ALPHA:
+                this._blendFactorSource = exports.ContextGLBlendFactor.ZERO;
+                this._blendFactorDest = exports.ContextGLBlendFactor.SOURCE_ALPHA;
+                this.usesBlending = true;
+                break;
+            default:
+                throw new ArgumentError("Unsupported blend mode!");
+        }
+    };
+    /**
+     * @inheritDoc
+     */
+    ShaderBase.prototype._iActivate = function (projection) {
+        this._stage.context.setCulling(this.useBothSides ? exports.ContextGLTriangleFace.NONE : this._defaultCulling, projection.coordinateSystem);
+        if (!this.usesTangentSpace && this.cameraPositionIndex >= 0) {
+            var pos = projection.transform.concatenatedMatrix3D.position;
+            this.vertexConstantData[this.cameraPositionIndex] = pos.x;
+            this.vertexConstantData[this.cameraPositionIndex + 1] = pos.y;
+            this.vertexConstantData[this.cameraPositionIndex + 2] = pos.z;
+        }
+        this._stage.context.setDepthTest((this.writeDepth && !this.usesBlending), this.depthCompareMode);
+        if (this.usesBlending)
+            this._stage.context.setBlendFactors(this._blendFactorSource, this._blendFactorDest);
+        this.activeElements = null;
+    };
+    /**
+     * @inheritDoc
+     */
+    ShaderBase.prototype._iDeactivate = function () {
+        //For the love of god don't remove this if you want your multi-material shadows to not flicker like shit
+        this._stage.context.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
+        this.activeElements = null;
+    };
+    /**
+     *
+     *
+     * @param renderable
+     * @param stage
+     * @param camera
+     */
+    ShaderBase.prototype._setRenderState = function (renderable, projection) {
+        if (renderable.sourceEntity.animator)
+            renderable.sourceEntity.animator.setRenderState(this, renderable, this._stage, projection);
+        var rawData;
+        if (this.usesUVTransform) {
+            var uvMatrix = renderable.uvMatrix;
+            if (uvMatrix) {
+                //transpose
+                rawData = uvMatrix.rawData;
+                this.vertexConstantData[this.uvMatrixIndex] = rawData[0];
+                this.vertexConstantData[this.uvMatrixIndex + 1] = rawData[2];
+                this.vertexConstantData[this.uvMatrixIndex + 3] = rawData[4];
+                this.vertexConstantData[this.uvMatrixIndex + 4] = rawData[1];
+                this.vertexConstantData[this.uvMatrixIndex + 5] = rawData[3];
+                this.vertexConstantData[this.uvMatrixIndex + 7] = rawData[5];
+            }
+            else {
+                this.vertexConstantData[this.uvMatrixIndex] = 1;
+                this.vertexConstantData[this.uvMatrixIndex + 1] = 0;
+                this.vertexConstantData[this.uvMatrixIndex + 3] = 0;
+                this.vertexConstantData[this.uvMatrixIndex + 4] = 0;
+                this.vertexConstantData[this.uvMatrixIndex + 5] = 1;
+                this.vertexConstantData[this.uvMatrixIndex + 7] = 0;
+            }
+        }
+        if (this.usesColorTransform) {
+            var colorTransform = renderable.sourceEntity._iAssignedColorTransform();
+            if (colorTransform) {
+                //TODO: AWDParser to write normalised color offsets
+                rawData = colorTransform._rawData;
+                this.fragmentConstantData[this.colorTransformIndex] = rawData[0];
+                this.fragmentConstantData[this.colorTransformIndex + 1] = rawData[1];
+                this.fragmentConstantData[this.colorTransformIndex + 2] = rawData[2];
+                this.fragmentConstantData[this.colorTransformIndex + 3] = rawData[3];
+                this.fragmentConstantData[this.colorTransformIndex + 4] = rawData[4] / 255;
+                this.fragmentConstantData[this.colorTransformIndex + 5] = rawData[5] / 255;
+                this.fragmentConstantData[this.colorTransformIndex + 6] = rawData[6] / 255;
+                this.fragmentConstantData[this.colorTransformIndex + 7] = rawData[7] / 255;
+            }
+            else {
+                this.fragmentConstantData[this.colorTransformIndex] = 1;
+                this.fragmentConstantData[this.colorTransformIndex + 1] = 1;
+                this.fragmentConstantData[this.colorTransformIndex + 2] = 1;
+                this.fragmentConstantData[this.colorTransformIndex + 3] = 1;
+                this.fragmentConstantData[this.colorTransformIndex + 4] = 0;
+                this.fragmentConstantData[this.colorTransformIndex + 5] = 0;
+                this.fragmentConstantData[this.colorTransformIndex + 6] = 0;
+                this.fragmentConstantData[this.colorTransformIndex + 7] = 0;
+            }
+        }
+        if (this.sceneNormalMatrixIndex >= 0) {
+            this.sceneNormalMatrix.copyFrom(renderable.sourceEntity.transform.inverseConcatenatedMatrix3D);
+        }
+        if (this.usesTangentSpace && this.cameraPositionIndex >= 0) {
+            renderable.sourceEntity.transform.inverseConcatenatedMatrix3D.copyRawDataTo(this._pInverseSceneMatrix);
+            var pos = projection.transform.concatenatedMatrix3D.position;
+            var x = pos.x;
+            var y = pos.y;
+            var z = pos.z;
+            this.vertexConstantData[this.cameraPositionIndex] = this._pInverseSceneMatrix[0] * x + this._pInverseSceneMatrix[4] * y + this._pInverseSceneMatrix[8] * z + this._pInverseSceneMatrix[12];
+            this.vertexConstantData[this.cameraPositionIndex + 1] = this._pInverseSceneMatrix[1] * x + this._pInverseSceneMatrix[5] * y + this._pInverseSceneMatrix[9] * z + this._pInverseSceneMatrix[13];
+            this.vertexConstantData[this.cameraPositionIndex + 2] = this._pInverseSceneMatrix[2] * x + this._pInverseSceneMatrix[6] * y + this._pInverseSceneMatrix[10] * z + this._pInverseSceneMatrix[14];
+        }
+    };
+    ShaderBase.prototype.invalidateProgram = function () {
+        this._invalidProgram = true;
+    };
+    ShaderBase.prototype.dispose = function () {
+        this._programData.dispose();
+        this._programData = null;
+    };
+    ShaderBase.prototype._updateProgram = function () {
+        this._invalidProgram = false;
+        var compiler = this.createCompiler(this._elementsClass, this._pass);
+        compiler.compile();
+        this._calcAnimationCode(compiler._pRegisterCache, compiler.shadedTarget, compiler._pSharedRegisters);
+        //initialise the required shader constants
+        this.initConstantData(compiler._pRegisterCache);
+        var programData = this._stage.getProgramData(this._animationVertexCode + compiler.vertexCode, compiler.fragmentCode + this._animationFragmentCode + compiler.postAnimationFragmentCode);
+        //check program data hasn't changed, keep count of program usages
+        if (this._programData != programData) {
+            if (this._programData)
+                this._programData.dispose();
+            this._programData = programData;
+            programData.usages++;
+        }
+    };
+    ShaderBase.prototype._calcAnimationCode = function (registerCache, shadedTarget, sharedRegisters) {
+        //reset code
+        this._animationVertexCode = "";
+        this._animationFragmentCode = "";
+        //check to see if GPU animation is used
+        if (this.usesAnimation) {
+            var animationSet = this._pass.animationSet;
+            this._animationVertexCode += animationSet.getAGALVertexCode(this, registerCache, sharedRegisters);
+            if (this.uvDependencies > 0 && !this.usesUVTransform)
+                this._animationVertexCode += animationSet.getAGALUVCode(this, registerCache, sharedRegisters);
+            if (this.usesFragmentAnimation)
+                this._animationFragmentCode += animationSet.getAGALFragmentCode(this, registerCache, shadedTarget);
+        }
+        else {
+            // simply write attributes to targets, do not animate them
+            // projection will pick up on targets[0] to do the projection
+            var len = sharedRegisters.animatableAttributes.length;
+            for (var i = 0; i < len; ++i)
+                this._animationVertexCode += "mov " + sharedRegisters.animationTargetRegisters[i] + ", " + sharedRegisters.animatableAttributes[i] + "\n";
+            if (this.uvDependencies > 0 && !this.usesUVTransform)
+                this._animationVertexCode += "mov " + sharedRegisters.uvTarget + "," + sharedRegisters.uvSource + "\n";
+        }
+    };
+    ShaderBase.prototype.setVertexConst = function (index, x, y, z, w) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        if (z === void 0) { z = 0; }
+        if (w === void 0) { w = 0; }
+        index *= 4;
+        this.vertexConstantData[index++] = x;
+        this.vertexConstantData[index++] = y;
+        this.vertexConstantData[index++] = z;
+        this.vertexConstantData[index] = w;
+    };
+    ShaderBase.prototype.setVertexConstFromArray = function (index, data) {
+        index *= 4;
+        for (var i = 0; i < data.length; i++)
+            this.vertexConstantData[index++] = data[i];
+    };
+    ShaderBase.prototype.setVertexConstFromMatrix = function (index, matrix) {
+        index *= 4;
+        var rawData = matrix._rawData;
+        this.vertexConstantData[index++] = rawData[0];
+        this.vertexConstantData[index++] = rawData[4];
+        this.vertexConstantData[index++] = rawData[8];
+        this.vertexConstantData[index++] = rawData[12];
+        this.vertexConstantData[index++] = rawData[1];
+        this.vertexConstantData[index++] = rawData[5];
+        this.vertexConstantData[index++] = rawData[9];
+        this.vertexConstantData[index++] = rawData[13];
+        this.vertexConstantData[index++] = rawData[2];
+        this.vertexConstantData[index++] = rawData[6];
+        this.vertexConstantData[index++] = rawData[10];
+        this.vertexConstantData[index++] = rawData[14];
+        this.vertexConstantData[index++] = rawData[3];
+        this.vertexConstantData[index++] = rawData[7];
+        this.vertexConstantData[index++] = rawData[11];
+        this.vertexConstantData[index] = rawData[15];
+    };
+    ShaderBase.prototype.setFragmentConst = function (index, x, y, z, w) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        if (z === void 0) { z = 0; }
+        if (w === void 0) { w = 0; }
+        index *= 4;
+        this.fragmentConstantData[index++] = x;
+        this.fragmentConstantData[index++] = y;
+        this.fragmentConstantData[index++] = z;
+        this.fragmentConstantData[index] = w;
+    };
+    return ShaderBase;
+}());
+ShaderBase._abstractionClassPool = new Object();
+
+/**
+ * PassBase provides an abstract base class for material shader passes. A material pass constitutes at least
+ * a render call per required renderable.
+ */
+var PassBase = (function (_super) {
+    __extends(PassBase, _super);
+    /**
+     * Creates a new PassBase object.
+     */
+    function PassBase(render, material, materialPool) {
+        var _this = _super.call(this) || this;
+        _this._preserveAlpha = true;
+        _this._forceSeparateMVP = false;
+        _this._render = render;
+        _this._material = material;
+        _this._elementsClass = materialPool.elementsClass;
+        _this._stage = materialPool.materialGroup.stage;
+        return _this;
+    }
+    Object.defineProperty(PassBase.prototype, "shader", {
+        get: function () {
+            return this._shader;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PassBase.prototype, "animationSet", {
+        get: function () {
+            return this._material.animationSet;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PassBase.prototype, "preserveAlpha", {
+        /**
+         * Indicates whether the output alpha value should remain unchanged compared to the material's original alpha.
+         */
+        get: function () {
+            return this._preserveAlpha;
+        },
+        set: function (value) {
+            if (this._preserveAlpha == value)
+                return;
+            this._preserveAlpha = value;
+            this.invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PassBase.prototype, "forceSeparateMVP", {
+        /**
+         * Indicates whether the screen projection should be calculated by forcing a separate scene matrix and
+         * view-projection matrix. This is used to prevent rounding errors when using multiple passes with different
+         * projection code.
+         */
+        get: function () {
+            return this._forceSeparateMVP;
+        },
+        set: function (value) {
+            if (this._forceSeparateMVP == value)
+                return;
+            this._forceSeparateMVP = value;
+            this.invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    PassBase.prototype.getImageIndex = function (texture, index) {
+        if (index === void 0) { index = 0; }
+        return this._render.getImageIndex(texture, index);
+    };
+    /**
+     * Marks the shader program as invalid, so it will be recompiled before the next render.
+     */
+    PassBase.prototype.invalidate = function () {
+        this._shader.invalidateProgram();
+        this.dispatchEvent(new PassEvent(PassEvent.INVALIDATE, this));
+    };
+    /**
+     * Cleans up any resources used by the current object.
+     * @param deep Indicates whether other resources should be cleaned up, that could potentially be shared across different instances.
+     */
+    PassBase.prototype.dispose = function () {
+        this._render = null;
+        this._material = null;
+        this._elementsClass = null;
+        this._stage = null;
+        if (this._shader) {
+            this._shader.dispose();
+            this._shader = null;
+        }
+    };
+    /**
+     * Renders the current pass. Before calling pass, activatePass needs to be called with the same index.
+     * @param pass The pass used to render the renderable.
+     * @param renderable The IRenderable object to draw.
+     * @param stage The Stage object used for rendering.
+     * @param entityCollector The EntityCollector object that contains the visible scene data.
+     * @param viewProjection The view-projection matrix used to project to the screen. This is not the same as
+     * camera.viewProjection as it includes the scaling factors when rendering to textures.
+     *
+     * @internal
+     */
+    PassBase.prototype._setRenderState = function (renderable, projection) {
+        this._shader._setRenderState(renderable, projection);
+    };
+    /**
+     * Sets the render state for the pass that is independent of the rendered object. This needs to be called before
+     * calling pass. Before activating a pass, the previously used pass needs to be deactivated.
+     * @param stage The Stage object which is currently used for rendering.
+     * @param camera The camera from which the scene is viewed.
+     * @private
+     */
+    PassBase.prototype._iActivate = function (projection) {
+        this._shader._iActivate(projection);
+    };
+    /**
+     * Clears the render state for the pass. This needs to be called before activating another pass.
+     * @param stage The Stage used for rendering
+     *
+     * @private
+     */
+    PassBase.prototype._iDeactivate = function () {
+        this._shader._iDeactivate();
+    };
+    PassBase.prototype._iIncludeDependencies = function (shader) {
+        this._render._iIncludeDependencies(shader);
+        if (this._forceSeparateMVP)
+            shader.globalPosDependencies++;
+    };
+    PassBase.prototype._iInitConstantData = function (shader) {
+    };
+    PassBase.prototype._iGetPreLightingVertexCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    PassBase.prototype._iGetPreLightingFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    PassBase.prototype._iGetVertexCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    PassBase.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    PassBase.prototype._iGetNormalVertexCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    PassBase.prototype._iGetNormalFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    return PassBase;
+}(EventDispatcher));
+
+/**
+ * BasicMaterialPass forms an abstract base class for the default shaded materials provided by Stage,
+ * using material methods to define their appearance.
+ */
+var BasicMaterialPass = (function (_super) {
+    __extends(BasicMaterialPass, _super);
+    function BasicMaterialPass(render, material, materialPool) {
+        var _this = _super.call(this, render, material, materialPool) || this;
+        _this._diffuseR = 1;
+        _this._diffuseG = 1;
+        _this._diffuseB = 1;
+        _this._diffuseA = 1;
+        _this._shader = new ShaderBase(materialPool.elementsClass, _this, _this._stage);
+        _this.invalidate();
+        return _this;
+    }
+    BasicMaterialPass.prototype._iIncludeDependencies = function (shader) {
+        _super.prototype._iIncludeDependencies.call(this, shader);
+        if (this._textureVO != null)
+            shader.uvDependencies++;
+    };
+    BasicMaterialPass.prototype.invalidate = function () {
+        _super.prototype.invalidate.call(this);
+        this._textureVO = this._material.getTextureAt(0) ? this._shader.getAbstraction(this._material.getTextureAt(0)) : null;
+    };
+    BasicMaterialPass.prototype.dispose = function () {
+        if (this._textureVO) {
+            this._textureVO.onClear(new AssetEvent(AssetEvent.CLEAR, this._material.getTextureAt(0)));
+            this._textureVO = null;
+        }
+        _super.prototype.dispose.call(this);
+    };
+    /**
+     * @inheritDoc
+     */
+    BasicMaterialPass.prototype._iGetFragmentCode = function (shader, regCache, sharedReg) {
+        var code = "";
+        var alphaReg;
+        if (this.preserveAlpha) {
+            alphaReg = regCache.getFreeFragmentSingleTemp();
+            regCache.addFragmentTempUsages(alphaReg, 1);
+            code += "mov " + alphaReg + ", " + sharedReg.shadedTarget + ".w\n";
+        }
+        var targetReg = sharedReg.shadedTarget;
+        if (this._textureVO != null) {
+            code += this._textureVO._iGetFragmentCode(targetReg, regCache, sharedReg, sharedReg.uvVarying);
+            if (shader.alphaThreshold > 0) {
+                var cutOffReg = regCache.getFreeFragmentConstant();
+                this._fragmentConstantsIndex = cutOffReg.index * 4;
+                code += "sub " + targetReg + ".w, " + targetReg + ".w, " + cutOffReg + ".x\n" + "kil " + targetReg + ".w\n" + "add " + targetReg + ".w, " + targetReg + ".w, " + cutOffReg + ".x\n";
+            }
+        }
+        else if (shader.colorBufferIndex != -1) {
+            code += "mov " + targetReg + ", " + sharedReg.colorVarying + "\n";
+        }
+        else {
+            var diffuseInputReg = regCache.getFreeFragmentConstant();
+            this._fragmentConstantsIndex = diffuseInputReg.index * 4;
+            code += "mov " + targetReg + ", " + diffuseInputReg + "\n";
+        }
+        if (this.preserveAlpha) {
+            code += "mul " + sharedReg.shadedTarget + ".w, " + sharedReg.shadedTarget + ".w, " + alphaReg + "\n";
+            regCache.removeFragmentTempUsage(alphaReg);
+        }
+        return code;
+    };
+    BasicMaterialPass.prototype._setRenderState = function (renderable, projection) {
+        _super.prototype._setRenderState.call(this, renderable, projection);
+        if (this._textureVO != null)
+            this._textureVO._setRenderState(renderable);
+    };
+    /**
+     * @inheritDoc
+     */
+    BasicMaterialPass.prototype._iActivate = function (projection) {
+        _super.prototype._iActivate.call(this, projection);
+        if (this._textureVO != null) {
+            this._textureVO.activate(this._render);
+            if (this._shader.alphaThreshold > 0)
+                this._shader.fragmentConstantData[this._fragmentConstantsIndex] = this._shader.alphaThreshold;
+        }
+        else if (this._shader.colorBufferIndex == -1) {
+            var index = this._fragmentConstantsIndex;
+            var data = this._shader.fragmentConstantData;
+            data[index] = this._diffuseR;
+            data[index + 1] = this._diffuseG;
+            data[index + 2] = this._diffuseB;
+            data[index + 3] = this._diffuseA;
+        }
+    };
+    return BasicMaterialPass;
+}(PassBase));
+
+/**
+ *
+ * @class away.pool.Passes
+ */
+var GL_MaterialBase = (function (_super) {
+    __extends(GL_MaterialBase, _super);
+    function GL_MaterialBase(material, materialPool) {
+        var _this = _super.call(this, material, materialPool) || this;
+        _this.usages = 0;
+        _this._forceSeparateMVP = false;
+        _this._usesAnimation = true;
+        _this._invalidAnimation = true;
+        _this._invalidRender = true;
+        _this._invalidImages = true;
+        _this._passes = new Array();
+        _this._imageIndices = new Object();
+        _this._pRequiresBlending = false;
+        _this.images = new Array();
+        _this.samplers = new Array();
+        _this._onInvalidateAnimationDelegate = function (event) { return _this.onInvalidateAnimation(event); };
+        _this._onInvalidatePassesDelegate = function (event) { return _this.onInvalidatePasses(event); };
+        _this.materialID = material.id;
+        _this._material = material;
+        _this._elementsClass = materialPool.elementsClass;
+        _this._stage = materialPool.materialGroup.stage;
+        _this._material.addEventListener(MaterialEvent.INVALIDATE_ANIMATION, _this._onInvalidateAnimationDelegate);
+        _this._material.addEventListener(MaterialEvent.INVALIDATE_PASSES, _this._onInvalidatePassesDelegate);
+        _this._onPassInvalidateDelegate = function (event) { return _this.onPassInvalidate(event); };
+        return _this;
+    }
+    Object.defineProperty(GL_MaterialBase.prototype, "requiresBlending", {
+        /**
+         * Indicates whether or not the renderable requires alpha blending during rendering.
+         */
+        get: function () {
+            return this._pRequiresBlending;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_MaterialBase.prototype, "renderOrderId", {
+        get: function () {
+            if (this._invalidAnimation)
+                this._updateAnimation();
+            return this._renderOrderId;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_MaterialBase.prototype, "passes", {
+        get: function () {
+            if (this._invalidAnimation)
+                this._updateAnimation();
+            return this._passes;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_MaterialBase.prototype, "material", {
+        get: function () {
+            return this._material;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_MaterialBase.prototype, "numImages", {
+        get: function () {
+            if (this._invalidImages)
+                this._updateImages();
+            return this._numImages;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    GL_MaterialBase.prototype._iIncludeDependencies = function (shader) {
+        this._elementsClass._iIncludeDependencies(shader);
+        shader.alphaThreshold = this._material.alphaThreshold;
+        shader.useImageRect = this._material.imageRect;
+        shader.usesCurves = this._material.curves;
+        if (this._material instanceof MaterialBase) {
+            var material = this._material;
+            shader.useAlphaPremultiplied = material.alphaPremultiplied;
+            shader.useBothSides = material.bothSides;
+            shader.usesUVTransform = material.animateUVs;
+            shader.usesColorTransform = material.useColorTransform;
+        }
+    };
+    GL_MaterialBase.prototype.getImageIndex = function (texture, index) {
+        if (index === void 0) { index = 0; }
+        if (this._invalidImages)
+            this._updateImages();
+        return this._imageIndices[texture.id][index];
+    };
+    /**
+     *
+     */
+    GL_MaterialBase.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._material = null;
+        this._elementsClass = null;
+        this._stage = null;
+        var len = this._passes.length;
+        for (var i = 0; i < len; i++) {
+            this._passes[i].removeEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
+            this._passes[i].dispose();
+        }
+        this._passes = null;
+    };
+    /**
+     *
+     */
+    GL_MaterialBase.prototype.onInvalidate = function (event) {
+        _super.prototype.onInvalidate.call(this, event);
+        this._invalidRender = true;
+        this._invalidAnimation = true;
+    };
+    /**
+     *
+     */
+    GL_MaterialBase.prototype.onInvalidatePasses = function (event) {
+        var len = this._passes.length;
+        for (var i = 0; i < len; i++)
+            this._passes[i].invalidate();
+        this._invalidAnimation = true;
+        this._invalidImages = true;
+    };
+    /**
+     *
+     */
+    GL_MaterialBase.prototype.onInvalidateAnimation = function (event) {
+        this._invalidAnimation = true;
+    };
+    /**
+     *
+     * @param surface
+     */
+    GL_MaterialBase.prototype._updateAnimation = function () {
+        if (this._invalidRender)
+            this._pUpdateRender();
+        this._invalidAnimation = false;
+        var usesAnimation = this._getEnabledGPUAnimation();
+        var renderOrderId = 0;
+        var mult = 1;
+        var shader;
+        var len = this._passes.length;
+        for (var i = 0; i < len; i++) {
+            shader = this._passes[i].shader;
+            shader.usesAnimation = usesAnimation;
+            renderOrderId += shader.programData.id * mult;
+            mult *= 1000;
+        }
+        if (this._usesAnimation != usesAnimation) {
+            this._usesAnimation = usesAnimation;
+            var renderables = this._material.iOwners;
+            var numOwners = renderables.length;
+            for (var j = 0; j < numOwners; j++)
+                renderables[j].invalidateElements();
+        }
+        this._renderOrderId = renderOrderId;
+    };
+    GL_MaterialBase.prototype._updateImages = function () {
+        this._invalidImages = false;
+        var numTextures = this._material.getNumTextures();
+        var texture;
+        var numImages;
+        var images;
+        var image;
+        var sampler;
+        var index = 0;
+        for (var i = 0; i < numTextures; i++) {
+            texture = this._material.getTextureAt(i);
+            numImages = texture.getNumImages();
+            images = this._imageIndices[texture.id] = new Array();
+            for (var j = 0; j < numImages; j++) {
+                image = texture.getImageAt(j) || (this._material.style ? this._material.style.getImageAt(texture, j) : null) || DefaultMaterialManager.getDefaultImage2D();
+                this.images[index] = this._stage.getAbstraction(image);
+                sampler = texture.getSamplerAt(j) || (this._material.style ? this._material.style.getSamplerAt(texture, j) : null) || DefaultMaterialManager.getDefaultSampler();
+                this.samplers[index] = this._stage.getAbstraction(sampler);
+                images[j] = index++;
+            }
+        }
+        this._numImages = index;
+    };
+    /**
+     * Performs any processing that needs to occur before any of its passes are used.
+     *
+     * @private
+     */
+    GL_MaterialBase.prototype._pUpdateRender = function () {
+        this._invalidRender = false;
+        //overrride to update shader object properties
+    };
+    /**
+     * Removes a pass from the surface.
+     * @param pass The pass to be removed.
+     */
+    GL_MaterialBase.prototype._pRemovePass = function (pass) {
+        pass.removeEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
+        this._passes.splice(this._passes.indexOf(pass), 1);
+    };
+    /**
+     * Removes all passes from the surface
+     */
+    GL_MaterialBase.prototype._pClearPasses = function () {
+        var len = this._passes.length;
+        for (var i = 0; i < len; ++i)
+            this._passes[i].removeEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
+        this._passes.length = 0;
+    };
+    /**
+     * Adds a pass to the surface
+     * @param pass
+     */
+    GL_MaterialBase.prototype._pAddPass = function (pass) {
+        this._passes.push(pass);
+        pass.addEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
+    };
+    /**
+     * Listener for when a pass's shader code changes. It recalculates the render order id.
+     */
+    GL_MaterialBase.prototype.onPassInvalidate = function (event) {
+        this._invalidAnimation = true;
+    };
+    /**
+     * test if animation will be able to run on gpu BEFORE compiling materials
+     * test if the shader objects supports animating the animation set in the vertex shader
+     * if any object using this material fails to support accelerated animations for any of the shader objects,
+     * we should do everything on cpu (otherwise we have the cost of both gpu + cpu animations)
+     */
+    GL_MaterialBase.prototype._getEnabledGPUAnimation = function () {
+        if (this._material.animationSet) {
+            this._material.animationSet.resetGPUCompatibility();
+            var entities = this._material.iOwners;
+            var numOwners = entities.length;
+            var len = this._passes.length;
+            var shader;
+            for (var i = 0; i < len; i++) {
+                shader = this._passes[i].shader;
+                shader.usesAnimation = false;
+                for (var j = 0; j < numOwners; j++)
+                    if (entities[j].animator)
+                        entities[j].animator.testGPUCompatibility(shader);
+            }
+            return !this._material.animationSet.usesCPU;
+        }
+        return false;
+    };
+    return GL_MaterialBase;
+}(AbstractionBase));
+
+/**
+ * RenderMaterialObject forms an abstract base class for the default shaded materials provided by Stage,
+ * using material methods to define their appearance.
+ */
+var GL_BasicMaterial = (function (_super) {
+    __extends(GL_BasicMaterial, _super);
+    function GL_BasicMaterial(material, materialPool) {
+        var _this = _super.call(this, material, materialPool) || this;
+        _this._basicMaterial = material;
+        _this._pAddPass(_this._pass = new BasicMaterialPass(_this, material, materialPool));
+        return _this;
+    }
+    GL_BasicMaterial.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._basicMaterial = null;
+    };
+    /**
+     * @inheritDoc
+     */
+    GL_BasicMaterial.prototype._pUpdateRender = function () {
+        _super.prototype._pUpdateRender.call(this);
+        this._pRequiresBlending = (this._basicMaterial.blendMode != BlendMode.NORMAL || this._basicMaterial.alphaBlending || (this._basicMaterial.colorTransform && this._basicMaterial.colorTransform.alphaMultiplier < 1));
+        this._pass.preserveAlpha = this._basicMaterial.preserveAlpha; //this._pRequiresBlending;
+        this._pass.shader.setBlendMode((this._basicMaterial.blendMode == BlendMode.NORMAL && this._pRequiresBlending) ? BlendMode.LAYER : this._basicMaterial.blendMode);
+        //this._pass.forceSeparateMVP = false;
+    };
+    return GL_BasicMaterial;
+}(GL_MaterialBase));
+
+/**
+ * GL_MaterialPassBase provides an abstract base class for material shader passes. A material pass constitutes at least
+ * a render call per required renderable.
+ */
+var GL_MaterialPassBase = (function (_super) {
+    __extends(GL_MaterialPassBase, _super);
+    function GL_MaterialPassBase() {
+        return _super.apply(this, arguments) || this;
+    }
+    Object.defineProperty(GL_MaterialPassBase.prototype, "shader", {
+        get: function () {
+            return this._shader;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_MaterialPassBase.prototype, "animationSet", {
+        get: function () {
+            return this._material.animationSet;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Marks the shader program as invalid, so it will be recompiled before the next render.
+     */
+    GL_MaterialPassBase.prototype.invalidate = function () {
+        this._shader.invalidateProgram();
+        this.dispatchEvent(new PassEvent(PassEvent.INVALIDATE, this));
+    };
+    GL_MaterialPassBase.prototype.dispose = function () {
+        if (this._shader) {
+            this._shader.dispose();
+            this._shader = null;
+        }
+    };
+    /**
+     * Renders the current pass. Before calling pass, activatePass needs to be called with the same index.
+     * @param pass The pass used to render the renderable.
+     * @param renderable The IRenderable object to draw.
+     * @param stage The Stage object used for rendering.
+     * @param entityCollector The EntityCollector object that contains the visible scene data.
+     * @param viewProjection The view-projection matrix used to project to the screen. This is not the same as
+     * camera.viewProjection as it includes the scaling factors when rendering to textures.
+     *
+     * @internal
+     */
+    GL_MaterialPassBase.prototype._setRenderState = function (renderable, projection) {
+        this._shader._setRenderState(renderable, projection);
+    };
+    /**
+     * Sets the render state for the pass that is independent of the rendered object. This needs to be called before
+     * calling pass. Before activating a pass, the previously used pass needs to be deactivated.
+     * @param stage The Stage object which is currently used for rendering.
+     * @param camera The camera from which the scene is viewed.
+     * @private
+     */
+    GL_MaterialPassBase.prototype._iActivate = function (projection) {
+        this._shader._iActivate(projection);
+    };
+    /**
+     * Clears the render state for the pass. This needs to be called before activating another pass.
+     * @param stage The Stage used for rendering
+     *
+     * @private
+     */
+    GL_MaterialPassBase.prototype._iDeactivate = function () {
+        this._shader._iDeactivate();
+    };
+    GL_MaterialPassBase.prototype._iInitConstantData = function (shader) {
+    };
+    GL_MaterialPassBase.prototype._iGetPreLightingVertexCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    GL_MaterialPassBase.prototype._iGetPreLightingFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    GL_MaterialPassBase.prototype._iGetVertexCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    GL_MaterialPassBase.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    GL_MaterialPassBase.prototype._iGetNormalVertexCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    GL_MaterialPassBase.prototype._iGetNormalFragmentCode = function (shader, registerCache, sharedRegisters) {
+        return "";
+    };
+    return GL_MaterialPassBase;
+}(GL_MaterialBase));
+
+/**
+ * @class away.pool.RenderablePool
+ */
+var RenderablePool = (function () {
+    /**
+     * //TODO
+     *
+     * @param materialClassGL
+     */
+    function RenderablePool(entity, materialGroup) {
+        this._abstractionPool = new Object();
+        this._entity = entity;
+        this._materialGroup = materialGroup;
+    }
+    Object.defineProperty(RenderablePool.prototype, "entity", {
+        get: function () {
+            return this._entity;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RenderablePool.prototype, "materialGroup", {
+        get: function () {
+            return this._materialGroup;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * //TODO
+     *
+     * @param renderable
+     * @returns GL_RenderableBase
+     */
+    RenderablePool.prototype.getAbstraction = function (renderable) {
+        return this._abstractionPool[renderable.id] || (this._abstractionPool[renderable.id] = new RenderablePool._abstractionClassPool[renderable.assetType](renderable, this));
+    };
+    /**
+     *
+     * @param renderable
+     */
+    RenderablePool.prototype.clearAbstraction = function (renderable) {
+        this._abstractionPool[renderable.id] = null;
+    };
+    /**
+     *
+     * @param imageObjectClass
+     */
+    RenderablePool.registerAbstraction = function (renderableClass, assetClass) {
+        RenderablePool._abstractionClassPool[assetClass.assetType] = renderableClass;
+    };
+    return RenderablePool;
+}());
+RenderablePool._abstractionClassPool = new Object();
+
+/**
+ * @class away.pool.MaterialPool
+ */
+var MaterialPool = (function () {
+    /**
+     * //TODO
+     *
+     * @param materialClassGL
+     */
+    function MaterialPool(elementsClass, materialGroup) {
+        this._abstractionPool = new Object();
+        this._elementsClass = elementsClass;
+        this._materialGroup = materialGroup;
+        this._abstractionClassPool = materialGroup.abstractionClassPool;
+    }
+    Object.defineProperty(MaterialPool.prototype, "elementsClass", {
+        get: function () {
+            return this._elementsClass;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MaterialPool.prototype, "materialGroup", {
+        get: function () {
+            return this._materialGroup;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * //TODO
+     *
+     * @param elementsOwner
+     * @returns IElements
+     */
+    MaterialPool.prototype.getAbstraction = function (material) {
+        return (this._abstractionPool[material.id] || (this._abstractionPool[material.id] = new this._abstractionClassPool[material.assetType](material, this)));
+    };
+    /**
+     * //TODO
+     *
+     * @param elementsOwner
+     */
+    MaterialPool.prototype.clearAbstraction = function (material) {
+        delete this._abstractionPool[material.id];
+    };
+    return MaterialPool;
+}());
+
+/**
+ * @class away.pool.MaterialGroupBase
+ */
+var MaterialGroupBase = (function () {
+    /**
+     * //TODO
+     *
+     * @param materialClassGL
+     */
+    function MaterialGroupBase(stage, abstractionClassPool) {
+        this._abstractionClassPool = new Object();
+        this._materialPools = new Object();
+        this._renderablePools = new Object();
+        this._stage = stage;
+        this._abstractionClassPool = abstractionClassPool;
+    }
+    Object.defineProperty(MaterialGroupBase.prototype, "stage", {
+        get: function () {
+            return this._stage;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MaterialGroupBase.prototype, "abstractionClassPool", {
+        get: function () {
+            return this._abstractionClassPool;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    MaterialGroupBase.prototype.getMaterialPool = function (elements) {
+        return this._materialPools[elements.elementsType] || (this._materialPools[elements.elementsType] = new MaterialPool(elements.elementsClass, this));
+    };
+    MaterialGroupBase.prototype.getRenderablePool = function (entity) {
+        return this._renderablePools[entity.id] || (this._renderablePools[entity.id] = new RenderablePool(entity, this));
+    };
+    return MaterialGroupBase;
+}());
+
+/**
+ * @class RenderableListItem
+ */
+var GL_RenderableBase = (function (_super) {
+    __extends(GL_RenderableBase, _super);
+    /**
+     *
+     * @param renderable
+     * @param sourceEntity
+     * @param surface
+     * @param renderer
+     */
+    function GL_RenderableBase(renderable, renderablePool) {
+        var _this = _super.call(this, renderable, renderablePool) || this;
+        _this._count = 0;
+        _this._offset = 0;
+        _this._elementsDirty = true;
+        _this._materialDirty = true;
+        _this.images = new Array();
+        _this.samplers = new Array();
+        _this._onInvalidateMaterialDelegate = function (event) { return _this._onInvalidateMaterial(event); };
+        _this._onInvalidateElementsDelegate = function (event) { return _this.onInvalidateElements(event); };
+        //store references
+        _this.sourceEntity = renderablePool.entity;
+        _this._materialGroup = renderablePool.materialGroup;
+        _this._stage = _this._materialGroup.stage;
+        _this.renderable = renderable;
+        _this.renderable.addEventListener(RenderableEvent.INVALIDATE_MATERIAL, _this._onInvalidateMaterialDelegate);
+        _this.renderable.addEventListener(RenderableEvent.INVALIDATE_ELEMENTS, _this._onInvalidateElementsDelegate);
+        return _this;
+    }
+    Object.defineProperty(GL_RenderableBase.prototype, "elementsGL", {
+        get: function () {
+            if (this._elementsDirty)
+                this._updateElements();
+            return this._elementsGL;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GL_RenderableBase.prototype, "materialGL", {
+        get: function () {
+            if (this._materialDirty)
+                this._updateMaterial();
+            return this._materialGL;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    GL_RenderableBase.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this.next = null;
+        this.masksConfig = null;
+        this.renderSceneTransform = null;
+        this.sourceEntity = null;
+        this._materialGroup = null;
+        this._stage = null;
+        this.renderable.removeEventListener(RenderableEvent.INVALIDATE_MATERIAL, this._onInvalidateMaterialDelegate);
+        this.renderable.removeEventListener(RenderableEvent.INVALIDATE_ELEMENTS, this._onInvalidateElementsDelegate);
+        this.renderable = null;
+        this._materialGL.usages--;
+        if (!this._materialGL.usages)
+            this._materialGL.onClear(new AssetEvent(AssetEvent.CLEAR, this._materialGL.material));
+        this._materialGL = null;
+        this._elementsGL = null;
+    };
+    GL_RenderableBase.prototype.onInvalidateElements = function (event) {
+        this._elementsDirty = true;
+    };
+    GL_RenderableBase.prototype._onInvalidateMaterial = function (event) {
+        this._materialDirty = true;
+    };
+    GL_RenderableBase.prototype._pGetElements = function () {
+        throw new AbstractMethodError();
+    };
+    GL_RenderableBase.prototype._pGetMaterial = function () {
+        throw new AbstractMethodError();
+    };
+    /**
+     * Renders an object to the current render target.
+     *
+     * @private
+     */
+    GL_RenderableBase.prototype._iRender = function (pass, projection) {
+        this._setRenderState(pass, projection);
+        this._elementsGL.draw(this, pass.shader, projection, this._count, this._offset);
+    };
+    GL_RenderableBase.prototype._setRenderState = function (pass, projection) {
+        if (this._elementsDirty)
+            this._updateElements();
+        pass._setRenderState(this, projection);
+        if (pass.shader.activeElements != this._elementsGL) {
+            pass.shader.activeElements = this._elementsGL;
+            this._elementsGL._setRenderState(this, pass.shader, projection);
+        }
+    };
+    /**
+     * //TODO
+     *
+     * @private
+     */
+    GL_RenderableBase.prototype._updateElements = function () {
+        this._elementsGL = this._pGetElements();
+        this._elementsDirty = false;
+    };
+    GL_RenderableBase.prototype._updateMaterial = function () {
+        var materialGL = this._pGetMaterial();
+        if (this._materialGL != materialGL) {
+            if (this._materialGL) {
+                this._materialGL.usages--;
+                //dispose current materialGL object
+                if (!this._materialGL.usages)
+                    this._materialGL.onClear(new AssetEvent(AssetEvent.CLEAR, this._materialGL.material));
+            }
+            this._materialGL = materialGL;
+            this._materialGL.usages++;
+        }
+        //create a cache of image & sampler objects for the renderable
+        var numImages = materialGL.numImages;
+        var style = this.renderable.style || this.sourceEntity.style;
+        var material = this._materialGL.material;
+        this.images.length = numImages;
+        this.samplers.length = numImages;
+        this.uvMatrix = style ? style.uvMatrix : material.style ? material.style.uvMatrix : null;
+        var numTextures = this._materialGL.material.getNumTextures();
+        var texture;
+        var numImages;
+        var image;
+        var sampler;
+        var index;
+        for (var i = 0; i < numTextures; i++) {
+            texture = material.getTextureAt(i);
+            numImages = texture.getNumImages();
+            for (var j = 0; j < numImages; j++) {
+                index = materialGL.getImageIndex(texture, j);
+                image = style ? style.getImageAt(texture, j) : null;
+                this.images[index] = image ? this._stage.getAbstraction(image) : null;
+                sampler = style ? style.getSamplerAt(texture, j) : null;
+                this.samplers[index] = sampler ? this._stage.getAbstraction(sampler) : null;
+            }
+        }
+        this._materialDirty = false;
+    };
+    return GL_RenderableBase;
+}(AbstractionBase));
+
+/**
+ * @class away.pool.GL_ShapeRenderable
+ */
+var GL_ShapeRenderable = (function (_super) {
+    __extends(GL_ShapeRenderable, _super);
+    /**
+     * //TODO
+     *
+     * @param renderablePool
+     * @param shape
+     * @param level
+     * @param indexOffset
+     */
+    function GL_ShapeRenderable(shape, renderablePool) {
+        var _this = _super.call(this, shape, renderablePool) || this;
+        _this.shape = shape;
+        return _this;
+    }
+    GL_ShapeRenderable.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this.shape = null;
+    };
+    /**
+     *
+     * @returns {ElementsBase}
+     * @protected
+     */
+    GL_ShapeRenderable.prototype._pGetElements = function () {
+        this._offset = this.shape.offset;
+        this._count = this.shape.count;
+        return this._stage.getAbstraction((this.sourceEntity.animator) ? this.sourceEntity.animator.getRenderableElements(this, this.shape.elements) : this.shape.elements);
+    };
+    GL_ShapeRenderable.prototype._pGetMaterial = function () {
+        return this._materialGroup.getMaterialPool(this.elementsGL).getAbstraction(this.shape.material || this.sourceEntity.material || DefaultMaterialManager.getDefaultMaterial(this.renderable));
+    };
+    return GL_ShapeRenderable;
+}(GL_RenderableBase));
+
+/**
+ *
+ * @class away.pool.GL_TextureBaseBase
+ */
+var GL_TextureBase = (function (_super) {
+    __extends(GL_TextureBase, _super);
+    function GL_TextureBase(texture, shader) {
+        var _this = _super.call(this, texture, shader) || this;
+        _this._texture = texture;
+        _this._shader = shader;
+        _this._stage = shader._stage;
+        return _this;
+    }
+    /**
+     *
+     */
+    GL_TextureBase.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._texture = null;
+        this._shader = null;
+        this._stage = null;
+    };
+    GL_TextureBase.prototype._iGetFragmentCode = function (targetReg, regCache, sharedReg, inputReg) {
+        if (inputReg === void 0) { inputReg = null; }
+        throw new AbstractMethodError();
+    };
+    GL_TextureBase.prototype._setRenderState = function (renderable) {
+        //overidden for state logic
+    };
+    GL_TextureBase.prototype.activate = function (render) {
+        //overridden for activation logic
+    };
+    GL_TextureBase.prototype.getTextureReg = function (imageIndex, regCache, sharedReg) {
+        var index = this._shader.imageIndices.indexOf(imageIndex); //todo: collapse the index based on duplicate image objects to save registrations
+        if (index == -1) {
+            var textureReg = regCache.getFreeTextureReg();
+            sharedReg.textures.push(textureReg);
+            this._shader.imageIndices.push(imageIndex);
+            return textureReg;
+        }
+        return sharedReg.textures[index];
+    };
+    return GL_TextureBase;
+}(AbstractionBase));
+
+/**
+ *
+ * @class away.pool.GL_Single2DTexture
+ */
+var GL_Single2DTexture = (function (_super) {
+    __extends(GL_Single2DTexture, _super);
+    function GL_Single2DTexture(single2DTexture, shader) {
+        var _this = _super.call(this, single2DTexture, shader) || this;
+        _this._single2DTexture = single2DTexture;
+        return _this;
+    }
+    GL_Single2DTexture.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._single2DTexture = null;
+    };
+    /**
+     *
+     * @param shader
+     * @param regCache
+     * @param targetReg The register in which to store the sampled colour.
+     * @param uvReg The uv coordinate vector with which to sample the texture map.
+     * @returns {string}
+     * @private
+     */
+    GL_Single2DTexture.prototype._iGetFragmentCode = function (targetReg, regCache, sharedReg, inputReg) {
+        var code = "";
+        var wrap = "wrap";
+        var format = ""; //this.getFormatString(this._single2DTexture.image2D);
+        var filter = "linear,miplinear";
+        var temp;
+        //modify depending on mapping mode
+        if (this._single2DTexture.mappingMode == MappingMode.RADIAL_GRADIENT) {
+            temp = regCache.getFreeFragmentVectorTemp();
+            code += "mul " + temp + ".xy, " + inputReg + ", " + inputReg + "\n";
+            code += "mul " + temp + ".xy, " + inputReg + ", " + inputReg + "\n";
+            code += "add " + temp + ".x, " + temp + ".x, " + temp + ".y\n";
+            code += "sub " + temp + ".y, " + temp + ".y, " + temp + ".y\n";
+            code += "sqt " + temp + ".x, " + temp + ".x, " + temp + ".x\n";
+            inputReg = temp;
+        }
+        //handles texture atlasing
+        if (this._shader.useImageRect) {
+            var samplerReg = regCache.getFreeFragmentConstant();
+            this._samplerIndex = samplerReg.index * 4;
+            temp = regCache.getFreeFragmentVectorTemp();
+            code += "mul " + temp + ", " + inputReg + ", " + samplerReg + ".xy\n";
+            code += "add " + temp + ", " + temp + ", " + samplerReg + ".zw\n";
+            inputReg = temp;
+        }
+        this._imageIndex = this._shader.getImageIndex(this._single2DTexture, 0);
+        var textureReg = this.getTextureReg(this._imageIndex, regCache, sharedReg);
+        this._textureIndex = textureReg.index;
+        code += "tex " + targetReg + ", " + inputReg + ", " + textureReg + " <2d," + filter + "," + format + wrap + ">\n";
+        return code;
+    };
+    GL_Single2DTexture.prototype.activate = function (render) {
+        var sampler = render.samplers[this._imageIndex];
+        sampler.activate(this._textureIndex);
+        var image = render.images[this._imageIndex];
+        image.activate(this._textureIndex, sampler._sampler.mipmap);
+        if (this._shader.useImageRect) {
+            var index = this._samplerIndex;
+            var data = this._shader.fragmentConstantData;
+            if (!sampler._sampler.imageRect) {
+                data[index] = 1;
+                data[index + 1] = 1;
+                data[index + 2] = 0;
+                data[index + 3] = 0;
+            }
+            else {
+                data[index] = sampler._sampler.imageRect.width;
+                data[index + 1] = sampler._sampler.imageRect.height;
+                data[index + 2] = sampler._sampler.imageRect.x;
+                data[index + 3] = sampler._sampler.imageRect.y;
+            }
+        }
+    };
+    GL_Single2DTexture.prototype._setRenderState = function (renderable) {
+        var sampler = renderable.samplers[this._imageIndex];
+        if (sampler)
+            sampler.activate(this._textureIndex);
+        var image = renderable.images[this._imageIndex];
+        if (image)
+            image.activate(this._textureIndex, sampler._sampler.mipmap);
+        if (this._shader.useImageRect && sampler) {
+            var index = this._samplerIndex;
+            var data = this._shader.fragmentConstantData;
+            if (!sampler._sampler.imageRect) {
+                data[index] = 1;
+                data[index + 1] = 1;
+                data[index + 2] = 0;
+                data[index + 3] = 0;
+            }
+            else {
+                data[index] = sampler._sampler.imageRect.width;
+                data[index + 1] = sampler._sampler.imageRect.height;
+                data[index + 2] = sampler._sampler.imageRect.x;
+                data[index + 3] = sampler._sampler.imageRect.y;
+            }
+        }
+    };
+    return GL_Single2DTexture;
+}(GL_TextureBase));
+
+/**
+ *
+ * @class away.pool.TextureDataBase
+ */
+var GL_SingleCubeTexture = (function (_super) {
+    __extends(GL_SingleCubeTexture, _super);
+    function GL_SingleCubeTexture(singleCubeTexture, shader) {
+        var _this = _super.call(this, singleCubeTexture, shader) || this;
+        _this._singleCubeTexture = singleCubeTexture;
+        return _this;
+    }
+    GL_SingleCubeTexture.prototype.onClear = function (event) {
+        _super.prototype.onClear.call(this, event);
+        this._singleCubeTexture = null;
+    };
+    GL_SingleCubeTexture.prototype._iIncludeDependencies = function (includeInput) {
+        if (includeInput === void 0) { includeInput = true; }
+        if (includeInput)
+            this._shader.usesPositionFragment = true;
+    };
+    /**
+     *
+     * @param shader
+     * @param regCache
+     * @param targetReg The register in which to store the sampled colour.
+     * @param uvReg The direction vector with which to sample the cube map.
+     * @returns {string}
+     * @private
+     */
+    GL_SingleCubeTexture.prototype._iGetFragmentCode = function (targetReg, regCache, sharedReg, inputReg) {
+        var format = ""; //this.getFormatString(this._singleCubeTexture.imageCube);
+        var filter = "linear,miplinear";
+        this._imageIndex = this._shader.getImageIndex(this._singleCubeTexture, 0);
+        var textureReg = this.getTextureReg(this._imageIndex, regCache, sharedReg);
+        this._textureIndex = textureReg.index;
+        return "tex " + targetReg + ", " + inputReg + ", " + textureReg + " <cube," + format + filter + ">\n";
+    };
+    GL_SingleCubeTexture.prototype.activate = function (render) {
+        var sampler = render.samplers[this._imageIndex];
+        if (sampler)
+            sampler.activate(this._textureIndex);
+        if (render.images[this._imageIndex])
+            render.images[this._imageIndex].activate(this._textureIndex, sampler._sampler.mipmap);
+    };
+    GL_SingleCubeTexture.prototype._setRenderState = function (renderable) {
+        var sampler = renderable.samplers[this._imageIndex];
+        if (sampler)
+            sampler.activate(this._textureIndex);
+        if (renderable.images[this._imageIndex] && sampler)
+            renderable.images[this._imageIndex].activate(this._textureIndex, sampler._sampler.mipmap);
+    };
+    return GL_SingleCubeTexture;
+}(GL_TextureBase));
+
+/**
  * ...
  */
 var AnimationElements = (function () {
@@ -27795,113 +31410,6 @@ var AnimationElements = (function () {
     return AnimationElements;
 }());
 AnimationElements.SUBGEOM_ID_COUNT = 0;
-
-/**
- * A single register element (an entire register or a single register's component) used by the RegisterPool.
- */
-var ShaderRegisterElement = (function () {
-    /**
-     * Creates a new ShaderRegisterElement object.
-     *
-     * @param regName The name of the register.
-     * @param index The index of the register.
-     * @param component The register's component, if not the entire register is represented.
-     */
-    function ShaderRegisterElement(regName, index, component) {
-        if (component === void 0) { component = -1; }
-        this._component = component;
-        this._regName = regName;
-        this._index = index;
-        this._toStr = this._regName;
-        if (this._index >= 0)
-            this._toStr += this._index;
-        if (component > -1)
-            this._toStr += "." + ShaderRegisterElement.COMPONENTS[component];
-    }
-    /**
-     * Converts the register or the components AGAL string representation.
-     */
-    ShaderRegisterElement.prototype.toString = function () {
-        return this._toStr;
-    };
-    Object.defineProperty(ShaderRegisterElement.prototype, "regName", {
-        /**
-         * The register's name.
-         */
-        get: function () {
-            return this._regName;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderRegisterElement.prototype, "index", {
-        /**
-         * The register's index.
-         */
-        get: function () {
-            return this._index;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ShaderRegisterElement;
-}());
-ShaderRegisterElement.COMPONENTS = ["x", "y", "z", "w"];
-
-/**
- * ...
- */
-var AnimationRegisterData = (function () {
-    function AnimationRegisterData() {
-        this.indexDictionary = new Object();
-    }
-    AnimationRegisterData.prototype.reset = function (registerCache, sharedRegisters, needVelocity) {
-        this.rotationRegisters = new Array();
-        this.positionAttribute = sharedRegisters.animatableAttributes[0];
-        this.scaleAndRotateTarget = sharedRegisters.animationTargetRegisters[0];
-        for (var i = 1; i < sharedRegisters.animationTargetRegisters.length; i++)
-            this.rotationRegisters.push(sharedRegisters.animationTargetRegisters[i]);
-        //allot const register
-        this.vertexZeroConst = registerCache.getFreeVertexConstant();
-        this.vertexZeroConst = new ShaderRegisterElement(this.vertexZeroConst.regName, this.vertexZeroConst.index, 0);
-        this.vertexOneConst = new ShaderRegisterElement(this.vertexZeroConst.regName, this.vertexZeroConst.index, 1);
-        this.vertexTwoConst = new ShaderRegisterElement(this.vertexZeroConst.regName, this.vertexZeroConst.index, 2);
-        //allot temp register
-        this.positionTarget = registerCache.getFreeVertexVectorTemp();
-        registerCache.addVertexTempUsages(this.positionTarget, 1);
-        this.positionTarget = new ShaderRegisterElement(this.positionTarget.regName, this.positionTarget.index);
-        if (needVelocity) {
-            this.velocityTarget = registerCache.getFreeVertexVectorTemp();
-            registerCache.addVertexTempUsages(this.velocityTarget, 1);
-            this.velocityTarget = new ShaderRegisterElement(this.velocityTarget.regName, this.velocityTarget.index);
-            this.vertexTime = new ShaderRegisterElement(this.velocityTarget.regName, this.velocityTarget.index, 3);
-            this.vertexLife = new ShaderRegisterElement(this.positionTarget.regName, this.positionTarget.index, 3);
-        }
-        else {
-            var tempTime = registerCache.getFreeVertexVectorTemp();
-            registerCache.addVertexTempUsages(tempTime, 1);
-            this.vertexTime = new ShaderRegisterElement(tempTime.regName, tempTime.index, 0);
-            this.vertexLife = new ShaderRegisterElement(tempTime.regName, tempTime.index, 1);
-        }
-    };
-    AnimationRegisterData.prototype.setUVSourceAndTarget = function (sharedRegisters) {
-        this.uvVar = sharedRegisters.uvTarget;
-        this.uvAttribute = sharedRegisters.uvSource;
-        //uv action is processed after normal actions,so use offsetTarget as uvTarget
-        this.uvTarget = new ShaderRegisterElement(this.positionTarget.regName, this.positionTarget.index);
-    };
-    AnimationRegisterData.prototype.setRegisterIndex = function (node, parameterIndex, registerIndex) {
-        //8 should be enough for any node.
-        var t = this.indexDictionary[node.id];
-        if (t == null)
-            t = this.indexDictionary[node.id] = new Array(8);
-        t[parameterIndex] = registerIndex;
-    };
-    AnimationRegisterData.prototype.getRegisterIndex = function (node, parameterIndex) {
-        return this.indexDictionary[node.id][parameterIndex];
-    };
-    return AnimationRegisterData;
-}());
 
 var ColorSegmentPoint = (function () {
     function ColorSegmentPoint(life, color) {
@@ -28455,7 +31963,7 @@ var ParticleStateBase = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleStateBase.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleStateBase.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
     };
     ParticleStateBase.prototype._pUpdateDynamicProperties = function (animationElements) {
         this._pDynamicPropertiesDirty[animationElements._iUniqueId] = true;
@@ -28536,7 +32044,7 @@ var ParticleAccelerationState = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticleAccelerationState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleAccelerationState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleAccelerationState.ACCELERATION_INDEX);
         if (this._particleAccelerationNode.mode == ParticlePropertiesMode.LOCAL_STATIC)
             animationElements.activateVertexBuffer(index, this._particleAccelerationNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_3);
@@ -28771,7 +32279,7 @@ var ParticleBezierCurveState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleBezierCurveState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleBezierCurveState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var controlIndex = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleBezierCurveState.BEZIER_CONTROL_INDEX);
         var endIndex = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleBezierCurveState.BEZIER_END_INDEX);
         if (this._particleBezierCurveNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
@@ -28897,17 +32405,17 @@ var ParticleBillboardState = (function (_super) {
         _this._billboardAxis = particleNode._iBillboardAxis;
         return _this;
     }
-    ParticleBillboardState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleBillboardState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var comps;
         if (this._billboardAxis) {
-            var pos = renderable.sourceEntity.sceneTransform.position;
-            var look = camera.sceneTransform.position.subtract(pos);
+            var pos = renderable.sourceEntity.transform.concatenatedMatrix3D.position;
+            var look = projection.transform.concatenatedMatrix3D.position.subtract(pos);
             var right = look.crossProduct(this._billboardAxis);
             right.normalize();
             look = this.billboardAxis.crossProduct(right);
             look.normalize();
             //create a quick inverse projection matrix
-            this._matrix.copyFrom(renderable.sourceEntity.sceneTransform);
+            this._matrix.copyFrom(renderable.sourceEntity.transform.concatenatedMatrix3D);
             comps = this._matrix.decompose(Orientation3D.AXIS_ANGLE);
             this._matrix.copyColumnFrom(0, right);
             this._matrix.copyColumnFrom(1, this.billboardAxis);
@@ -28917,8 +32425,8 @@ var ParticleBillboardState = (function (_super) {
         }
         else {
             //create a quick inverse projection matrix
-            this._matrix.copyFrom(renderable.sourceEntity.sceneTransform);
-            this._matrix.append(camera.inverseSceneTransform);
+            this._matrix.copyFrom(renderable.sourceEntity.transform.concatenatedMatrix3D);
+            this._matrix.append(projection.transform.inverseConcatenatedMatrix3D);
             //decompose using axis angle rotations
             comps = this._matrix.decompose(Orientation3D.AXIS_ANGLE);
             //recreate the matrix with just the rotation data
@@ -29074,7 +32582,7 @@ var ParticleColorState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleColorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleColorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (shader.usesFragmentAnimation) {
             var dataOffset = this._particleColorNode._iDataOffset;
             var index;
@@ -29157,7 +32665,7 @@ var ParticleTimeState = (function (_super) {
         _this._particleTimeNode = particleTimeNode;
         return _this;
     }
-    ParticleTimeState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleTimeState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         animationElements.activateVertexBuffer(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleTimeState.TIME_STREAM_INDEX), this._particleTimeNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
         var particleTime = this._pTime / 1000;
         shader.setVertexConst(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleTimeState.TIME_CONSTANT_INDEX), particleTime, particleTime, particleTime, particleTime);
@@ -29248,162 +32756,6 @@ var ParticleTimeNode = (function (_super) {
     };
     return ParticleTimeNode;
 }(ParticleNodeBase));
-
-var AnimationSetError = (function (_super) {
-    __extends(AnimationSetError, _super);
-    function AnimationSetError(message) {
-        return _super.call(this, message) || this;
-    }
-    return AnimationSetError;
-}(ErrorBase));
-
-/**
- * Provides an abstract base class for data set classes that hold animation data for use in animator classes.
- *
- * @see away.animators.AnimatorBase
- */
-var AnimationSetBase = (function (_super) {
-    __extends(AnimationSetBase, _super);
-    function AnimationSetBase() {
-        var _this = _super.call(this) || this;
-        _this._animations = new Array();
-        _this._animationNames = new Array();
-        _this._animationDictionary = new Object();
-        return _this;
-    }
-    /**
-     * Retrieves a temporary GPU register that's still free.
-     *
-     * @param exclude An array of non-free temporary registers.
-     * @param excludeAnother An additional register that's not free.
-     * @return A temporary register that can be used.
-     */
-    AnimationSetBase.prototype._pFindTempReg = function (exclude, excludeAnother) {
-        if (excludeAnother === void 0) { excludeAnother = null; }
-        var i = 0;
-        var reg;
-        while (true) {
-            reg = "vt" + i;
-            if (exclude.indexOf(reg) == -1 && excludeAnother != reg)
-                return reg;
-            ++i;
-        }
-    };
-    Object.defineProperty(AnimationSetBase.prototype, "usesCPU", {
-        /**
-         * Indicates whether the properties of the animation data contained within the set combined with
-         * the vertex registers already in use on shading materials allows the animation data to utilise
-         * GPU calls.
-         */
-        get: function () {
-            return this._usesCPU;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Called by the material to reset the GPU indicator before testing whether register space in the shader
-     * is available for running GPU-based animation code.
-     *
-     * @private
-     */
-    AnimationSetBase.prototype.resetGPUCompatibility = function () {
-        this._usesCPU = false;
-    };
-    AnimationSetBase.prototype.cancelGPUCompatibility = function () {
-        this._usesCPU = true;
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimationSetBase.prototype.getAGALVertexCode = function (shader, registerCache, sharedRegisters) {
-        throw new AbstractMethodError();
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimationSetBase.prototype.getAGALFragmentCode = function (shader, registerCache, shadedTarget) {
-        throw new AbstractMethodError();
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimationSetBase.prototype.getAGALUVCode = function (shader, registerCache, sharedRegisters) {
-        throw new AbstractMethodError();
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimationSetBase.prototype.doneAGALCode = function (shader) {
-        throw new AbstractMethodError();
-    };
-    Object.defineProperty(AnimationSetBase.prototype, "assetType", {
-        /**
-         * @inheritDoc
-         */
-        get: function () {
-            return AnimationSetBase.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimationSetBase.prototype, "animations", {
-        /**
-         * Returns a vector of animation state objects that make up the contents of the animation data set.
-         */
-        get: function () {
-            return this._animations;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimationSetBase.prototype, "animationNames", {
-        /**
-         * Returns a vector of animation state objects that make up the contents of the animation data set.
-         */
-        get: function () {
-            return this._animationNames;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Check to determine whether a state is registered in the animation set under the given name.
-     *
-     * @param stateName The name of the animation state object to be checked.
-     */
-    AnimationSetBase.prototype.hasAnimation = function (name) {
-        return this._animationDictionary[name] != null;
-    };
-    /**
-     * Retrieves the animation state object registered in the animation data set under the given name.
-     *
-     * @param stateName The name of the animation state object to be retrieved.
-     */
-    AnimationSetBase.prototype.getAnimation = function (name) {
-        return this._animationDictionary[name];
-    };
-    /**
-     * Adds an animation state object to the aniamtion data set under the given name.
-     *
-     * @param stateName The name under which the animation state object will be stored.
-     * @param animationState The animation state object to be staored in the set.
-     */
-    AnimationSetBase.prototype.addAnimation = function (node) {
-        if (this._animationDictionary[node.name])
-            throw new AnimationSetError("root node name '" + node.name + "' already exists in the set");
-        this._animationDictionary[node.name] = node;
-        this._animations.push(node);
-        this._animationNames.push(node.name);
-    };
-    /**
-     * Cleans up any resources used by the current object.
-     */
-    AnimationSetBase.prototype.dispose = function () {
-    };
-    return AnimationSetBase;
-}(AssetBase));
-AnimationSetBase.assetType = "[asset AnimationSet]";
 
 /**
  * The animation data set used by particle-based animators, containing particle animation data.
@@ -29900,7 +33252,7 @@ var ParticleFollowState = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticleFollowState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleFollowState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (this._followTarget) {
             if (this._particleFollowNode._iUsesPosition) {
                 this._targetPos.x = this._followTarget.transform.position.x / renderable.sourceEntity.transform.scale.x;
@@ -30216,7 +33568,7 @@ var ParticleInitialColorState = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticleInitialColorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleInitialColorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (shader.usesFragmentAnimation) {
             var index;
             if (this._particleInitialColorNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
@@ -30400,7 +33752,7 @@ var ParticleOrbitState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleOrbitState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleOrbitState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleOrbitState.ORBIT_INDEX);
         if (this._particleOrbitNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
             if (this._usesPhase)
@@ -30586,7 +33938,7 @@ var ParticleOscillatorState = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticleOscillatorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleOscillatorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleOscillatorState.OSCILLATOR_INDEX);
         if (this._particleOscillatorNode.mode == ParticlePropertiesMode.LOCAL_STATIC)
             animationElements.activateVertexBuffer(index, this._particleOscillatorNode._iDataOffset, stage, exports.ContextGLVertexBufferFormat.FLOAT_4);
@@ -30721,7 +34073,7 @@ var ParticlePositionState = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticlePositionState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticlePositionState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (this._particlePositionNode.mode == ParticlePropertiesMode.LOCAL_DYNAMIC && !this._pDynamicPropertiesDirty[animationElements._iUniqueId])
             this._pUpdateDynamicProperties(animationElements);
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticlePositionState.POSITION_INDEX);
@@ -30796,10 +34148,10 @@ var ParticleRotateToHeadingState = (function (_super) {
         _this._matrix = new Matrix3D();
         return _this;
     }
-    ParticleRotateToHeadingState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleRotateToHeadingState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (this._pParticleAnimator.animationSet.hasBillboard) {
-            this._matrix.copyFrom(renderable.sourceEntity.sceneTransform);
-            this._matrix.append(camera.inverseSceneTransform);
+            this._matrix.copyFrom(renderable.sourceEntity.transform.concatenatedMatrix3D);
+            this._matrix.append(projection.transform.inverseConcatenatedMatrix3D);
             shader.setVertexConstFromMatrix(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleRotateToHeadingState.MATRIX_INDEX), this._matrix);
         }
     };
@@ -30985,15 +34337,15 @@ var ParticleRotateToPositionState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleRotateToPositionState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleRotateToPositionState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleRotateToPositionState.POSITION_INDEX);
         if (this._pParticleAnimator.animationSet.hasBillboard) {
-            this._matrix.copyFrom(renderable.sourceEntity.sceneTransform);
-            this._matrix.append(camera.inverseSceneTransform);
+            this._matrix.copyFrom(renderable.sourceEntity.transform.concatenatedMatrix3D);
+            this._matrix.append(projection.transform.inverseConcatenatedMatrix3D);
             shader.setVertexConstFromMatrix(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleRotateToPositionState.MATRIX_INDEX), this._matrix);
         }
         if (this._particleRotateToPositionNode.mode == ParticlePropertiesMode.GLOBAL) {
-            this._offset = renderable.sourceEntity.inverseSceneTransform.transformVector(this._position);
+            this._offset = renderable.sourceEntity.transform.inverseConcatenatedMatrix3D.transformVector(this._position);
             shader.setVertexConst(index, this._offset.x, this._offset.y, this._offset.z);
         }
         else
@@ -31215,7 +34567,7 @@ var ParticleRotationalVelocityState = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticleRotationalVelocityState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleRotationalVelocityState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (this._particleRotationalVelocityNode.mode == ParticlePropertiesMode.LOCAL_DYNAMIC && !this._pDynamicPropertiesDirty[animationElements._iUniqueId])
             this._pUpdateDynamicProperties(animationElements);
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleRotationalVelocityState.ROTATIONALVELOCITY_INDEX);
@@ -31430,7 +34782,7 @@ var ParticleScaleState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleScaleState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleScaleState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleScaleState.SCALE_INDEX);
         if (this._particleScaleNode.mode == ParticlePropertiesMode.LOCAL_STATIC) {
             if (this._usesCycle) {
@@ -31628,7 +34980,7 @@ var ParticleSegmentedColorState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleSegmentedColorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleSegmentedColorState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (shader.usesFragmentAnimation) {
             if (this._numSegmentPoint > 0)
                 shader.setVertexConst(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleSegmentedColorState.TIME_DATA_INDEX), this._timeLifeData[0], this._timeLifeData[1], this._timeLifeData[2], this._timeLifeData[3]);
@@ -31921,7 +35273,7 @@ var ParticleSpriteSheetState = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ParticleSpriteSheetState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleSpriteSheetState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (!shader.usesUVTransform) {
             shader.setVertexConst(animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleSpriteSheetState.UV_INDEX_0), this._spriteSheetData[0], this._spriteSheetData[1], this._spriteSheetData[2], this._spriteSheetData[3]);
             if (this._usesCycle) {
@@ -32124,7 +35476,7 @@ var ParticleUVState = (function (_super) {
         _this._particleUVNode = particleUVNode;
         return _this;
     }
-    ParticleUVState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleUVState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (!shader.usesUVTransform) {
             var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleUVState.UV_INDEX);
             var data = this._particleUVNode._iUvData;
@@ -32281,7 +35633,7 @@ var ParticleVelocityState = (function (_super) {
         this._pDynamicProperties = value;
         this._pDynamicPropertiesDirty = new Object();
     };
-    ParticleVelocityState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, camera, stage) {
+    ParticleVelocityState.prototype.setRenderState = function (shader, renderable, animationElements, animationRegisterData, projection, stage) {
         if (this._particleVelocityNode.mode == ParticlePropertiesMode.LOCAL_DYNAMIC && !this._pDynamicPropertiesDirty[animationElements._iUniqueId])
             this._pUpdateDynamicProperties(animationElements);
         var index = animationRegisterData.getRegisterIndex(this._pAnimationNode, ParticleVelocityState.VELOCITY_INDEX);
@@ -33629,374 +36981,6 @@ var CrossfadeTransition = (function () {
 }());
 
 /**
- * Dispatched to notify changes in an animator's state.
- */
-var AnimatorEvent = (function (_super) {
-    __extends(AnimatorEvent, _super);
-    /**
-     * Create a new <code>AnimatorEvent</code> object.
-     *
-     * @param type The event type.
-     * @param animator The animator object that is the subject of this event.
-     */
-    function AnimatorEvent(type, animator) {
-        var _this = _super.call(this, type) || this;
-        _this._animator = animator;
-        return _this;
-    }
-    Object.defineProperty(AnimatorEvent.prototype, "animator", {
-        get: function () {
-            return this._animator;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Clones the event.
-     *
-     * @return An exact duplicate of the current event object.
-     */
-    AnimatorEvent.prototype.clone = function () {
-        return new AnimatorEvent(this.type, this._animator);
-    };
-    return AnimatorEvent;
-}(EventBase));
-/**
- * Defines the value of the type property of a start event object.
- */
-AnimatorEvent.START = "animatorStart";
-/**
- * Defines the value of the type property of a stop event object.
- */
-AnimatorEvent.STOP = "animatorStop";
-/**
- * Defines the value of the type property of a cycle complete event object.
- */
-AnimatorEvent.CYCLE_COMPLETE = "animatorCycleComplete";
-
-/**
- * Dispatched when playback of an animation inside the animator object starts.
- *
- * @eventType away3d.events.AnimatorEvent
- */
-//[Event(name="start", type="away3d.events.AnimatorEvent")]
-/**
- * Dispatched when playback of an animation inside the animator object stops.
- *
- * @eventType away3d.events.AnimatorEvent
- */
-//[Event(name="stop", type="away3d.events.AnimatorEvent")]
-/**
- * Dispatched when playback of an animation reaches the end of an animation.
- *
- * @eventType away3d.events.AnimatorEvent
- */
-//[Event(name="cycle_complete", type="away3d.events.AnimatorEvent")]
-/**
- * Provides an abstract base class for animator classes that control animation output from a data set subtype of <code>AnimationSetBase</code>.
- *
- * @see away.animators.AnimationSetBase
- */
-var AnimatorBase = (function (_super) {
-    __extends(AnimatorBase, _super);
-    /**
-     * Creates a new <code>AnimatorBase</code> object.
-     *
-     * @param animationSet The animation data set to be used by the animator object.
-     */
-    function AnimatorBase(animationSet) {
-        var _this = _super.call(this) || this;
-        _this._autoUpdate = true;
-        _this._time = 0;
-        _this._playbackSpeed = 1;
-        _this._pOwners = new Array();
-        _this._pAbsoluteTime = 0;
-        _this._animationStates = new Object();
-        /**
-         * Enables translation of the animated graphics from data returned per frame via the positionDelta property of the active animation node. Defaults to true.
-         *
-         * @see away.animators.IAnimationState#positionDelta
-         */
-        _this.updatePosition = true;
-        _this._pAnimationSet = animationSet;
-        _this._broadcaster = new RequestAnimationFrame(_this.onEnterFrame, _this);
-        return _this;
-    }
-    AnimatorBase.prototype.getAnimationState = function (node) {
-        var className = node.stateClass;
-        var uID = node.id;
-        if (this._animationStates[uID] == null)
-            this._animationStates[uID] = new className(this, node);
-        return this._animationStates[uID];
-    };
-    AnimatorBase.prototype.getAnimationStateByName = function (name) {
-        return this.getAnimationState(this._pAnimationSet.getAnimation(name));
-    };
-    Object.defineProperty(AnimatorBase.prototype, "absoluteTime", {
-        /**
-         * Returns the internal absolute time of the animator, calculated by the current time and the playback speed.
-         *
-         * @see #time
-         * @see #playbackSpeed
-         */
-        get: function () {
-            return this._pAbsoluteTime;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimatorBase.prototype, "animationSet", {
-        /**
-         * Returns the animation data set in use by the animator.
-         */
-        get: function () {
-            return this._pAnimationSet;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimatorBase.prototype, "activeState", {
-        /**
-         * Returns the current active animation state.
-         */
-        get: function () {
-            return this._pActiveState;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimatorBase.prototype, "activeAnimation", {
-        /**
-         * Returns the current active animation node.
-         */
-        get: function () {
-            return this._pAnimationSet.getAnimation(this._pActiveAnimationName);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimatorBase.prototype, "activeAnimationName", {
-        /**
-         * Returns the current active animation node.
-         */
-        get: function () {
-            return this._pActiveAnimationName;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimatorBase.prototype, "autoUpdate", {
-        /**
-         * Determines whether the animators internal update mechanisms are active. Used in cases
-         * where manual updates are required either via the <code>time</code> property or <code>update()</code> method.
-         * Defaults to true.
-         *
-         * @see #time
-         * @see #update()
-         */
-        get: function () {
-            return this._autoUpdate;
-        },
-        set: function (value) {
-            if (this._autoUpdate == value)
-                return;
-            this._autoUpdate = value;
-            if (this._autoUpdate)
-                this.start();
-            else
-                this.stop();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AnimatorBase.prototype, "time", {
-        /**
-         * Gets and sets the internal time clock of the animator.
-         */
-        get: function () {
-            return this._time;
-        },
-        set: function (value) {
-            if (this._time == value)
-                return;
-            this.update(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Sets the animation phase of the current active state's animation clip(s).
-     *
-     * @param value The phase value to use. 0 represents the beginning of an animation clip, 1 represents the end.
-     */
-    AnimatorBase.prototype.phase = function (value) {
-        this._pActiveState.phase(value);
-    };
-    Object.defineProperty(AnimatorBase.prototype, "playbackSpeed", {
-        /**
-         * The amount by which passed time should be scaled. Used to slow down or speed up animations. Defaults to 1.
-         */
-        get: function () {
-            return this._playbackSpeed;
-        },
-        set: function (value) {
-            this._playbackSpeed = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    AnimatorBase.prototype.setRenderState = function (shader, renderable, stage, camera) {
-        throw new AbstractMethodError();
-    };
-    /**
-     * Resumes the automatic playback clock controling the active state of the animator.
-     */
-    AnimatorBase.prototype.start = function () {
-        if (this._isPlaying || !this._autoUpdate)
-            return;
-        this._time = this._pAbsoluteTime = getTimer();
-        this._isPlaying = true;
-        this._broadcaster.start();
-        if (!this.hasEventListener(AnimatorEvent.START))
-            return;
-        if (this._startEvent == null)
-            this._startEvent = new AnimatorEvent(AnimatorEvent.START, this);
-        this.dispatchEvent(this._startEvent);
-    };
-    /**
-     * Pauses the automatic playback clock of the animator, in case manual updates are required via the
-     * <code>time</code> property or <code>update()</code> method.
-     *
-     * @see #time
-     * @see #update()
-     */
-    AnimatorBase.prototype.stop = function () {
-        if (!this._isPlaying)
-            return;
-        this._isPlaying = false;
-        this._broadcaster.stop();
-        if (!this.hasEventListener(AnimatorEvent.STOP))
-            return;
-        if (this._stopEvent == null)
-            this._stopEvent = new AnimatorEvent(AnimatorEvent.STOP, this);
-        this.dispatchEvent(this._stopEvent);
-    };
-    /**
-     * Provides a way to manually update the active state of the animator when automatic
-     * updates are disabled.
-     *
-     * @see #stop()
-     * @see #autoUpdate
-     */
-    AnimatorBase.prototype.update = function (time) {
-        var dt = (time - this._time) * this.playbackSpeed;
-        this._pUpdateDeltaTime(dt);
-        this._time = time;
-    };
-    AnimatorBase.prototype.reset = function (name, offset) {
-        if (offset === void 0) { offset = 0; }
-        this.getAnimationState(this._pAnimationSet.getAnimation(name)).offset(offset + this._pAbsoluteTime);
-    };
-    /**
-     * Used by the graphics object to which the animator is applied, registers the owner for internal use.
-     *
-     * @private
-     */
-    AnimatorBase.prototype.addOwner = function (entity) {
-        this._pOwners.push(entity);
-    };
-    /**
-     * Used by the graphics object from which the animator is removed, unregisters the owner for internal use.
-     *
-     * @private
-     */
-    AnimatorBase.prototype.removeOwner = function (entity) {
-        this._pOwners.splice(this._pOwners.indexOf(entity), 1);
-    };
-    /**
-     * Internal abstract method called when the time delta property of the animator's contents requires updating.
-     *
-     * @private
-     */
-    AnimatorBase.prototype._pUpdateDeltaTime = function (dt) {
-        this._pAbsoluteTime += dt;
-        this._pActiveState.update(this._pAbsoluteTime);
-        if (this.updatePosition)
-            this.applyPositionDelta();
-    };
-    /**
-     * Enter frame event handler for automatically updating the active state of the animator.
-     */
-    AnimatorBase.prototype.onEnterFrame = function (event) {
-        if (event === void 0) { event = null; }
-        this.update(getTimer());
-    };
-    AnimatorBase.prototype.applyPositionDelta = function () {
-        var delta = this._pActiveState.positionDelta;
-        var dist = delta.length;
-        var len;
-        if (dist > 0) {
-            len = this._pOwners.length;
-            for (var i = 0; i < len; ++i)
-                this._pOwners[i].transform.translateLocal(delta, dist);
-        }
-    };
-    /**
-     *  for internal use.
-     *
-     * @private
-     */
-    AnimatorBase.prototype.dispatchCycleEvent = function () {
-        if (this.hasEventListener(AnimatorEvent.CYCLE_COMPLETE)) {
-            if (this._cycleEvent == null)
-                this._cycleEvent = new AnimatorEvent(AnimatorEvent.CYCLE_COMPLETE, this);
-            this.dispatchEvent(this._cycleEvent);
-        }
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimatorBase.prototype.clone = function () {
-        throw new AbstractMethodError();
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimatorBase.prototype.dispose = function () {
-    };
-    AnimatorBase.prototype.invalidateElements = function () {
-        var entity;
-        var len = this._pOwners.length;
-        for (var i = 0; i < len; i++) {
-            entity = this._pOwners[i];
-            entity.invalidateElements();
-        }
-    };
-    /**
-     * @inheritDoc
-     */
-    AnimatorBase.prototype.testGPUCompatibility = function (shader) {
-        throw new AbstractMethodError();
-    };
-    Object.defineProperty(AnimatorBase.prototype, "assetType", {
-        /**
-         * @inheritDoc
-         */
-        get: function () {
-            return AnimatorBase.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    AnimatorBase.prototype.getRenderableElements = function (renderable, sourceElements) {
-        //nothing to do here
-        return sourceElements;
-    };
-    return AnimatorBase;
-}(AssetBase));
-AnimatorBase.assetType = "[asset Animator]";
-
-/**
  * Provides an interface for assigning paricle-based animation data sets to sprite-based entity objects
  * and controlling the various available states of animation through an interative playhead that can be
  * automatically updated or manually triggered.
@@ -34047,7 +37031,7 @@ var ParticleAnimator = (function (_super) {
     /**
      * @inheritDoc
      */
-    ParticleAnimator.prototype.setRenderState = function (shader, renderable, stage, camera) {
+    ParticleAnimator.prototype.setRenderState = function (shader, renderable, stage, projection) {
         var animationRegisterData = this._particleAnimationSet._iAnimationRegisterData;
         var graphics = renderable.sourceEntity.graphics;
         var shape = renderable.shape;
@@ -34057,11 +37041,11 @@ var ParticleAnimator = (function (_super) {
         var animationElements = this._particleAnimationSet.getAnimationElements(graphics, shape);
         var i;
         for (i = 0; i < this._animationParticleStates.length; i++)
-            this._animationParticleStates[i].setRenderState(shader, renderable, animationElements, animationRegisterData, camera, stage);
+            this._animationParticleStates[i].setRenderState(shader, renderable, animationElements, animationRegisterData, projection, stage);
         //process animator subgeometries
         var animatorElements = this.getAnimatorElements(graphics, shape);
         for (i = 0; i < this._animatorParticleStates.length; i++)
-            this._animatorParticleStates[i].setRenderState(shader, renderable, animatorElements, animationRegisterData, camera, stage);
+            this._animatorParticleStates[i].setRenderState(shader, renderable, animatorElements, animationRegisterData, projection, stage);
     };
     /**
      * @inheritDoc
@@ -34361,7 +37345,7 @@ var SkeletonAnimator = (function (_super) {
     /**
      * @inheritDoc
      */
-    SkeletonAnimator.prototype.setRenderState = function (shader, renderable, stage, camera) {
+    SkeletonAnimator.prototype.setRenderState = function (shader, renderable, stage, projection) {
         // do on request of globalProperties
         if (this._globalPropertiesDirty)
             this.updateGlobalProperties();
@@ -34970,7 +37954,7 @@ var VertexAnimator = (function (_super) {
     /**
      * @inheritDoc
      */
-    VertexAnimator.prototype.setRenderState = function (shader, renderable, stage, camera) {
+    VertexAnimator.prototype.setRenderState = function (shader, renderable, stage, projection) {
         // todo: add code for when running on cpu
         // this type of animation can only be Shape
         var shape = renderable.shape;
@@ -35276,1609 +38260,6 @@ var RTTBufferManagerVO = (function () {
 }());
 
 /**
- * RegisterPool is used by the shader compilers process to keep track of which registers of a certain type are
- * currently used and should not be allowed to be written to. Either entire registers can be requested and locked,
- * or single components (x, y, z, w) of a single register.
- * It is used by ShaderRegisterCache to track usages of individual register types.
- *
- * @see away.materials.ShaderRegisterCache
- */
-var RegisterPool = (function () {
-    /**
-     * Creates a new RegisterPool object.
-     * @param regName The base name of the register type ("ft" for fragment temporaries, "vc" for vertex constants, etc)
-     * @param regCount The amount of available registers of this type.
-     * @param persistent Whether or not registers, once reserved, can be freed again. For example, temporaries are not persistent, but constants are.
-     */
-    function RegisterPool(regName, regCount, persistent) {
-        if (persistent === void 0) { persistent = true; }
-        this._regName = regName;
-        this._regCount = regCount;
-        this._persistent = persistent;
-        this.initRegisters(regName, regCount);
-    }
-    /**
-     * Retrieve an entire vector register that's still available.
-     */
-    RegisterPool.prototype.requestFreeVectorReg = function () {
-        for (var i = 0; i < this._regCount; ++i) {
-            if (!this.isRegisterUsed(i)) {
-                if (this._persistent)
-                    this._usedVectorCount[i]++;
-                return this._vectorRegisters[i];
-            }
-        }
-        throw new Error("Register overflow!");
-    };
-    /**
-     * Retrieve a single vector component that's still available.
-     */
-    RegisterPool.prototype.requestFreeRegComponent = function () {
-        for (var i = 0; i < this._regCount; ++i) {
-            if (this._usedVectorCount[i] > 0)
-                continue;
-            for (var j = 0; j < 4; ++j) {
-                if (this._usedSingleCount[j][i] == 0) {
-                    if (this._persistent)
-                        this._usedSingleCount[j][i]++;
-                    return this._registerComponents[j][i];
-                }
-            }
-        }
-        throw new Error("Register overflow!");
-    };
-    /**
-     * Marks a register as used, so it cannot be retrieved. The register won't be able to be used until removeUsage
-     * has been called usageCount times again.
-     * @param register The register to mark as used.
-     * @param usageCount The amount of usages to add.
-     */
-    RegisterPool.prototype.addUsage = function (register, usageCount) {
-        if (register._component > -1)
-            this._usedSingleCount[register._component][register.index] += usageCount;
-        else
-            this._usedVectorCount[register.index] += usageCount;
-    };
-    /**
-     * Removes a usage from a register. When usages reach 0, the register is freed again.
-     * @param register The register for which to remove a usage.
-     */
-    RegisterPool.prototype.removeUsage = function (register) {
-        if (register._component > -1) {
-            if (--this._usedSingleCount[register._component][register.index] < 0)
-                throw new Error("More usages removed than exist!");
-        }
-        else {
-            if (--this._usedVectorCount[register.index] < 0)
-                throw new Error("More usages removed than exist!");
-        }
-    };
-    /**
-     * Disposes any resources used by the current RegisterPool object.
-     */
-    RegisterPool.prototype.dispose = function () {
-        this._vectorRegisters = null;
-        this._registerComponents = null;
-        this._usedSingleCount = null;
-        this._usedVectorCount = null;
-    };
-    /**
-     * Indicates whether or not any registers are in use.
-     */
-    RegisterPool.prototype.hasRegisteredRegs = function () {
-        for (var i = 0; i < this._regCount; ++i)
-            if (this.isRegisterUsed(i))
-                return true;
-        return false;
-    };
-    /**
-     * Initializes all registers.
-     */
-    RegisterPool.prototype.initRegisters = function (regName, regCount) {
-        var hash = RegisterPool._initPool(regName, regCount);
-        this._vectorRegisters = RegisterPool._regPool[hash];
-        this._registerComponents = RegisterPool._regCompsPool[hash];
-        this._usedVectorCount = this._initArray(Array(regCount), 0);
-        this._usedSingleCount = new Array(4);
-        this._usedSingleCount[0] = this._initArray(new Array(regCount), 0);
-        this._usedSingleCount[1] = this._initArray(new Array(regCount), 0);
-        this._usedSingleCount[2] = this._initArray(new Array(regCount), 0);
-        this._usedSingleCount[3] = this._initArray(new Array(regCount), 0);
-    };
-    RegisterPool._initPool = function (regName, regCount) {
-        var hash = regName + regCount;
-        if (RegisterPool._regPool[hash] != undefined)
-            return hash;
-        var vectorRegisters = new Array(regCount);
-        RegisterPool._regPool[hash] = vectorRegisters;
-        var registerComponents = [
-            [],
-            [],
-            [],
-            []
-        ];
-        RegisterPool._regCompsPool[hash] = registerComponents;
-        for (var i = 0; i < regCount; ++i) {
-            vectorRegisters[i] = new ShaderRegisterElement(regName, i);
-            for (var j = 0; j < 4; ++j)
-                registerComponents[j][i] = new ShaderRegisterElement(regName, i, j);
-        }
-        return hash;
-    };
-    /**
-     * Check if the temp register is either used for single or vector use
-     */
-    RegisterPool.prototype.isRegisterUsed = function (index) {
-        if (this._usedVectorCount[index] > 0)
-            return true;
-        for (var i = 0; i < 4; ++i)
-            if (this._usedSingleCount[i][index] > 0)
-                return true;
-        return false;
-    };
-    RegisterPool.prototype._initArray = function (a, val) {
-        var l = a.length;
-        for (var c = 0; c < l; c++)
-            a[c] = val;
-        return a;
-    };
-    return RegisterPool;
-}());
-RegisterPool._regPool = new Object();
-RegisterPool._regCompsPool = new Object();
-
-/**
- * ShaderRegister Cache provides the usage management system for all registers during shading compilers.
- */
-var ShaderRegisterCache = (function () {
-    /**
-     * Create a new ShaderRegisterCache object.
-     *
-     * @param profile The compatibility profile used by the renderer.
-     */
-    function ShaderRegisterCache(profile) {
-        this._numUsedVertexConstants = 0;
-        this._numUsedFragmentConstants = 0;
-        this._numUsedStreams = 0;
-        this._numUsedTextures = 0;
-        this._numUsedVaryings = 0;
-        this._profile = profile;
-        this.reset();
-    }
-    /**
-     * Resets all registers.
-     */
-    ShaderRegisterCache.prototype.reset = function () {
-        this._fragmentTempCache = new RegisterPool("ft", 8, false);
-        this._vertexTempCache = new RegisterPool("vt", 8, false);
-        this._varyingCache = new RegisterPool("v", 8);
-        this._textureCache = new RegisterPool("fs", 8);
-        this._vertexAttributesCache = new RegisterPool("va", 8);
-        this._fragmentConstantsCache = new RegisterPool("fc", 28);
-        this._vertexConstantsCache = new RegisterPool("vc", 128);
-        this._fragmentOutputRegister = new ShaderRegisterElement("oc", -1);
-        this._vertexOutputRegister = new ShaderRegisterElement("op", -1);
-        this._numUsedVertexConstants = 0;
-        this._numUsedStreams = 0;
-        this._numUsedTextures = 0;
-        this._numUsedVaryings = 0;
-        this._numUsedFragmentConstants = 0;
-    };
-    /**
-     * Disposes all resources used.
-     */
-    ShaderRegisterCache.prototype.dispose = function () {
-        this._fragmentTempCache.dispose();
-        this._vertexTempCache.dispose();
-        this._varyingCache.dispose();
-        this._fragmentConstantsCache.dispose();
-        this._vertexAttributesCache.dispose();
-        this._fragmentTempCache = null;
-        this._vertexTempCache = null;
-        this._varyingCache = null;
-        this._fragmentConstantsCache = null;
-        this._vertexAttributesCache = null;
-        this._fragmentOutputRegister = null;
-        this._vertexOutputRegister = null;
-    };
-    /**
-     * Marks a fragment temporary register as used, so it cannot be retrieved. The register won't be able to be used until removeUsage
-     * has been called usageCount times again.
-     * @param register The register to mark as used.
-     * @param usageCount The amount of usages to add.
-     */
-    ShaderRegisterCache.prototype.addFragmentTempUsages = function (register, usageCount) {
-        this._fragmentTempCache.addUsage(register, usageCount);
-    };
-    /**
-     * Removes a usage from a fragment temporary register. When usages reach 0, the register is freed again.
-     * @param register The register for which to remove a usage.
-     */
-    ShaderRegisterCache.prototype.removeFragmentTempUsage = function (register) {
-        this._fragmentTempCache.removeUsage(register);
-    };
-    /**
-     * Marks a vertex temporary register as used, so it cannot be retrieved. The register won't be able to be used
-     * until removeUsage has been called usageCount times again.
-     * @param register The register to mark as used.
-     * @param usageCount The amount of usages to add.
-     */
-    ShaderRegisterCache.prototype.addVertexTempUsages = function (register, usageCount) {
-        this._vertexTempCache.addUsage(register, usageCount);
-    };
-    /**
-     * Removes a usage from a vertex temporary register. When usages reach 0, the register is freed again.
-     * @param register The register for which to remove a usage.
-     */
-    ShaderRegisterCache.prototype.removeVertexTempUsage = function (register) {
-        this._vertexTempCache.removeUsage(register);
-    };
-    /**
-     * Retrieve an entire fragment temporary register that's still available. The register won't be able to be used until removeUsage
-     * has been called usageCount times again.
-     */
-    ShaderRegisterCache.prototype.getFreeFragmentVectorTemp = function () {
-        return this._fragmentTempCache.requestFreeVectorReg();
-    };
-    /**
-     * Retrieve a single component from a fragment temporary register that's still available.
-     */
-    ShaderRegisterCache.prototype.getFreeFragmentSingleTemp = function () {
-        return this._fragmentTempCache.requestFreeRegComponent();
-    };
-    /**
-     * Retrieve an available varying register
-     */
-    ShaderRegisterCache.prototype.getFreeVarying = function () {
-        ++this._numUsedVaryings;
-        return this._varyingCache.requestFreeVectorReg();
-    };
-    /**
-     * Retrieve an available fragment constant register
-     */
-    ShaderRegisterCache.prototype.getFreeFragmentConstant = function () {
-        ++this._numUsedFragmentConstants;
-        return this._fragmentConstantsCache.requestFreeVectorReg();
-    };
-    /**
-     * Retrieve an available vertex constant register
-     */
-    ShaderRegisterCache.prototype.getFreeVertexConstant = function () {
-        ++this._numUsedVertexConstants;
-        return this._vertexConstantsCache.requestFreeVectorReg();
-    };
-    /**
-     * Retrieve an entire vertex temporary register that's still available.
-     */
-    ShaderRegisterCache.prototype.getFreeVertexVectorTemp = function () {
-        return this._vertexTempCache.requestFreeVectorReg();
-    };
-    /**
-     * Retrieve a single component from a vertex temporary register that's still available.
-     */
-    ShaderRegisterCache.prototype.getFreeVertexSingleTemp = function () {
-        return this._vertexTempCache.requestFreeRegComponent();
-    };
-    /**
-     * Retrieve an available vertex attribute register
-     */
-    ShaderRegisterCache.prototype.getFreeVertexAttribute = function () {
-        ++this._numUsedStreams;
-        return this._vertexAttributesCache.requestFreeVectorReg();
-    };
-    /**
-     * Retrieve an available texture register
-     */
-    ShaderRegisterCache.prototype.getFreeTextureReg = function () {
-        ++this._numUsedTextures;
-        return this._textureCache.requestFreeVectorReg();
-    };
-    Object.defineProperty(ShaderRegisterCache.prototype, "fragmentOutputRegister", {
-        /**
-         * The fragment output register.
-         */
-        get: function () {
-            return this._fragmentOutputRegister;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedVertexConstants", {
-        /**
-         * The amount of used vertex constant registers.
-         */
-        get: function () {
-            return this._numUsedVertexConstants;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedFragmentConstants", {
-        /**
-         * The amount of used fragment constant registers.
-         */
-        get: function () {
-            return this._numUsedFragmentConstants;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedStreams", {
-        /**
-         * The amount of used vertex streams.
-         */
-        get: function () {
-            return this._numUsedStreams;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedTextures", {
-        /**
-         * The amount of used texture slots.
-         */
-        get: function () {
-            return this._numUsedTextures;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderRegisterCache.prototype, "numUsedVaryings", {
-        /**
-         * The amount of used varying registers.
-         */
-        get: function () {
-            return this._numUsedVaryings;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ShaderRegisterCache;
-}());
-
-/**
- * ShaderRegisterData contains the "named" registers, generated by the compiler and to be passed on to the methods.
- */
-var ShaderRegisterData = (function () {
-    function ShaderRegisterData() {
-        this.textures = new Array();
-        this.animatableAttributes = new Array();
-        this.animationTargetRegisters = new Array();
-    }
-    return ShaderRegisterData;
-}());
-
-/**
- * CompilerBase is an abstract base class for shader compilers that use modular shader methods to assemble a
- * material. Concrete subclasses are used by the default materials.
- *
- * @see away.materials.ShadingMethodBase
- */
-var CompilerBase = (function () {
-    /**
-     * Creates a new CompilerBase object.
-     * @param profile The compatibility profile of the renderer.
-     */
-    function CompilerBase(elementsClass, pass, shader) {
-        this._pVertexCode = ''; // Changed to emtpy string- AwayTS
-        this._pFragmentCode = ''; // Changed to emtpy string - AwayTS
-        this._pPostAnimationFragmentCode = ''; // Changed to emtpy string - AwayTS
-        this._pElementsClass = elementsClass;
-        this._pRenderPass = pass;
-        this._pShader = shader;
-        this._pSharedRegisters = new ShaderRegisterData();
-        this._pRegisterCache = new ShaderRegisterCache(shader.profile);
-    }
-    /**
-     * Compiles the code after all setup on the compiler has finished.
-     */
-    CompilerBase.prototype.compile = function () {
-        this._pShader.reset();
-        this._pShader._iIncludeDependencies();
-        this.pInitRegisterIndices();
-        this.pCompileDependencies();
-        //compile custom vertex & fragment codes
-        this._pVertexCode += this._pRenderPass._iGetVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-        this._pPostAnimationFragmentCode += this._pRenderPass._iGetFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-        //assign the final output color to the output register
-        this._pPostAnimationFragmentCode += "mov " + this._pRegisterCache.fragmentOutputRegister + ", " + this._pSharedRegisters.shadedTarget + "\n";
-        this._pRegisterCache.removeFragmentTempUsage(this._pSharedRegisters.shadedTarget);
-    };
-    /**
-     * Calculate the transformed colours
-     */
-    CompilerBase.prototype.compileColorTransformCode = function () {
-        // rm, gm, bm, am - multiplier
-        // ro, go, bo, ao - offset
-        var ct1 = this._pRegisterCache.getFreeFragmentConstant();
-        var ct2 = this._pRegisterCache.getFreeFragmentConstant();
-        this._pShader.colorTransformIndex = ct1.index * 4;
-        this._pPostAnimationFragmentCode += "mul " + this._pSharedRegisters.shadedTarget + ", " + this._pSharedRegisters.shadedTarget + ", " + ct1 + "\n";
-        this._pPostAnimationFragmentCode += "add " + this._pSharedRegisters.shadedTarget + ", " + this._pSharedRegisters.shadedTarget + ", " + ct2 + "\n";
-    };
-    /**
-     * Compile the code for the methods.
-     */
-    CompilerBase.prototype.pCompileDependencies = function () {
-        this._pSharedRegisters.shadedTarget = this._pRegisterCache.getFreeFragmentVectorTemp();
-        this._pRegisterCache.addFragmentTempUsages(this._pSharedRegisters.shadedTarget, 1);
-        //compile the world-space position if required
-        if (this._pShader.globalPosDependencies > 0)
-            this.compileGlobalPositionCode();
-        //compile the local-space position if required
-        if (this._pShader.usesPositionFragment)
-            this.compilePositionCode();
-        if (this._pShader.usesCurves)
-            this.compileCurvesCode();
-        if (this._pShader.usesColorTransform)
-            this.compileColorTransformCode();
-        //Calculate the (possibly animated) UV coordinates.
-        if (this._pShader.uvDependencies > 0)
-            this.compileUVCode();
-        if (this._pShader.secondaryUVDependencies > 0)
-            this.compileSecondaryUVCode();
-        if (this._pShader.normalDependencies > 0)
-            this.compileNormalCode();
-        if (this._pShader.viewDirDependencies > 0)
-            this.compileViewDirCode();
-        //collect code from material
-        this._pVertexCode += this._pElementsClass._iGetVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-        this._pFragmentCode += this._pElementsClass._iGetFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-        //collect code from pass
-        this._pVertexCode += this._pRenderPass._iGetPreLightingVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-        this._pFragmentCode += this._pRenderPass._iGetPreLightingFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-    };
-    CompilerBase.prototype.compileGlobalPositionCode = function () {
-        this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.globalPositionVertex = this._pRegisterCache.getFreeVertexVectorTemp(), this._pShader.globalPosDependencies);
-        var sceneMatrixReg = this._pRegisterCache.getFreeVertexConstant();
-        this._pRegisterCache.getFreeVertexConstant();
-        this._pRegisterCache.getFreeVertexConstant();
-        this._pRegisterCache.getFreeVertexConstant();
-        this._pShader.sceneMatrixIndex = sceneMatrixReg.index * 4;
-        this._pVertexCode += "m44 " + this._pSharedRegisters.globalPositionVertex + ", " + this._pSharedRegisters.animatedPosition + ", " + sceneMatrixReg + "\n";
-        if (this._pShader.usesGlobalPosFragment) {
-            this._pSharedRegisters.globalPositionVarying = this._pRegisterCache.getFreeVarying();
-            this._pVertexCode += "mov " + this._pSharedRegisters.globalPositionVarying + ", " + this._pSharedRegisters.globalPositionVertex + "\n";
-        }
-    };
-    CompilerBase.prototype.compilePositionCode = function () {
-        this._pSharedRegisters.positionVarying = this._pRegisterCache.getFreeVarying();
-        this._pVertexCode += "mov " + this._pSharedRegisters.positionVarying + ", " + this._pSharedRegisters.animatedPosition + "\n";
-    };
-    CompilerBase.prototype.compileCurvesCode = function () {
-        this._pSharedRegisters.curvesInput = this._pRegisterCache.getFreeVertexAttribute();
-        this._pShader.curvesIndex = this._pSharedRegisters.curvesInput.index;
-        this._pSharedRegisters.curvesVarying = this._pRegisterCache.getFreeVarying();
-        this._pVertexCode += "mov " + this._pSharedRegisters.curvesVarying + ", " + this._pSharedRegisters.curvesInput + "\n";
-        var temp = this._pRegisterCache.getFreeFragmentSingleTemp();
-        this._pFragmentCode += "mul " + temp + ", " + this._pSharedRegisters.curvesVarying + ".y, " + this._pSharedRegisters.curvesVarying + ".y\n" +
-            "sub " + temp + ", " + temp + ", " + this._pSharedRegisters.curvesVarying + ".z\n" +
-            "mul " + temp + ", " + temp + ", " + this._pSharedRegisters.curvesVarying + ".x\n" +
-            "kil " + temp + "\n";
-        // var temp:ShaderRegisterElement = this._pRegisterCache.getFreeFragmentVectorTemp();
-        //
-        // this._pPostAnimationFragmentCode += "mul " + temp + ".x, " + this._pSharedRegisters.curvesVarying + ".y, " + this._pSharedRegisters.curvesVarying + ".y\n" +
-        // 					"sub " + temp + ".x, " + temp + ".x, " + this._pSharedRegisters.curvesVarying + ".z\n" +
-        // 					"mul " + temp + ".x, " + temp + ".x, " + this._pSharedRegisters.curvesVarying + ".x\n" +
-        // 					"ddx " + temp + ".y," + temp + ".x\n" +
-        // 					"ddy " + temp + ".z," + temp + ".x\n" +
-        // 					"mul " + temp + ".y, " + temp + ".y, " + temp + ".y\n" +
-        // 					"mul " + temp + ".z, " + temp + ".z, " + temp + ".z\n" +
-        // 					"add " + this._pSharedRegisters.shadedTarget + ".w, " + temp + ".y, " + temp + ".z\n" +
-        // 					"sqt " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.shadedTarget + ".w\n" +
-        // 					"div " + this._pSharedRegisters.shadedTarget + ".w, " + temp + ".x, " + this._pSharedRegisters.shadedTarget + ".w\n" +
-        // 					"max " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.commons + ".y\n" +
-        // 					"min " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.shadedTarget + ".w, " + this._pSharedRegisters.commons + ".w\n";
-    };
-    /**
-     * Calculate the (possibly animated) UV coordinates.
-     */
-    CompilerBase.prototype.compileUVCode = function () {
-        var uvAttributeReg = this._pRegisterCache.getFreeVertexAttribute();
-        this._pShader.uvIndex = uvAttributeReg.index;
-        var varying = this._pSharedRegisters.uvVarying = this._pRegisterCache.getFreeVarying();
-        if (this._pShader.usesUVTransform) {
-            // a, b, 0, tx
-            // c, d, 0, ty
-            var uvTransform1 = this._pRegisterCache.getFreeVertexConstant();
-            var uvTransform2 = this._pRegisterCache.getFreeVertexConstant();
-            this._pShader.uvMatrixIndex = uvTransform1.index * 4;
-            this._pVertexCode += "dp4 " + varying + ".x, " + uvAttributeReg + ", " + uvTransform1 + "\n" +
-                "dp4 " + varying + ".y, " + uvAttributeReg + ", " + uvTransform2 + "\n" +
-                "mov " + varying + ".zw, " + uvAttributeReg + ".zw \n";
-        }
-        else {
-            this._pShader.uvMatrixIndex = -1;
-            this._pSharedRegisters.uvTarget = varying;
-            this._pSharedRegisters.uvSource = uvAttributeReg;
-        }
-    };
-    /**
-     * Provide the secondary UV coordinates.
-     */
-    CompilerBase.prototype.compileSecondaryUVCode = function () {
-        var uvAttributeReg = this._pRegisterCache.getFreeVertexAttribute();
-        this._pShader.secondaryUVIndex = uvAttributeReg.index;
-        this._pSharedRegisters.secondaryUVVarying = this._pRegisterCache.getFreeVarying();
-        this._pVertexCode += "mov " + this._pSharedRegisters.secondaryUVVarying + ", " + uvAttributeReg + "\n";
-    };
-    /**
-     * Calculate the view direction.
-     */
-    CompilerBase.prototype.compileViewDirCode = function () {
-        var cameraPositionReg = this._pRegisterCache.getFreeVertexConstant();
-        this._pSharedRegisters.viewDirVarying = this._pRegisterCache.getFreeVarying();
-        this._pSharedRegisters.viewDirFragment = this._pRegisterCache.getFreeFragmentVectorTemp();
-        this._pRegisterCache.addFragmentTempUsages(this._pSharedRegisters.viewDirFragment, this._pShader.viewDirDependencies);
-        this._pShader.cameraPositionIndex = cameraPositionReg.index * 4;
-        if (this._pShader.usesTangentSpace) {
-            var temp = this._pRegisterCache.getFreeVertexVectorTemp();
-            this._pVertexCode += "sub " + temp + ", " + cameraPositionReg + ", " + this._pSharedRegisters.animatedPosition + "\n" +
-                "m33 " + this._pSharedRegisters.viewDirVarying + ".xyz, " + temp + ", " + this._pSharedRegisters.animatedTangent + "\n" +
-                "mov " + this._pSharedRegisters.viewDirVarying + ".w, " + this._pSharedRegisters.animatedPosition + ".w\n";
-        }
-        else {
-            this._pVertexCode += "sub " + this._pSharedRegisters.viewDirVarying + ", " + cameraPositionReg + ", " + this._pSharedRegisters.globalPositionVertex + "\n";
-            this._pRegisterCache.removeVertexTempUsage(this._pSharedRegisters.globalPositionVertex);
-        }
-        //TODO is this required in all cases? (re: distancemappass)
-        this._pFragmentCode += "nrm " + this._pSharedRegisters.viewDirFragment + ".xyz, " + this._pSharedRegisters.viewDirVarying + "\n" +
-            "mov " + this._pSharedRegisters.viewDirFragment + ".w,   " + this._pSharedRegisters.viewDirVarying + ".w\n";
-    };
-    /**
-     * Calculate the normal.
-     */
-    CompilerBase.prototype.compileNormalCode = function () {
-        this._pSharedRegisters.normalFragment = this._pRegisterCache.getFreeFragmentVectorTemp();
-        this._pRegisterCache.addFragmentTempUsages(this._pSharedRegisters.normalFragment, this._pShader.normalDependencies);
-        //simple normal aquisition if no tangent space is being used
-        if (this._pShader.outputsNormals && !this._pShader.outputsTangentNormals) {
-            this._pVertexCode += this._pRenderPass._iGetNormalVertexCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-            this._pFragmentCode += this._pRenderPass._iGetNormalFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-            return;
-        }
-        var normalMatrix;
-        if (!this._pShader.outputsNormals || !this._pShader.usesTangentSpace) {
-            normalMatrix = new Array(3);
-            normalMatrix[0] = this._pRegisterCache.getFreeVertexConstant();
-            normalMatrix[1] = this._pRegisterCache.getFreeVertexConstant();
-            normalMatrix[2] = this._pRegisterCache.getFreeVertexConstant();
-            this._pRegisterCache.getFreeVertexConstant();
-            this._pShader.sceneNormalMatrixIndex = normalMatrix[0].index * 4;
-            this._pSharedRegisters.normalVarying = this._pRegisterCache.getFreeVarying();
-        }
-        if (this._pShader.outputsNormals) {
-            if (this._pShader.usesTangentSpace) {
-                // normalize normal + tangent vector and generate (approximated) bitangent used in m33 operation for view
-                this._pVertexCode += "nrm " + this._pSharedRegisters.animatedNormal + ".xyz, " + this._pSharedRegisters.animatedNormal + "\n" +
-                    "nrm " + this._pSharedRegisters.animatedTangent + ".xyz, " + this._pSharedRegisters.animatedTangent + "\n" +
-                    "crs " + this._pSharedRegisters.bitangent + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + this._pSharedRegisters.animatedTangent + "\n";
-                this._pFragmentCode += this._pRenderPass._iGetNormalFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters);
-            }
-            else {
-                //Compiles the vertex shader code for tangent-space normal maps.
-                this._pSharedRegisters.tangentVarying = this._pRegisterCache.getFreeVarying();
-                this._pSharedRegisters.bitangentVarying = this._pRegisterCache.getFreeVarying();
-                var temp = this._pRegisterCache.getFreeVertexVectorTemp();
-                this._pVertexCode += "m33 " + temp + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + normalMatrix[0] + "\n" +
-                    "nrm " + this._pSharedRegisters.animatedNormal + ".xyz, " + temp + "\n" +
-                    "m33 " + temp + ".xyz, " + this._pSharedRegisters.animatedTangent + ", " + normalMatrix[0] + "\n" +
-                    "nrm " + this._pSharedRegisters.animatedTangent + ".xyz, " + temp + "\n" +
-                    "mov " + this._pSharedRegisters.tangentVarying + ".x, " + this._pSharedRegisters.animatedTangent + ".x  \n" +
-                    "mov " + this._pSharedRegisters.tangentVarying + ".z, " + this._pSharedRegisters.animatedNormal + ".x  \n" +
-                    "mov " + this._pSharedRegisters.tangentVarying + ".w, " + this._pSharedRegisters.normalInput + ".w  \n" +
-                    "mov " + this._pSharedRegisters.bitangentVarying + ".x, " + this._pSharedRegisters.animatedTangent + ".y  \n" +
-                    "mov " + this._pSharedRegisters.bitangentVarying + ".z, " + this._pSharedRegisters.animatedNormal + ".y  \n" +
-                    "mov " + this._pSharedRegisters.bitangentVarying + ".w, " + this._pSharedRegisters.normalInput + ".w  \n" +
-                    "mov " + this._pSharedRegisters.normalVarying + ".x, " + this._pSharedRegisters.animatedTangent + ".z  \n" +
-                    "mov " + this._pSharedRegisters.normalVarying + ".z, " + this._pSharedRegisters.animatedNormal + ".z  \n" +
-                    "mov " + this._pSharedRegisters.normalVarying + ".w, " + this._pSharedRegisters.normalInput + ".w  \n" +
-                    "crs " + temp + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + this._pSharedRegisters.animatedTangent + "\n" +
-                    "mov " + this._pSharedRegisters.tangentVarying + ".y, " + temp + ".x    \n" +
-                    "mov " + this._pSharedRegisters.bitangentVarying + ".y, " + temp + ".y  \n" +
-                    "mov " + this._pSharedRegisters.normalVarying + ".y, " + temp + ".z    \n";
-                this._pRegisterCache.removeVertexTempUsage(this._pSharedRegisters.animatedTangent);
-                //Compiles the fragment shader code for tangent-space normal maps.
-                var t;
-                var b;
-                var n;
-                t = this._pRegisterCache.getFreeFragmentVectorTemp();
-                this._pRegisterCache.addFragmentTempUsages(t, 1);
-                b = this._pRegisterCache.getFreeFragmentVectorTemp();
-                this._pRegisterCache.addFragmentTempUsages(b, 1);
-                n = this._pRegisterCache.getFreeFragmentVectorTemp();
-                this._pRegisterCache.addFragmentTempUsages(n, 1);
-                this._pFragmentCode += "nrm " + t + ".xyz, " + this._pSharedRegisters.tangentVarying + "\n" +
-                    "mov " + t + ".w, " + this._pSharedRegisters.tangentVarying + ".w	\n" +
-                    "nrm " + b + ".xyz, " + this._pSharedRegisters.bitangentVarying + "\n" +
-                    "nrm " + n + ".xyz, " + this._pSharedRegisters.normalVarying + "\n";
-                //compile custom fragment code for normal calcs
-                this._pFragmentCode += this._pRenderPass._iGetNormalFragmentCode(this._pShader, this._pRegisterCache, this._pSharedRegisters) +
-                    "m33 " + this._pSharedRegisters.normalFragment + ".xyz, " + this._pSharedRegisters.normalFragment + ", " + t + "\n" +
-                    "mov " + this._pSharedRegisters.normalFragment + ".w, " + this._pSharedRegisters.normalVarying + ".w\n";
-                this._pRegisterCache.removeFragmentTempUsage(b);
-                this._pRegisterCache.removeFragmentTempUsage(t);
-                this._pRegisterCache.removeFragmentTempUsage(n);
-            }
-        }
-        else {
-            // no output, world space is enough
-            this._pVertexCode += "m33 " + this._pSharedRegisters.normalVarying + ".xyz, " + this._pSharedRegisters.animatedNormal + ", " + normalMatrix[0] + "\n" +
-                "mov " + this._pSharedRegisters.normalVarying + ".w, " + this._pSharedRegisters.animatedNormal + ".w\n";
-            this._pFragmentCode += "nrm " + this._pSharedRegisters.normalFragment + ".xyz, " + this._pSharedRegisters.normalVarying + "\n" +
-                "mov " + this._pSharedRegisters.normalFragment + ".w, " + this._pSharedRegisters.normalVarying + ".w\n";
-            if (this._pShader.tangentDependencies > 0) {
-                this._pSharedRegisters.tangentVarying = this._pRegisterCache.getFreeVarying();
-                this._pVertexCode += "m33 " + this._pSharedRegisters.tangentVarying + ".xyz, " + this._pSharedRegisters.animatedTangent + ", " + normalMatrix[0] + "\n" +
-                    "mov " + this._pSharedRegisters.tangentVarying + ".w, " + this._pSharedRegisters.animatedTangent + ".w\n";
-            }
-        }
-        if (!this._pShader.usesTangentSpace)
-            this._pRegisterCache.removeVertexTempUsage(this._pSharedRegisters.animatedNormal);
-    };
-    /**
-     * Reset all the indices to "unused".
-     */
-    CompilerBase.prototype.pInitRegisterIndices = function () {
-        this._pShader.pInitRegisterIndices();
-        this._pSharedRegisters.animatedPosition = this._pRegisterCache.getFreeVertexVectorTemp();
-        this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.animatedPosition, 1);
-        this._pSharedRegisters.animatableAttributes.push(this._pRegisterCache.getFreeVertexAttribute());
-        this._pSharedRegisters.animationTargetRegisters.push(this._pSharedRegisters.animatedPosition);
-        this._pVertexCode = "";
-        this._pFragmentCode = "";
-        this._pPostAnimationFragmentCode = "";
-        //create commonly shared constant registers
-        if (this._pShader.usesCommonData || this._pShader.normalDependencies > 0) {
-            this._pSharedRegisters.commons = this._pRegisterCache.getFreeFragmentConstant();
-            this._pShader.commonsDataIndex = this._pSharedRegisters.commons.index * 4;
-        }
-        //Creates the registers to contain the tangent data.
-        //Needs to be created FIRST and in this order (for when using tangent space)
-        if (this._pShader.tangentDependencies > 0 || this._pShader.outputsNormals) {
-            this._pSharedRegisters.tangentInput = this._pRegisterCache.getFreeVertexAttribute();
-            this._pShader.tangentIndex = this._pSharedRegisters.tangentInput.index;
-            this._pSharedRegisters.animatedTangent = this._pRegisterCache.getFreeVertexVectorTemp();
-            this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.animatedTangent, 1);
-            if (this._pShader.usesTangentSpace) {
-                this._pSharedRegisters.bitangent = this._pRegisterCache.getFreeVertexVectorTemp();
-                this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.bitangent, 1);
-            }
-            this._pSharedRegisters.animatableAttributes.push(this._pSharedRegisters.tangentInput);
-            this._pSharedRegisters.animationTargetRegisters.push(this._pSharedRegisters.animatedTangent);
-        }
-        if (this._pShader.normalDependencies > 0) {
-            this._pSharedRegisters.normalInput = this._pRegisterCache.getFreeVertexAttribute();
-            this._pShader.normalIndex = this._pSharedRegisters.normalInput.index;
-            this._pSharedRegisters.animatedNormal = this._pRegisterCache.getFreeVertexVectorTemp();
-            this._pRegisterCache.addVertexTempUsages(this._pSharedRegisters.animatedNormal, 1);
-            this._pSharedRegisters.animatableAttributes.push(this._pSharedRegisters.normalInput);
-            this._pSharedRegisters.animationTargetRegisters.push(this._pSharedRegisters.animatedNormal);
-        }
-        if (this._pShader.colorDependencies > 0) {
-            this._pSharedRegisters.colorInput = this._pRegisterCache.getFreeVertexAttribute();
-            this._pShader.colorBufferIndex = this._pSharedRegisters.colorInput.index;
-            this._pSharedRegisters.colorVarying = this._pRegisterCache.getFreeVarying();
-            this._pVertexCode += "mov " + this._pSharedRegisters.colorVarying + ", " + this._pSharedRegisters.colorInput + "\n";
-        }
-    };
-    /**
-     * Disposes all resources used by the compiler.
-     */
-    CompilerBase.prototype.dispose = function () {
-        this._pRegisterCache.dispose();
-        this._pRegisterCache = null;
-        this._pSharedRegisters = null;
-    };
-    Object.defineProperty(CompilerBase.prototype, "vertexCode", {
-        /**
-         * The generated vertex code.
-         */
-        get: function () {
-            return this._pVertexCode;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CompilerBase.prototype, "fragmentCode", {
-        /**
-         * The generated fragment code.
-         */
-        get: function () {
-            return this._pFragmentCode;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CompilerBase.prototype, "postAnimationFragmentCode", {
-        /**
-         * The generated fragment code.
-         */
-        get: function () {
-            return this._pPostAnimationFragmentCode;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CompilerBase.prototype, "shadedTarget", {
-        /**
-         * The register containing the final shaded colour.
-         */
-        get: function () {
-            return this._pSharedRegisters.shadedTarget;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return CompilerBase;
-}());
-
-/**
- * ShaderBase keeps track of the number of dependencies for "named registers" used across a pass.
- * Named registers are that are not necessarily limited to a single method. They are created by the compiler and
- * passed on to methods. The compiler uses the results to reserve usages through RegisterPool, which can be removed
- * each time a method has been compiled into the shader.
- *
- * @see RegisterPool.addUsage
- */
-var ShaderBase = (function () {
-    /**
-     * Creates a new MethodCompilerVO object.
-     */
-    function ShaderBase(elementsClass, pass, stage) {
-        this._abstractionPool = new Object();
-        this._blendFactorSource = exports.ContextGLBlendFactor.ONE;
-        this._blendFactorDest = exports.ContextGLBlendFactor.ZERO;
-        this._invalidProgram = true;
-        this._animationVertexCode = "";
-        this._animationFragmentCode = "";
-        this.usesBlending = false;
-        this.useImageRect = false;
-        this.usesCurves = false;
-        /**
-         * The depth compare mode used to render the renderables using this material.
-         *
-         * @see away.stagegl.ContextGLCompareMode
-         */
-        this.depthCompareMode = exports.ContextGLCompareMode.LESS_EQUAL;
-        /**
-         * Indicate whether the shader should write to the depth buffer or not. Ignored when blending is enabled.
-         */
-        this.writeDepth = true;
-        this._defaultCulling = exports.ContextGLTriangleFace.BACK;
-        this._pInverseSceneMatrix = new Float32Array(16);
-        //set ambient values to default
-        this.ambientR = 0xFF;
-        this.ambientG = 0xFF;
-        this.ambientB = 0xFF;
-        /**
-         * Indicates whether there are any dependencies on the world-space position vector.
-         */
-        this.usesGlobalPosFragment = false;
-        /**
-         * Indicates whether there are any dependencies on the local position vector.
-         */
-        this.usesPositionFragment = false;
-        /**
-         *
-         */
-        this.imageIndices = new Array();
-        this._elementsClass = elementsClass;
-        this._pass = pass;
-        this._stage = stage;
-        this.profile = this._stage.profile;
-    }
-    Object.defineProperty(ShaderBase.prototype, "programData", {
-        get: function () {
-            if (this._invalidProgram)
-                this._updateProgram();
-            return this._programData;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderBase.prototype, "usesAnimation", {
-        get: function () {
-            return this._usesAnimation;
-        },
-        set: function (value) {
-            if (this._usesAnimation == value)
-                return;
-            this._usesAnimation = value;
-            this.invalidateProgram();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderBase.prototype, "numUsedVertexConstants", {
-        get: function () {
-            if (this._invalidProgram)
-                this._updateProgram();
-            return this._numUsedVertexConstants;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderBase.prototype, "numUsedFragmentConstants", {
-        get: function () {
-            if (this._invalidProgram)
-                this._updateProgram();
-            return this._numUsedFragmentConstants;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderBase.prototype, "numUsedStreams", {
-        /**
-         * The amount of used vertex streams in the vertex code. Used by the animation code generation to know from which index on streams are available.
-         */
-        get: function () {
-            if (this._invalidProgram)
-                this._updateProgram();
-            return this._numUsedStreams;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ShaderBase.prototype, "numUsedTextures", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._invalidProgram)
-                this._updateProgram();
-            return this._numUsedTextures;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ShaderBase.prototype.getAbstraction = function (texture) {
-        return (this._abstractionPool[texture.id] || (this._abstractionPool[texture.id] = new ShaderBase._abstractionClassPool[texture.assetType](texture, this)));
-    };
-    /**
-     *
-     * @param image
-     */
-    ShaderBase.prototype.clearAbstraction = function (texture) {
-        this._abstractionPool[texture.id] = null;
-    };
-    /**
-     *
-     * @param imageObjectClass
-     */
-    ShaderBase.registerAbstraction = function (gl_assetClass, assetClass) {
-        ShaderBase._abstractionClassPool[assetClass.assetType] = gl_assetClass;
-    };
-    ShaderBase.prototype.getImageIndex = function (texture, index) {
-        if (index === void 0) { index = 0; }
-        return this._pass.getImageIndex(texture, index);
-    };
-    ShaderBase.prototype._iIncludeDependencies = function () {
-        this._pass._iIncludeDependencies(this);
-        //this.usesCommonData = this.usesCurves || this.usesCommonData;
-    };
-    /**
-     * Factory method to create a concrete compiler object for this object
-     *
-     * @param elementsClass
-     * @param pass
-     * @param stage
-     * @returns {CompilerBase}
-     */
-    ShaderBase.prototype.createCompiler = function (elementsClass, pass) {
-        return new CompilerBase(elementsClass, pass, this);
-    };
-    /**
-     * Clears dependency counts for all registers. Called when recompiling a pass.
-     */
-    ShaderBase.prototype.reset = function () {
-        this.projectionDependencies = 0;
-        this.normalDependencies = 0;
-        this.colorDependencies = 0;
-        this.viewDirDependencies = 0;
-        this.uvDependencies = 0;
-        this.secondaryUVDependencies = 0;
-        this.globalPosDependencies = 0;
-        this.tangentDependencies = 0;
-        this.usesCommonData = false;
-        this.usesGlobalPosFragment = false;
-        this.usesPositionFragment = false;
-        this.usesFragmentAnimation = false;
-        this.usesTangentSpace = false;
-        this.outputsNormals = false;
-        this.outputsTangentNormals = false;
-    };
-    ShaderBase.prototype.pInitRegisterIndices = function () {
-        this.commonsDataIndex = -1;
-        this.cameraPositionIndex = -1;
-        this.curvesIndex = -1;
-        this.uvIndex = -1;
-        this.uvMatrixIndex = -1;
-        this.colorTransformIndex = -1;
-        this.secondaryUVIndex = -1;
-        this.normalIndex = -1;
-        this.colorBufferIndex = -1;
-        this.tangentIndex = -1;
-        this.sceneMatrixIndex = -1;
-        this.sceneNormalMatrixIndex = -1;
-        this.jointIndexIndex = -1;
-        this.jointWeightIndex = -1;
-        this.imageIndices.length = 0;
-    };
-    /**
-     * Initializes the unchanging constant data for this shader object.
-     */
-    ShaderBase.prototype.initConstantData = function (registerCache) {
-        //Updates the amount of used register indices.
-        this._numUsedVertexConstants = registerCache.numUsedVertexConstants;
-        this._numUsedFragmentConstants = registerCache.numUsedFragmentConstants;
-        this._numUsedStreams = registerCache.numUsedStreams;
-        this._numUsedTextures = registerCache.numUsedTextures;
-        this.vertexConstantData = new Float32Array(registerCache.numUsedVertexConstants * 4);
-        this.fragmentConstantData = new Float32Array(registerCache.numUsedFragmentConstants * 4);
-        //Initialies viewMatrix
-        if (this.viewMatrixIndex >= 0) {
-            this.viewMatrix = new Matrix3D(new Float32Array(this.vertexConstantData.buffer, this.viewMatrixIndex * 4, 16));
-        }
-        else if (this.viewMatrix) {
-            this.viewMatrix = null;
-        }
-        //Initialies sceneMatrix
-        if (this.sceneMatrixIndex >= 0) {
-            this.sceneMatrix = new Matrix3D(new Float32Array(this.vertexConstantData.buffer, this.sceneMatrixIndex * 4, 16));
-        }
-        else if (this.sceneMatrix) {
-            this.sceneMatrix = null;
-        }
-        //Initializes commonly required constant values.
-        if (this.commonsDataIndex >= 0) {
-            this.fragmentConstantData[this.commonsDataIndex] = .5;
-            this.fragmentConstantData[this.commonsDataIndex + 1] = 0;
-            this.fragmentConstantData[this.commonsDataIndex + 2] = 1 / 255;
-            this.fragmentConstantData[this.commonsDataIndex + 3] = 1;
-        }
-        //Initializes the default UV transformation matrix.
-        if (this.uvMatrixIndex >= 0) {
-            this.vertexConstantData[this.uvMatrixIndex] = 1;
-            this.vertexConstantData[this.uvMatrixIndex + 1] = 0;
-            this.vertexConstantData[this.uvMatrixIndex + 2] = 0;
-            this.vertexConstantData[this.uvMatrixIndex + 3] = 0;
-            this.vertexConstantData[this.uvMatrixIndex + 4] = 0;
-            this.vertexConstantData[this.uvMatrixIndex + 5] = 1;
-            this.vertexConstantData[this.uvMatrixIndex + 6] = 0;
-            this.vertexConstantData[this.uvMatrixIndex + 7] = 0;
-        }
-        //Initializes the default colorTransform.
-        if (this.colorTransformIndex >= 0) {
-            this.fragmentConstantData[this.colorTransformIndex] = 1;
-            this.fragmentConstantData[this.colorTransformIndex + 1] = 1;
-            this.fragmentConstantData[this.colorTransformIndex + 2] = 1;
-            this.fragmentConstantData[this.colorTransformIndex + 3] = 1;
-            this.fragmentConstantData[this.colorTransformIndex + 4] = 0;
-            this.fragmentConstantData[this.colorTransformIndex + 5] = 0;
-            this.fragmentConstantData[this.colorTransformIndex + 6] = 0;
-            this.fragmentConstantData[this.colorTransformIndex + 7] = 0;
-        }
-        if (this.sceneNormalMatrixIndex >= 0) {
-            this.sceneNormalMatrix = new Matrix3D(new Float32Array(this.vertexConstantData.buffer, this.sceneNormalMatrixIndex * 4, 16));
-        }
-        else if (this.sceneNormalMatrix) {
-            this.sceneNormalMatrix = null;
-        }
-        if (this.cameraPositionIndex >= 0)
-            this.vertexConstantData[this.cameraPositionIndex + 3] = 1;
-        // init constant data in pass
-        this._pass._iInitConstantData(this);
-        //init constant data in animation
-        if (this.usesAnimation)
-            this._pass.animationSet.doneAGALCode(this);
-    };
-    /**
-     * The blend mode to use when drawing this renderable. The following blend modes are supported:
-     * <ul>
-     * <li>BlendMode.NORMAL: No blending, unless the material inherently needs it</li>
-     * <li>BlendMode.LAYER: Force blending. This will draw the object the same as NORMAL, but without writing depth writes.</li>
-     * <li>BlendMode.MULTIPLY</li>
-     * <li>BlendMode.ADD</li>
-     * <li>BlendMode.ALPHA</li>
-     * </ul>
-     */
-    ShaderBase.prototype.setBlendMode = function (value) {
-        switch (value) {
-            case BlendMode.NORMAL:
-                this._blendFactorSource = exports.ContextGLBlendFactor.ONE;
-                this._blendFactorDest = exports.ContextGLBlendFactor.ZERO;
-                this.usesBlending = false;
-                break;
-            case BlendMode.LAYER:
-                this._blendFactorSource = exports.ContextGLBlendFactor.SOURCE_ALPHA;
-                this._blendFactorDest = exports.ContextGLBlendFactor.ONE_MINUS_SOURCE_ALPHA;
-                this.usesBlending = true;
-                break;
-            case BlendMode.MULTIPLY:
-                this._blendFactorSource = exports.ContextGLBlendFactor.ZERO;
-                this._blendFactorDest = exports.ContextGLBlendFactor.SOURCE_COLOR;
-                this.usesBlending = true;
-                break;
-            case BlendMode.ADD:
-                this._blendFactorSource = exports.ContextGLBlendFactor.SOURCE_ALPHA;
-                this._blendFactorDest = exports.ContextGLBlendFactor.ONE;
-                this.usesBlending = true;
-                break;
-            case BlendMode.ALPHA:
-                this._blendFactorSource = exports.ContextGLBlendFactor.ZERO;
-                this._blendFactorDest = exports.ContextGLBlendFactor.SOURCE_ALPHA;
-                this.usesBlending = true;
-                break;
-            default:
-                throw new ArgumentError("Unsupported blend mode!");
-        }
-    };
-    /**
-     * @inheritDoc
-     */
-    ShaderBase.prototype._iActivate = function (camera) {
-        this._stage.context.setCulling(this.useBothSides ? exports.ContextGLTriangleFace.NONE : this._defaultCulling, camera.projection.coordinateSystem);
-        if (!this.usesTangentSpace && this.cameraPositionIndex >= 0) {
-            var pos = camera.scenePosition;
-            this.vertexConstantData[this.cameraPositionIndex] = pos.x;
-            this.vertexConstantData[this.cameraPositionIndex + 1] = pos.y;
-            this.vertexConstantData[this.cameraPositionIndex + 2] = pos.z;
-        }
-        this._stage.context.setDepthTest((this.writeDepth && !this.usesBlending), this.depthCompareMode);
-        if (this.usesBlending)
-            this._stage.context.setBlendFactors(this._blendFactorSource, this._blendFactorDest);
-        this.activeElements = null;
-    };
-    /**
-     * @inheritDoc
-     */
-    ShaderBase.prototype._iDeactivate = function () {
-        //For the love of god don't remove this if you want your multi-material shadows to not flicker like shit
-        this._stage.context.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
-        this.activeElements = null;
-    };
-    /**
-     *
-     *
-     * @param renderable
-     * @param stage
-     * @param camera
-     */
-    ShaderBase.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        if (renderable.sourceEntity.animator)
-            renderable.sourceEntity.animator.setRenderState(this, renderable, this._stage, camera);
-        var rawData;
-        if (this.usesUVTransform) {
-            var uvMatrix = renderable.uvMatrix;
-            if (uvMatrix) {
-                //transpose
-                rawData = uvMatrix.rawData;
-                this.vertexConstantData[this.uvMatrixIndex] = rawData[0];
-                this.vertexConstantData[this.uvMatrixIndex + 1] = rawData[2];
-                this.vertexConstantData[this.uvMatrixIndex + 3] = rawData[4];
-                this.vertexConstantData[this.uvMatrixIndex + 4] = rawData[1];
-                this.vertexConstantData[this.uvMatrixIndex + 5] = rawData[3];
-                this.vertexConstantData[this.uvMatrixIndex + 7] = rawData[5];
-            }
-            else {
-                this.vertexConstantData[this.uvMatrixIndex] = 1;
-                this.vertexConstantData[this.uvMatrixIndex + 1] = 0;
-                this.vertexConstantData[this.uvMatrixIndex + 3] = 0;
-                this.vertexConstantData[this.uvMatrixIndex + 4] = 0;
-                this.vertexConstantData[this.uvMatrixIndex + 5] = 1;
-                this.vertexConstantData[this.uvMatrixIndex + 7] = 0;
-            }
-        }
-        if (this.usesColorTransform) {
-            var colorTransform = renderable.sourceEntity._iAssignedColorTransform();
-            if (colorTransform) {
-                //TODO: AWDParser to write normalised color offsets
-                rawData = colorTransform._rawData;
-                this.fragmentConstantData[this.colorTransformIndex] = rawData[0];
-                this.fragmentConstantData[this.colorTransformIndex + 1] = rawData[1];
-                this.fragmentConstantData[this.colorTransformIndex + 2] = rawData[2];
-                this.fragmentConstantData[this.colorTransformIndex + 3] = rawData[3];
-                this.fragmentConstantData[this.colorTransformIndex + 4] = rawData[4] / 255;
-                this.fragmentConstantData[this.colorTransformIndex + 5] = rawData[5] / 255;
-                this.fragmentConstantData[this.colorTransformIndex + 6] = rawData[6] / 255;
-                this.fragmentConstantData[this.colorTransformIndex + 7] = rawData[7] / 255;
-            }
-            else {
-                this.fragmentConstantData[this.colorTransformIndex] = 1;
-                this.fragmentConstantData[this.colorTransformIndex + 1] = 1;
-                this.fragmentConstantData[this.colorTransformIndex + 2] = 1;
-                this.fragmentConstantData[this.colorTransformIndex + 3] = 1;
-                this.fragmentConstantData[this.colorTransformIndex + 4] = 0;
-                this.fragmentConstantData[this.colorTransformIndex + 5] = 0;
-                this.fragmentConstantData[this.colorTransformIndex + 6] = 0;
-                this.fragmentConstantData[this.colorTransformIndex + 7] = 0;
-            }
-        }
-        if (this.sceneNormalMatrixIndex >= 0) {
-            this.sceneNormalMatrix.copyFrom(renderable.sourceEntity.inverseSceneTransform);
-        }
-        if (this.usesTangentSpace && this.cameraPositionIndex >= 0) {
-            renderable.sourceEntity.inverseSceneTransform.copyRawDataTo(this._pInverseSceneMatrix);
-            var pos = camera.scenePosition;
-            var x = pos.x;
-            var y = pos.y;
-            var z = pos.z;
-            this.vertexConstantData[this.cameraPositionIndex] = this._pInverseSceneMatrix[0] * x + this._pInverseSceneMatrix[4] * y + this._pInverseSceneMatrix[8] * z + this._pInverseSceneMatrix[12];
-            this.vertexConstantData[this.cameraPositionIndex + 1] = this._pInverseSceneMatrix[1] * x + this._pInverseSceneMatrix[5] * y + this._pInverseSceneMatrix[9] * z + this._pInverseSceneMatrix[13];
-            this.vertexConstantData[this.cameraPositionIndex + 2] = this._pInverseSceneMatrix[2] * x + this._pInverseSceneMatrix[6] * y + this._pInverseSceneMatrix[10] * z + this._pInverseSceneMatrix[14];
-        }
-    };
-    ShaderBase.prototype.invalidateProgram = function () {
-        this._invalidProgram = true;
-    };
-    ShaderBase.prototype.dispose = function () {
-        this._programData.dispose();
-        this._programData = null;
-    };
-    ShaderBase.prototype._updateProgram = function () {
-        this._invalidProgram = false;
-        var compiler = this.createCompiler(this._elementsClass, this._pass);
-        compiler.compile();
-        this._calcAnimationCode(compiler._pRegisterCache, compiler.shadedTarget, compiler._pSharedRegisters);
-        //initialise the required shader constants
-        this.initConstantData(compiler._pRegisterCache);
-        var programData = this._stage.getProgramData(this._animationVertexCode + compiler.vertexCode, compiler.fragmentCode + this._animationFragmentCode + compiler.postAnimationFragmentCode);
-        //check program data hasn't changed, keep count of program usages
-        if (this._programData != programData) {
-            if (this._programData)
-                this._programData.dispose();
-            this._programData = programData;
-            programData.usages++;
-        }
-    };
-    ShaderBase.prototype._calcAnimationCode = function (registerCache, shadedTarget, sharedRegisters) {
-        //reset code
-        this._animationVertexCode = "";
-        this._animationFragmentCode = "";
-        //check to see if GPU animation is used
-        if (this.usesAnimation) {
-            var animationSet = this._pass.animationSet;
-            this._animationVertexCode += animationSet.getAGALVertexCode(this, registerCache, sharedRegisters);
-            if (this.uvDependencies > 0 && !this.usesUVTransform)
-                this._animationVertexCode += animationSet.getAGALUVCode(this, registerCache, sharedRegisters);
-            if (this.usesFragmentAnimation)
-                this._animationFragmentCode += animationSet.getAGALFragmentCode(this, registerCache, shadedTarget);
-        }
-        else {
-            // simply write attributes to targets, do not animate them
-            // projection will pick up on targets[0] to do the projection
-            var len = sharedRegisters.animatableAttributes.length;
-            for (var i = 0; i < len; ++i)
-                this._animationVertexCode += "mov " + sharedRegisters.animationTargetRegisters[i] + ", " + sharedRegisters.animatableAttributes[i] + "\n";
-            if (this.uvDependencies > 0 && !this.usesUVTransform)
-                this._animationVertexCode += "mov " + sharedRegisters.uvTarget + "," + sharedRegisters.uvSource + "\n";
-        }
-    };
-    ShaderBase.prototype.setVertexConst = function (index, x, y, z, w) {
-        if (x === void 0) { x = 0; }
-        if (y === void 0) { y = 0; }
-        if (z === void 0) { z = 0; }
-        if (w === void 0) { w = 0; }
-        index *= 4;
-        this.vertexConstantData[index++] = x;
-        this.vertexConstantData[index++] = y;
-        this.vertexConstantData[index++] = z;
-        this.vertexConstantData[index] = w;
-    };
-    ShaderBase.prototype.setVertexConstFromArray = function (index, data) {
-        index *= 4;
-        for (var i = 0; i < data.length; i++)
-            this.vertexConstantData[index++] = data[i];
-    };
-    ShaderBase.prototype.setVertexConstFromMatrix = function (index, matrix) {
-        index *= 4;
-        var rawData = matrix._rawData;
-        this.vertexConstantData[index++] = rawData[0];
-        this.vertexConstantData[index++] = rawData[4];
-        this.vertexConstantData[index++] = rawData[8];
-        this.vertexConstantData[index++] = rawData[12];
-        this.vertexConstantData[index++] = rawData[1];
-        this.vertexConstantData[index++] = rawData[5];
-        this.vertexConstantData[index++] = rawData[9];
-        this.vertexConstantData[index++] = rawData[13];
-        this.vertexConstantData[index++] = rawData[2];
-        this.vertexConstantData[index++] = rawData[6];
-        this.vertexConstantData[index++] = rawData[10];
-        this.vertexConstantData[index++] = rawData[14];
-        this.vertexConstantData[index++] = rawData[3];
-        this.vertexConstantData[index++] = rawData[7];
-        this.vertexConstantData[index++] = rawData[11];
-        this.vertexConstantData[index] = rawData[15];
-    };
-    ShaderBase.prototype.setFragmentConst = function (index, x, y, z, w) {
-        if (x === void 0) { x = 0; }
-        if (y === void 0) { y = 0; }
-        if (z === void 0) { z = 0; }
-        if (w === void 0) { w = 0; }
-        index *= 4;
-        this.fragmentConstantData[index++] = x;
-        this.fragmentConstantData[index++] = y;
-        this.fragmentConstantData[index++] = z;
-        this.fragmentConstantData[index] = w;
-    };
-    return ShaderBase;
-}());
-ShaderBase._abstractionClassPool = new Object();
-
-var PassEvent = (function (_super) {
-    __extends(PassEvent, _super);
-    function PassEvent(type, pass) {
-        var _this = _super.call(this, type) || this;
-        _this._pass = pass;
-        return _this;
-    }
-    Object.defineProperty(PassEvent.prototype, "pass", {
-        /**
-         *
-         */
-        get: function () {
-            return this._pass;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     */
-    PassEvent.prototype.clone = function () {
-        return new PassEvent(this.type, this._pass);
-    };
-    return PassEvent;
-}(EventBase));
-/**
- *
- */
-PassEvent.INVALIDATE = "invalidatePass";
-
-/**
- *
- * @class away.pool.Passes
- */
-var GL_MaterialBase = (function (_super) {
-    __extends(GL_MaterialBase, _super);
-    function GL_MaterialBase(material, elementsClass, renderPool) {
-        var _this = _super.call(this, material, renderPool) || this;
-        _this.usages = 0;
-        _this._forceSeparateMVP = false;
-        _this._usesAnimation = true;
-        _this._invalidAnimation = true;
-        _this._invalidRender = true;
-        _this._invalidImages = true;
-        _this._passes = new Array();
-        _this._imageIndices = new Object();
-        _this._pRequiresBlending = false;
-        _this.images = new Array();
-        _this.samplers = new Array();
-        _this._onInvalidateAnimationDelegate = function (event) { return _this.onInvalidateAnimation(event); };
-        _this._onInvalidatePassesDelegate = function (event) { return _this.onInvalidatePasses(event); };
-        _this.materialID = material.id;
-        _this._material = material;
-        _this._elementsClass = elementsClass;
-        _this._stage = renderPool.stage;
-        _this._material.addEventListener(MaterialEvent.INVALIDATE_ANIMATION, _this._onInvalidateAnimationDelegate);
-        _this._material.addEventListener(MaterialEvent.INVALIDATE_PASSES, _this._onInvalidatePassesDelegate);
-        _this._onPassInvalidateDelegate = function (event) { return _this.onPassInvalidate(event); };
-        return _this;
-    }
-    Object.defineProperty(GL_MaterialBase.prototype, "requiresBlending", {
-        /**
-         * Indicates whether or not the renderable requires alpha blending during rendering.
-         */
-        get: function () {
-            return this._pRequiresBlending;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_MaterialBase.prototype, "renderOrderId", {
-        get: function () {
-            if (this._invalidAnimation)
-                this._updateAnimation();
-            return this._renderOrderId;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_MaterialBase.prototype, "passes", {
-        get: function () {
-            if (this._invalidAnimation)
-                this._updateAnimation();
-            return this._passes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_MaterialBase.prototype, "material", {
-        get: function () {
-            return this._material;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_MaterialBase.prototype, "numImages", {
-        get: function () {
-            if (this._invalidImages)
-                this._updateImages();
-            return this._numImages;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    GL_MaterialBase.prototype._iIncludeDependencies = function (shader) {
-        this._elementsClass._iIncludeDependencies(shader);
-        shader.alphaThreshold = this._material.alphaThreshold;
-        shader.useImageRect = this._material.imageRect;
-        shader.usesCurves = this._material.curves;
-        if (this._material instanceof MaterialBase) {
-            var material = this._material;
-            shader.useAlphaPremultiplied = material.alphaPremultiplied;
-            shader.useBothSides = material.bothSides;
-            shader.usesUVTransform = material.animateUVs;
-            shader.usesColorTransform = material.useColorTransform;
-        }
-    };
-    GL_MaterialBase.prototype.getImageIndex = function (texture, index) {
-        if (index === void 0) { index = 0; }
-        if (this._invalidImages)
-            this._updateImages();
-        return this._imageIndices[texture.id][index];
-    };
-    /**
-     *
-     */
-    GL_MaterialBase.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._material = null;
-        this._elementsClass = null;
-        this._stage = null;
-        var len = this._passes.length;
-        for (var i = 0; i < len; i++) {
-            this._passes[i].removeEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
-            this._passes[i].dispose();
-        }
-        this._passes = null;
-    };
-    /**
-     *
-     */
-    GL_MaterialBase.prototype.onInvalidate = function (event) {
-        _super.prototype.onInvalidate.call(this, event);
-        this._invalidRender = true;
-        this._invalidAnimation = true;
-    };
-    /**
-     *
-     */
-    GL_MaterialBase.prototype.onInvalidatePasses = function (event) {
-        var len = this._passes.length;
-        for (var i = 0; i < len; i++)
-            this._passes[i].invalidate();
-        this._invalidAnimation = true;
-        this._invalidImages = true;
-    };
-    /**
-     *
-     */
-    GL_MaterialBase.prototype.onInvalidateAnimation = function (event) {
-        this._invalidAnimation = true;
-    };
-    /**
-     *
-     * @param surface
-     */
-    GL_MaterialBase.prototype._updateAnimation = function () {
-        if (this._invalidRender)
-            this._pUpdateRender();
-        this._invalidAnimation = false;
-        var usesAnimation = this._getEnabledGPUAnimation();
-        var renderOrderId = 0;
-        var mult = 1;
-        var shader;
-        var len = this._passes.length;
-        for (var i = 0; i < len; i++) {
-            shader = this._passes[i].shader;
-            shader.usesAnimation = usesAnimation;
-            renderOrderId += shader.programData.id * mult;
-            mult *= 1000;
-        }
-        if (this._usesAnimation != usesAnimation) {
-            this._usesAnimation = usesAnimation;
-            var renderables = this._material.iOwners;
-            var numOwners = renderables.length;
-            for (var j = 0; j < numOwners; j++)
-                renderables[j].invalidateElements();
-        }
-        this._renderOrderId = renderOrderId;
-    };
-    GL_MaterialBase.prototype._updateImages = function () {
-        this._invalidImages = false;
-        var numTextures = this._material.getNumTextures();
-        var texture;
-        var numImages;
-        var images;
-        var image;
-        var sampler;
-        var index = 0;
-        for (var i = 0; i < numTextures; i++) {
-            texture = this._material.getTextureAt(i);
-            numImages = texture.getNumImages();
-            images = this._imageIndices[texture.id] = new Array();
-            for (var j = 0; j < numImages; j++) {
-                image = texture.getImageAt(j) || (this._material.style ? this._material.style.getImageAt(texture, j) : null) || DefaultMaterialManager.getDefaultImage2D();
-                this.images[index] = this._stage.getAbstraction(image);
-                sampler = texture.getSamplerAt(j) || (this._material.style ? this._material.style.getSamplerAt(texture, j) : null) || DefaultMaterialManager.getDefaultSampler();
-                this.samplers[index] = this._stage.getAbstraction(sampler);
-                images[j] = index++;
-            }
-        }
-        this._numImages = index;
-    };
-    /**
-     * Performs any processing that needs to occur before any of its passes are used.
-     *
-     * @private
-     */
-    GL_MaterialBase.prototype._pUpdateRender = function () {
-        this._invalidRender = false;
-        //overrride to update shader object properties
-    };
-    /**
-     * Removes a pass from the surface.
-     * @param pass The pass to be removed.
-     */
-    GL_MaterialBase.prototype._pRemovePass = function (pass) {
-        pass.removeEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
-        this._passes.splice(this._passes.indexOf(pass), 1);
-    };
-    /**
-     * Removes all passes from the surface
-     */
-    GL_MaterialBase.prototype._pClearPasses = function () {
-        var len = this._passes.length;
-        for (var i = 0; i < len; ++i)
-            this._passes[i].removeEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
-        this._passes.length = 0;
-    };
-    /**
-     * Adds a pass to the surface
-     * @param pass
-     */
-    GL_MaterialBase.prototype._pAddPass = function (pass) {
-        this._passes.push(pass);
-        pass.addEventListener(PassEvent.INVALIDATE, this._onPassInvalidateDelegate);
-    };
-    /**
-     * Listener for when a pass's shader code changes. It recalculates the render order id.
-     */
-    GL_MaterialBase.prototype.onPassInvalidate = function (event) {
-        this._invalidAnimation = true;
-    };
-    /**
-     * test if animation will be able to run on gpu BEFORE compiling materials
-     * test if the shader objects supports animating the animation set in the vertex shader
-     * if any object using this material fails to support accelerated animations for any of the shader objects,
-     * we should do everything on cpu (otherwise we have the cost of both gpu + cpu animations)
-     */
-    GL_MaterialBase.prototype._getEnabledGPUAnimation = function () {
-        if (this._material.animationSet) {
-            this._material.animationSet.resetGPUCompatibility();
-            var entities = this._material.iOwners;
-            var numOwners = entities.length;
-            var len = this._passes.length;
-            var shader;
-            for (var i = 0; i < len; i++) {
-                shader = this._passes[i].shader;
-                shader.usesAnimation = false;
-                for (var j = 0; j < numOwners; j++)
-                    if (entities[j].animator)
-                        entities[j].animator.testGPUCompatibility(shader);
-            }
-            return !this._material.animationSet.usesCPU;
-        }
-        return false;
-    };
-    return GL_MaterialBase;
-}(AbstractionBase));
-
-/**
- * GL_MaterialPassBase provides an abstract base class for material shader passes. A material pass constitutes at least
- * a render call per required renderable.
- */
-var GL_MaterialPassBase = (function (_super) {
-    __extends(GL_MaterialPassBase, _super);
-    function GL_MaterialPassBase() {
-        return _super.apply(this, arguments) || this;
-    }
-    Object.defineProperty(GL_MaterialPassBase.prototype, "shader", {
-        get: function () {
-            return this._shader;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_MaterialPassBase.prototype, "animationSet", {
-        get: function () {
-            return this._material.animationSet;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Marks the shader program as invalid, so it will be recompiled before the next render.
-     */
-    GL_MaterialPassBase.prototype.invalidate = function () {
-        this._shader.invalidateProgram();
-        this.dispatchEvent(new PassEvent(PassEvent.INVALIDATE, this));
-    };
-    GL_MaterialPassBase.prototype.dispose = function () {
-        if (this._shader) {
-            this._shader.dispose();
-            this._shader = null;
-        }
-    };
-    /**
-     * Renders the current pass. Before calling pass, activatePass needs to be called with the same index.
-     * @param pass The pass used to render the renderable.
-     * @param renderable The IRenderable object to draw.
-     * @param stage The Stage object used for rendering.
-     * @param entityCollector The EntityCollector object that contains the visible scene data.
-     * @param viewProjection The view-projection matrix used to project to the screen. This is not the same as
-     * camera.viewProjection as it includes the scaling factors when rendering to textures.
-     *
-     * @internal
-     */
-    GL_MaterialPassBase.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        this._shader._setRenderState(renderable, camera, viewProjection);
-    };
-    /**
-     * Sets the render state for the pass that is independent of the rendered object. This needs to be called before
-     * calling pass. Before activating a pass, the previously used pass needs to be deactivated.
-     * @param stage The Stage object which is currently used for rendering.
-     * @param camera The camera from which the scene is viewed.
-     * @private
-     */
-    GL_MaterialPassBase.prototype._iActivate = function (camera) {
-        this._shader._iActivate(camera);
-    };
-    /**
-     * Clears the render state for the pass. This needs to be called before activating another pass.
-     * @param stage The Stage used for rendering
-     *
-     * @private
-     */
-    GL_MaterialPassBase.prototype._iDeactivate = function () {
-        this._shader._iDeactivate();
-    };
-    GL_MaterialPassBase.prototype._iInitConstantData = function (shader) {
-    };
-    GL_MaterialPassBase.prototype._iGetPreLightingVertexCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    GL_MaterialPassBase.prototype._iGetPreLightingFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    GL_MaterialPassBase.prototype._iGetVertexCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    GL_MaterialPassBase.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    GL_MaterialPassBase.prototype._iGetNormalVertexCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    GL_MaterialPassBase.prototype._iGetNormalFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    return GL_MaterialPassBase;
-}(GL_MaterialBase));
-
-/**
  * GL_DepthMaterial forms an abstract base class for the default shaded materials provided by Stage,
  * using material methods to define their appearance.
  */
@@ -36891,9 +38272,9 @@ var GL_DepthMaterial = (function (_super) {
      * @param elementsClass
      * @param stage
      */
-    function GL_DepthMaterial(material, elementsClass, renderPool) {
-        var _this = _super.call(this, material, elementsClass, renderPool) || this;
-        _this._shader = new ShaderBase(elementsClass, _this, _this._stage);
+    function GL_DepthMaterial(material, materialPool) {
+        var _this = _super.call(this, material, materialPool) || this;
+        _this._shader = new ShaderBase(materialPool.elementsClass, _this, _this._stage);
         _this._pAddPass(_this);
         return _this;
     }
@@ -36954,14 +38335,106 @@ var GL_DepthMaterial = (function (_super) {
     /**
      * @inheritDoc
      */
-    GL_DepthMaterial.prototype._iActivate = function (camera) {
-        _super.prototype._iActivate.call(this, camera);
+    GL_DepthMaterial.prototype._iActivate = function (projection) {
+        _super.prototype._iActivate.call(this, projection);
         if (this._textureVO && this._shader.alphaThreshold > 0) {
             this._textureVO.activate(this);
             this._shader.fragmentConstantData[this._fragmentConstantsIndex + 8] = this._shader.alphaThreshold;
         }
     };
     return GL_DepthMaterial;
+}(GL_MaterialPassBase));
+
+/**
+ * DistanceRender is a pass that writes distance values to a depth map as a 32-bit value exploded over the 4 texture channels.
+ * This is used to render omnidirectional shadow maps.
+ */
+var GL_DistanceMaterial = (function (_super) {
+    __extends(GL_DistanceMaterial, _super);
+    /**
+     * Creates a new DistanceRender object.
+     *
+     * @param material The material to which this pass belongs.
+     */
+    function GL_DistanceMaterial(material, materialPool) {
+        var _this = _super.call(this, material, materialPool) || this;
+        _this._shader = new ShaderBase(materialPool.elementsClass, _this, _this._stage);
+        _this._pAddPass(_this);
+        return _this;
+    }
+    GL_DistanceMaterial.prototype.invalidate = function () {
+        _super.prototype.invalidate.call(this);
+        this._textureVO = this._material.getTextureAt(0) ? this._shader.getAbstraction(this._material.getTextureAt(0)) : null;
+    };
+    /**
+     * Initializes the unchanging constant data for this material.
+     */
+    GL_DistanceMaterial.prototype._iInitConstantData = function (shader) {
+        _super.prototype._iInitConstantData.call(this, shader);
+        var index = this._fragmentConstantsIndex;
+        var data = shader.fragmentConstantData;
+        data[index + 4] = 1.0 / 255.0;
+        data[index + 5] = 1.0 / 255.0;
+        data[index + 6] = 1.0 / 255.0;
+        data[index + 7] = 0.0;
+    };
+    GL_DistanceMaterial.prototype._iIncludeDependencies = function (shader) {
+        _super.prototype._iIncludeDependencies.call(this, shader);
+        shader.projectionDependencies++;
+        shader.viewDirDependencies++;
+        if (shader.alphaThreshold > 0)
+            shader.uvDependencies++;
+        if (shader.viewDirDependencies > 0)
+            shader.globalPosDependencies++;
+    };
+    /**
+     * @inheritDoc
+     */
+    GL_DistanceMaterial.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
+        var code;
+        var targetReg = sharedRegisters.shadedTarget;
+        var dataReg1 = registerCache.getFreeFragmentConstant();
+        var dataReg2 = registerCache.getFreeFragmentConstant();
+        this._fragmentConstantsIndex = dataReg1.index * 4;
+        var temp1 = registerCache.getFreeFragmentVectorTemp();
+        registerCache.addFragmentTempUsages(temp1, 1);
+        var temp2 = registerCache.getFreeFragmentVectorTemp();
+        registerCache.addFragmentTempUsages(temp2, 1);
+        // squared distance to view
+        code = "dp3 " + temp1 + ".z, " + sharedRegisters.viewDirVarying + ".xyz, " + sharedRegisters.viewDirVarying + ".xyz\n" +
+            "mul " + temp1 + ", " + dataReg1 + ", " + temp1 + ".z\n" +
+            "frc " + temp1 + ", " + temp1 + "\n" +
+            "mul " + temp2 + ", " + temp1 + ".yzww, " + dataReg2 + "\n";
+        if (this._textureVO && shader.alphaThreshold > 0) {
+            var albedo = registerCache.getFreeFragmentVectorTemp();
+            code += this._textureVO._iGetFragmentCode(albedo, registerCache, sharedRegisters, sharedRegisters.uvVarying);
+            var cutOffReg = registerCache.getFreeFragmentConstant();
+            code += "sub " + albedo + ".w, " + albedo + ".w, " + cutOffReg + ".x\n" +
+                "kil " + albedo + ".w\n";
+        }
+        code += "sub " + targetReg + ", " + temp1 + ", " + temp2 + "\n";
+        return code;
+    };
+    /**
+     * @inheritDoc
+     */
+    GL_DistanceMaterial.prototype._iActivate = function (projection) {
+        _super.prototype._iActivate.call(this, projection);
+        var f = projection.far;
+        f = 1 / (2 * f * f);
+        // sqrt(f*f+f*f) is largest possible distance for any frustum, so we need to divide by it. Rarely a tight fit, but with 32 bits precision, it's enough.
+        var index = this._fragmentConstantsIndex;
+        var data = this._shader.fragmentConstantData;
+        data[index] = 1.0 * f;
+        data[index + 1] = 255.0 * f;
+        data[index + 2] = 65025.0 * f;
+        data[index + 3] = 16581375.0 * f;
+        if (this._textureVO && this._shader.alphaThreshold > 0) {
+            this._textureVO.activate(this);
+            data[index + 8] = this._shader.alphaThreshold;
+        }
+    };
+    return GL_DistanceMaterial;
 }(GL_MaterialPassBase));
 
 var RendererEvent = (function (_super) {
@@ -36973,101 +38446,6 @@ var RendererEvent = (function (_super) {
 }(EventBase));
 RendererEvent.VIEWPORT_UPDATED = "viewportUpdated";
 RendererEvent.SCISSOR_UPDATED = "scissorUpdated";
-
-/**
- * @class away.pool.MaterialPool
- */
-var MaterialPool = (function () {
-    /**
-     * //TODO
-     *
-     * @param materialClassGL
-     */
-    function MaterialPool(elementsClass, stage, materialClassGL) {
-        if (materialClassGL === void 0) { materialClassGL = null; }
-        this._abstractionPool = new Object();
-        this._elementsClass = elementsClass;
-        this._stage = stage;
-        this._materialClassGL = materialClassGL;
-    }
-    Object.defineProperty(MaterialPool.prototype, "stage", {
-        get: function () {
-            return this._stage;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * //TODO
-     *
-     * @param elementsOwner
-     * @returns IElements
-     */
-    MaterialPool.prototype.getAbstraction = function (material) {
-        return (this._abstractionPool[material.id] || (this._abstractionPool[material.id] = new (this._materialClassGL || MaterialPool._abstractionClassPool[material.assetType])(material, this._elementsClass, this)));
-    };
-    /**
-     * //TODO
-     *
-     * @param elementsOwner
-     */
-    MaterialPool.prototype.clearAbstraction = function (material) {
-        delete this._abstractionPool[material.id];
-    };
-    /**
-     *
-     * @param imageObjectClass
-     */
-    MaterialPool.registerAbstraction = function (materialClassGL, assetClass) {
-        MaterialPool._abstractionClassPool[assetClass.assetType] = materialClassGL;
-    };
-    return MaterialPool;
-}());
-MaterialPool._abstractionClassPool = new Object();
-
-/**
- * @class away.pool.RenderablePool
- */
-var RenderablePool = (function (_super) {
-    __extends(RenderablePool, _super);
-    /**
-     * //TODO
-     *
-     * @param materialClassGL
-     */
-    function RenderablePool(entity, renderer) {
-        var _this = _super.call(this, entity, renderer) || this;
-        _this._abstractionPool = new Object();
-        _this._entity = entity;
-        _this._renderer = renderer;
-        return _this;
-    }
-    /**
-     * //TODO
-     *
-     * @param renderable
-     * @returns GL_RenderableBase
-     */
-    RenderablePool.prototype.getAbstraction = function (renderable) {
-        return this._abstractionPool[renderable.id] || (this._abstractionPool[renderable.id] = new RenderablePool._abstractionClassPool[renderable.assetType](renderable, this._entity, this._renderer, this));
-    };
-    /**
-     *
-     * @param renderable
-     */
-    RenderablePool.prototype.clearAbstraction = function (renderable) {
-        this._abstractionPool[renderable.id] = null;
-    };
-    /**
-     *
-     * @param imageObjectClass
-     */
-    RenderablePool.registerAbstraction = function (renderableClass, assetClass) {
-        RenderablePool._abstractionClassPool[assetClass.assetType] = renderableClass;
-    };
-    return RenderablePool;
-}(AbstractionBase));
-RenderablePool._abstractionClassPool = new Object();
 
 /**
  * @class away.sort.RenderableMergeSort
@@ -37221,15 +38599,12 @@ var RendererBase = (function (_super) {
     /**
      * Creates a new RendererBase object.
      */
-    function RendererBase(stage, materialClassGL, forceSoftware, profile, mode) {
+    function RendererBase(stage, forceSoftware, profile, mode) {
         if (stage === void 0) { stage = null; }
-        if (materialClassGL === void 0) { materialClassGL = null; }
         if (forceSoftware === void 0) { forceSoftware = false; }
         if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
         if (mode === void 0) { mode = exports.ContextMode.AUTO; }
         var _this = _super.call(this) || this;
-        _this._renderablePools = new Object();
-        _this._materialPools = new Object();
         _this._activeMasksConfig = new Array();
         _this._registeredMasks = new Array();
         _this._numUsedStreams = 0;
@@ -37245,7 +38620,6 @@ var RendererBase = (function (_super) {
         _this._backgroundAlpha = 1;
         _this.textureRatioX = 1;
         _this.textureRatioY = 1;
-        _this._pRttViewProjectionMatrix = new Matrix3D();
         _this._localPos = new Point();
         _this._globalPos = new Point();
         _this._pScissorRect = new Rectangle();
@@ -37262,7 +38636,6 @@ var RendererBase = (function (_super) {
         _this._pStage.addEventListener(StageEvent.CONTEXT_CREATED, _this._onContextUpdateDelegate);
         _this._pStage.addEventListener(StageEvent.CONTEXT_RECREATED, _this._onContextUpdateDelegate);
         _this._pStage.addEventListener(StageEvent.VIEWPORT_UPDATED, _this._onViewportUpdatedDelegate);
-        _this._materialClassGL = materialClassGL;
         /*
          if (_backgroundImageRenderer)
          _backgroundImageRenderer.stage = value;
@@ -37410,27 +38783,7 @@ var RendererBase = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    RendererBase.prototype.getAbstraction = function (entity) {
-        return this._renderablePools[entity.id] || (this._renderablePools[entity.id] = new RenderablePool(entity, this));
-    };
-    /**
-     *
-     * @param elementsClass
-     * @returns MaterialPool
-     */
-    RendererBase.prototype.clearAbstraction = function (entity) {
-        this._renderablePools[entity.id] = null;
-    };
-    /**
-     * //TODO
-     *
-     * @param elementsClass
-     * @returns MaterialPool
-     */
-    RendererBase.prototype.getMaterialPool = function (elements) {
-        return this._materialPools[elements.elementsType] || (this._materialPools[elements.elementsType] = new MaterialPool(elements.elementsClass, this._pStage, this._materialClassGL));
-    };
-    RendererBase.prototype.activatePass = function (pass, camera) {
+    RendererBase.prototype.activatePass = function (pass, projection) {
         //clear unused vertex streams
         var i;
         for (i = pass.shader.numUsedStreams; i < this._numUsedStreams; i++)
@@ -37449,7 +38802,7 @@ var RendererBase = (function (_super) {
         //set program data
         this._pContext.setProgram(programData.program);
         //activate shader object through pass
-        pass._iActivate(camera);
+        pass._iActivate(projection);
     };
     RendererBase.prototype.deactivatePass = function (pass) {
         //deactivate shader object through pass
@@ -37554,7 +38907,7 @@ var RendererBase = (function (_super) {
      * @param surfaceSelector The index of a CubeTexture's face to render to.
      * @param additionalClearMask Additional clear mask information, in case extra clear channels are to be omitted.
      */
-    RendererBase.prototype._iRender = function (camera, view, target, scissorRect, surfaceSelector) {
+    RendererBase.prototype._iRender = function (projection, view, target, scissorRect, surfaceSelector) {
         if (target === void 0) { target = null; }
         if (scissorRect === void 0) { scissorRect = null; }
         if (surfaceSelector === void 0) { surfaceSelector = 0; }
@@ -37565,11 +38918,10 @@ var RendererBase = (function (_super) {
         this._pBlendedRenderableHead = null;
         this._pOpaqueRenderableHead = null;
         this._pNumElements = 0;
-        this._cullPlanes = this._customCullPlanes ? this._customCullPlanes : camera.frustumPlanes;
+        this._cameraTransform = projection.transform.concatenatedMatrix3D;
+        this._cameraForward = projection.transform.forwardVector;
+        this._cullPlanes = this._customCullPlanes ? this._customCullPlanes : projection.frustumPlanes;
         this._numCullPlanes = this._cullPlanes ? this._cullPlanes.length : 0;
-        this._cameraPosition = camera.scenePosition;
-        this._cameraTransform = camera.sceneTransform;
-        this._cameraForward = camera.transform.forwardVector;
         RendererBase._iCollectionMark++;
         view.traversePartitions(this);
         //sort the resulting renderables
@@ -37577,9 +38929,9 @@ var RendererBase = (function (_super) {
             this._pOpaqueRenderableHead = this.renderableSorter.sortOpaqueRenderables(this._pOpaqueRenderableHead);
             this._pBlendedRenderableHead = this.renderableSorter.sortBlendedRenderables(this._pBlendedRenderableHead);
         }
-        this._pRttViewProjectionMatrix.copyFrom(camera.viewProjection);
-        this._pRttViewProjectionMatrix.appendScale(this.textureRatioX, this.textureRatioY, 1);
-        this.pExecuteRender(camera, view, target, scissorRect, surfaceSelector);
+        // this._pRttViewProjectionMatrix.copyFrom(projection.viewMatrix3D);
+        // this._pRttViewProjectionMatrix.appendScale(this.textureRatioX, this.textureRatioY, 1);
+        this.pExecuteRender(projection, view, target, scissorRect, surfaceSelector);
         // invalidate target (if target exists) to regenerate mipmaps (if required)
         if (target)
             target.invalidate();
@@ -37589,7 +38941,7 @@ var RendererBase = (function (_super) {
             this._pContext.setTextureAt(i, null);
         }
     };
-    RendererBase.prototype._iRenderCascades = function (camera, view, target, numCascades, scissorRects, cameras) {
+    RendererBase.prototype._iRenderCascades = function (projection, view, target, numCascades, scissorRects, projections) {
         this._pStage.setRenderTarget(target, true, 0);
         this._pContext.clear(1, 1, 1, 1, 1, 0);
         this._pContext.setBlendFactors(exports.ContextGLBlendFactor.ONE, exports.ContextGLBlendFactor.ZERO);
@@ -37613,7 +38965,7 @@ var RendererBase = (function (_super) {
      * @param surfaceSelector The index of a CubeTexture's face to render to.
      * @param additionalClearMask Additional clear mask information, in case extra clear channels are to be omitted.
      */
-    RendererBase.prototype.pExecuteRender = function (camera, view, target, scissorRect, surfaceSelector) {
+    RendererBase.prototype.pExecuteRender = function (projection, view, target, scissorRect, surfaceSelector) {
         if (target === void 0) { target = null; }
         if (scissorRect === void 0) { scissorRect = null; }
         if (surfaceSelector === void 0) { surfaceSelector = 0; }
@@ -37626,7 +38978,7 @@ var RendererBase = (function (_super) {
          _backgroundImageRenderer.render();
          */
         this._pContext.setBlendFactors(exports.ContextGLBlendFactor.ONE, exports.ContextGLBlendFactor.ZERO);
-        this.pDraw(camera);
+        this.pDraw(projection);
         //line required for correct rendering when using away3d with starling. DO NOT REMOVE UNLESS STARLING INTEGRATION IS RETESTED!
         //this._pContext.setDepthTest(false, ContextGLCompareMode.LESS_EQUAL); //oopsie
         if (!this.shareContext) {
@@ -37647,13 +38999,13 @@ var RendererBase = (function (_super) {
     /**
      * Performs the actual drawing of geometry to the target.
      */
-    RendererBase.prototype.pDraw = function (camera) {
+    RendererBase.prototype.pDraw = function (projection) {
         this._pContext.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
         if (this._disableColor)
             this._pContext.setColorMask(false, false, false, false);
-        this.drawRenderables(camera, this._pOpaqueRenderableHead);
+        this.drawRenderables(projection, this._pOpaqueRenderableHead);
         if (this._renderBlended)
-            this.drawRenderables(camera, this._pBlendedRenderableHead);
+            this.drawRenderables(projection, this._pBlendedRenderableHead);
         if (this._disableColor)
             this._pContext.setColorMask(true, true, true, true);
     };
@@ -37693,7 +39045,7 @@ var RendererBase = (function (_super) {
      *
      * @param renderables The renderables to draw.
      */
-    RendererBase.prototype.drawRenderables = function (camera, renderableGL) {
+    RendererBase.prototype.drawRenderables = function (projection, renderableGL) {
         var i;
         var len;
         var renderableGL2;
@@ -37733,7 +39085,7 @@ var RendererBase = (function (_super) {
                         this._pContext.setStencilReferenceValue(0);
                     }
                     else {
-                        this._renderMasks(camera, renderableGL.sourceEntity._iAssignedMasks());
+                        this._renderMasks(projection, renderableGL.sourceEntity._iAssignedMasks());
                     }
                     this._activeMasksDirty = false;
                 }
@@ -37742,14 +39094,14 @@ var RendererBase = (function (_super) {
                 for (i = 0; i < len; i++) {
                     renderableGL2 = renderableGL;
                     pass = passes[i];
-                    this.activatePass(pass, camera);
+                    this.activatePass(pass, projection);
                     do {
                         if (renderableGL2.maskId !== -1) {
                             if (i == 0)
                                 this._registerMask(renderableGL2);
                         }
                         else {
-                            renderableGL2._iRender(pass, camera, this._pRttViewProjectionMatrix);
+                            renderableGL2._iRender(pass, projection);
                         }
                         renderableGL2 = renderableGL2.next;
                     } while (renderableGL2 && renderableGL2.materialGL == materialGL && !(this._activeMasksDirty = this._checkMasksConfig(renderableGL2.masksConfig)));
@@ -37875,9 +39227,9 @@ var RendererBase = (function (_super) {
     };
     RendererBase.prototype.applyEntity = function (entity) {
         this._sourceEntity = entity;
-        this._renderablePool = this.getAbstraction(entity);
+        this._renderablePool = this._materialGroup.getRenderablePool(entity);
         // project onto camera's z-axis
-        this._zIndex = entity.zOffset + this._cameraPosition.subtract(entity.scenePosition).dotProduct(this._cameraForward);
+        this._zIndex = entity.zOffset + this._cameraTransform.position.subtract(entity.scenePosition).dotProduct(this._cameraForward);
         //save sceneTransform
         this._renderSceneTransform = entity.getRenderSceneTransform(this._cameraTransform);
         //collect renderables
@@ -37930,7 +39282,7 @@ var RendererBase = (function (_super) {
         //console.log("registerMask");
         this._registeredMasks.push(obj);
     };
-    RendererBase.prototype._renderMasks = function (camera, masks) {
+    RendererBase.prototype._renderMasks = function (projection, masks) {
         //var gl = this._pContext["_gl"];
         //f (!gl)
         //	return;
@@ -37970,7 +39322,7 @@ var RendererBase = (function (_super) {
                     //console.log("testing for " + mask["hierarchicalMaskID"] + ", " + mask.name);
                     if (renderableGL.maskId == mask.id) {
                         //console.log("Rendering hierarchicalMaskID " + mask["hierarchicalMaskID"]);
-                        this._drawMask(camera, renderableGL);
+                        this._drawMask(projection, renderableGL);
                     }
                 }
             }
@@ -37983,15 +39335,15 @@ var RendererBase = (function (_super) {
         this._pContext.setDepthTest(true, exports.ContextGLCompareMode.LESS_EQUAL);
         //this._stage.setRenderTarget(oldRenderTarget);
     };
-    RendererBase.prototype._drawMask = function (camera, renderableGL) {
+    RendererBase.prototype._drawMask = function (projection, renderableGL) {
         var materialGL = renderableGL.materialGL;
         var passes = materialGL.passes;
         var len = passes.length;
         var pass = passes[len - 1];
-        this.activatePass(pass, camera);
+        this.activatePass(pass, projection);
         this._pContext.setDepthTest(false, exports.ContextGLCompareMode.LESS_EQUAL); //TODO: setup so as not to override activate
         // only render last pass for now
-        renderableGL._iRender(pass, camera, this._pRttViewProjectionMatrix);
+        renderableGL._iRender(pass, projection);
         this.deactivatePass(pass);
     };
     RendererBase.prototype._checkMasksConfig = function (masksConfig) {
@@ -38019,7 +39371,6 @@ var RendererBase = (function (_super) {
     return RendererBase;
 }(TraverserBase));
 RendererBase._iCollectionMark = 0;
-RendererBase._abstractionClassPool = new Object();
 
 /**
  * The DepthRenderer class renders 32-bit depth information encoded as RGBA
@@ -38035,7 +39386,8 @@ var DepthRenderer = (function (_super) {
      */
     function DepthRenderer(stage) {
         if (stage === void 0) { stage = null; }
-        var _this = _super.call(this, stage, GL_DepthMaterial) || this;
+        var _this = _super.call(this, stage) || this;
+        _this._materialGroup = new MaterialGroupBase(_this._pStage, DepthRenderer._abstractionClassPool);
         _this._iBackgroundR = 1;
         _this._iBackgroundG = 1;
         _this._iBackgroundB = 1;
@@ -38054,98 +39406,7 @@ var DepthRenderer = (function (_super) {
     };
     return DepthRenderer;
 }(RendererBase));
-
-/**
- * DistanceRender is a pass that writes distance values to a depth map as a 32-bit value exploded over the 4 texture channels.
- * This is used to render omnidirectional shadow maps.
- */
-var GL_DistanceMaterial = (function (_super) {
-    __extends(GL_DistanceMaterial, _super);
-    /**
-     * Creates a new DistanceRender object.
-     *
-     * @param material The material to which this pass belongs.
-     */
-    function GL_DistanceMaterial(material, elementsClass, renderPool) {
-        var _this = _super.call(this, material, elementsClass, renderPool) || this;
-        _this._shader = new ShaderBase(elementsClass, _this, _this._stage);
-        _this._pAddPass(_this);
-        return _this;
-    }
-    GL_DistanceMaterial.prototype.invalidate = function () {
-        _super.prototype.invalidate.call(this);
-        this._textureVO = this._material.getTextureAt(0) ? this._shader.getAbstraction(this._material.getTextureAt(0)) : null;
-    };
-    /**
-     * Initializes the unchanging constant data for this material.
-     */
-    GL_DistanceMaterial.prototype._iInitConstantData = function (shader) {
-        _super.prototype._iInitConstantData.call(this, shader);
-        var index = this._fragmentConstantsIndex;
-        var data = shader.fragmentConstantData;
-        data[index + 4] = 1.0 / 255.0;
-        data[index + 5] = 1.0 / 255.0;
-        data[index + 6] = 1.0 / 255.0;
-        data[index + 7] = 0.0;
-    };
-    GL_DistanceMaterial.prototype._iIncludeDependencies = function (shader) {
-        _super.prototype._iIncludeDependencies.call(this, shader);
-        shader.projectionDependencies++;
-        shader.viewDirDependencies++;
-        if (shader.alphaThreshold > 0)
-            shader.uvDependencies++;
-        if (shader.viewDirDependencies > 0)
-            shader.globalPosDependencies++;
-    };
-    /**
-     * @inheritDoc
-     */
-    GL_DistanceMaterial.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
-        var code;
-        var targetReg = sharedRegisters.shadedTarget;
-        var dataReg1 = registerCache.getFreeFragmentConstant();
-        var dataReg2 = registerCache.getFreeFragmentConstant();
-        this._fragmentConstantsIndex = dataReg1.index * 4;
-        var temp1 = registerCache.getFreeFragmentVectorTemp();
-        registerCache.addFragmentTempUsages(temp1, 1);
-        var temp2 = registerCache.getFreeFragmentVectorTemp();
-        registerCache.addFragmentTempUsages(temp2, 1);
-        // squared distance to view
-        code = "dp3 " + temp1 + ".z, " + sharedRegisters.viewDirVarying + ".xyz, " + sharedRegisters.viewDirVarying + ".xyz\n" +
-            "mul " + temp1 + ", " + dataReg1 + ", " + temp1 + ".z\n" +
-            "frc " + temp1 + ", " + temp1 + "\n" +
-            "mul " + temp2 + ", " + temp1 + ".yzww, " + dataReg2 + "\n";
-        if (this._textureVO && shader.alphaThreshold > 0) {
-            var albedo = registerCache.getFreeFragmentVectorTemp();
-            code += this._textureVO._iGetFragmentCode(albedo, registerCache, sharedRegisters, sharedRegisters.uvVarying);
-            var cutOffReg = registerCache.getFreeFragmentConstant();
-            code += "sub " + albedo + ".w, " + albedo + ".w, " + cutOffReg + ".x\n" +
-                "kil " + albedo + ".w\n";
-        }
-        code += "sub " + targetReg + ", " + temp1 + ", " + temp2 + "\n";
-        return code;
-    };
-    /**
-     * @inheritDoc
-     */
-    GL_DistanceMaterial.prototype._iActivate = function (camera) {
-        _super.prototype._iActivate.call(this, camera);
-        var f = camera.projection.far;
-        f = 1 / (2 * f * f);
-        // sqrt(f*f+f*f) is largest possible distance for any frustum, so we need to divide by it. Rarely a tight fit, but with 32 bits precision, it's enough.
-        var index = this._fragmentConstantsIndex;
-        var data = this._shader.fragmentConstantData;
-        data[index] = 1.0 * f;
-        data[index + 1] = 255.0 * f;
-        data[index + 2] = 65025.0 * f;
-        data[index + 3] = 16581375.0 * f;
-        if (this._textureVO && this._shader.alphaThreshold > 0) {
-            this._textureVO.activate(this);
-            data[index + 8] = this._shader.alphaThreshold;
-        }
-    };
-    return GL_DistanceMaterial;
-}(GL_MaterialPassBase));
+DepthRenderer._abstractionClassPool = Object();
 
 /**
  * The DistanceRenderer class renders 32-bit depth information encoded as RGBA
@@ -38161,7 +39422,8 @@ var DistanceRenderer = (function (_super) {
      */
     function DistanceRenderer(stage) {
         if (stage === void 0) { stage = null; }
-        var _this = _super.call(this, stage, GL_DistanceMaterial) || this;
+        var _this = _super.call(this, stage) || this;
+        _this._materialGroup = new MaterialGroupBase(_this._pStage, DistanceRenderer._abstractionClassPool);
         _this._iBackgroundR = 1;
         _this._iBackgroundG = 1;
         _this._iBackgroundB = 1;
@@ -38180,6 +39442,28 @@ var DistanceRenderer = (function (_super) {
     };
     return DistanceRenderer;
 }(RendererBase));
+DistanceRenderer._abstractionClassPool = Object();
+
+/**
+ * @class away.pool.DefaultMaterialGroup
+ */
+var DefaultMaterialGroup = (function (_super) {
+    __extends(DefaultMaterialGroup, _super);
+    function DefaultMaterialGroup(stage) {
+        return _super.call(this, stage, DefaultMaterialGroup._abstractionClassPool) || this;
+    }
+    /**
+     *
+     * @param imageObjectClass
+     */
+    DefaultMaterialGroup.registerAbstraction = function (materialClassGL, assetClass) {
+        DefaultMaterialGroup._abstractionClassPool[assetClass.assetType] = materialClassGL;
+        DepthRenderer._abstractionClassPool[assetClass.assetType] = GL_DepthMaterial;
+        DistanceRenderer._abstractionClassPool[assetClass.assetType] = GL_DistanceMaterial;
+    };
+    return DefaultMaterialGroup;
+}(MaterialGroupBase));
+DefaultMaterialGroup._abstractionClassPool = new Object();
 
 /**
  * @class away.render.Filter3DRenderer
@@ -38347,13 +39631,14 @@ var DefaultRenderer = (function (_super) {
         if (forceSoftware === void 0) { forceSoftware = false; }
         if (profile === void 0) { profile = exports.ContextGLProfile.BASELINE; }
         if (mode === void 0) { mode = exports.ContextMode.AUTO; }
-        var _this = _super.call(this, stage, null, forceSoftware, profile, mode) || this;
+        var _this = _super.call(this, stage, forceSoftware, profile, mode) || this;
         _this._antiAlias = 0;
         _this._directionalLights = new Array();
         _this._pointLights = new Array();
         _this._lightProbes = new Array();
         if (stage)
             _this.shareContext = true;
+        _this._materialGroup = new DefaultMaterialGroup(_this._pStage);
         _this._pRttBufferManager = RTTBufferManager.getInstance(_this._pStage);
         _this._depthRenderer = new DepthRenderer(_this._pStage);
         _this._distanceRenderer = new DistanceRenderer(_this._pStage);
@@ -38477,28 +39762,28 @@ var DefaultRenderer = (function (_super) {
         this._pointLights.length = 0;
         this._lightProbes.length = 0;
         if (this._pFilter3DRenderer && this._pContext) {
-            this._iRender(view.camera, view, this._pFilter3DRenderer.getMainInputTexture(this._pStage), this._pFilter3DRenderer.renderToTextureRect);
+            this._iRender(view.camera.projection, view, this._pFilter3DRenderer.getMainInputTexture(this._pStage), this._pFilter3DRenderer.renderToTextureRect);
             this._pFilter3DRenderer.render(this._pStage, view.camera, this._pDepthRender);
         }
         else {
             if (this.shareContext)
-                this._iRender(view.camera, view, null, this._pScissorRect);
+                this._iRender(view.camera.projection, view, null, this._pScissorRect);
             else
-                this._iRender(view.camera, view);
+                this._iRender(view.camera.projection, view);
         }
         if (!this.shareContext && this._pContext)
             this._pContext.present();
         // register that a view has been rendered
         this._pStage.bufferClear = false;
     };
-    DefaultRenderer.prototype.pExecuteRender = function (camera, view, target, scissorRect, surfaceSelector) {
+    DefaultRenderer.prototype.pExecuteRender = function (projection, view, target, scissorRect, surfaceSelector) {
         if (target === void 0) { target = null; }
         if (scissorRect === void 0) { scissorRect = null; }
         if (surfaceSelector === void 0) { surfaceSelector = 0; }
-        this.updateLights(camera, view);
-        _super.prototype.pExecuteRender.call(this, camera, view, target, scissorRect, surfaceSelector);
+        this.updateLights(projection, view);
+        _super.prototype.pExecuteRender.call(this, projection, view, target, scissorRect, surfaceSelector);
     };
-    DefaultRenderer.prototype.updateLights = function (camera, view) {
+    DefaultRenderer.prototype.updateLights = function (projection, view) {
         var len, i;
         var light;
         var shadowMapper;
@@ -38558,12 +39843,12 @@ var DefaultRenderer = (function (_super) {
         if (this._pFilter3DRenderer) {
             this._depthRenderer.textureRatioX = this._pRttBufferManager.textureRatioX;
             this._depthRenderer.textureRatioY = this._pRttBufferManager.textureRatioY;
-            this._depthRenderer._iRender(view.camera, view, this._pFilter3DRenderer.getMainInputTexture(this._pStage), this._pRttBufferManager.renderToTextureRect);
+            this._depthRenderer._iRender(view.camera.projection, view, this._pFilter3DRenderer.getMainInputTexture(this._pStage), this._pRttBufferManager.renderToTextureRect);
         }
         else {
             this._depthRenderer.textureRatioX = 1;
             this._depthRenderer.textureRatioY = 1;
-            this._depthRenderer._iRender(view.camera, view);
+            this._depthRenderer._iRender(view.camera.projection, view);
         }
         this._depthRenderer.disableColor = false;
     };
@@ -38575,7 +39860,7 @@ var DefaultRenderer = (function (_super) {
             this.initDepthTexture(this._pStage.context);
         this._depthRenderer.textureRatioX = this._pRttBufferManager.textureRatioX;
         this._depthRenderer.textureRatioY = this._pRttBufferManager.textureRatioY;
-        this._depthRenderer._iRender(view.camera, view, this._pDepthRender);
+        this._depthRenderer._iRender(view.camera.projection, view, this._pDepthRender);
     };
     /**
      * Updates the backbuffer dimensions.
@@ -38602,248 +39887,6 @@ var DefaultRenderer = (function (_super) {
     };
     return DefaultRenderer;
 }(RendererBase));
-
-/**
- *
- * @class away.pool.GL_ElementsBaseBase
- */
-var GL_ElementsBase = (function (_super) {
-    __extends(GL_ElementsBase, _super);
-    function GL_ElementsBase(elements, stage) {
-        var _this = _super.call(this, elements, stage) || this;
-        _this.usages = 0;
-        _this._vertices = new Object();
-        _this._verticesUpdated = new Object();
-        _this._indexMappings = Array();
-        _this._numIndices = 0;
-        _this._elements = elements;
-        _this._stage = stage;
-        _this._onInvalidateIndicesDelegate = function (event) { return _this._onInvalidateIndices(event); };
-        _this._onClearIndicesDelegate = function (event) { return _this._onClearIndices(event); };
-        _this._onInvalidateVerticesDelegate = function (event) { return _this._onInvalidateVertices(event); };
-        _this._onClearVerticesDelegate = function (event) { return _this._onClearVertices(event); };
-        _this._elements.addEventListener(ElementsEvent.CLEAR_INDICES, _this._onClearIndicesDelegate);
-        _this._elements.addEventListener(ElementsEvent.INVALIDATE_INDICES, _this._onInvalidateIndicesDelegate);
-        _this._elements.addEventListener(ElementsEvent.CLEAR_VERTICES, _this._onClearVerticesDelegate);
-        _this._elements.addEventListener(ElementsEvent.INVALIDATE_VERTICES, _this._onInvalidateVerticesDelegate);
-        return _this;
-    }
-    Object.defineProperty(GL_ElementsBase.prototype, "elementsType", {
-        get: function () {
-            throw new AbstractMethodError();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_ElementsBase.prototype, "elementsClass", {
-        get: function () {
-            throw new AbstractMethodError();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_ElementsBase.prototype, "elements", {
-        get: function () {
-            return this._elements;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_ElementsBase.prototype, "numIndices", {
-        /**
-         *
-         */
-        get: function () {
-            return this._numIndices;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_ElementsBase.prototype, "numVertices", {
-        /**
-         *
-         */
-        get: function () {
-            return this._numVertices;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     */
-    GL_ElementsBase.prototype.getIndexMappings = function () {
-        if (!this._indicesUpdated)
-            this._updateIndices();
-        return this._indexMappings;
-    };
-    /**
-     *
-     */
-    GL_ElementsBase.prototype.getIndexBufferGL = function () {
-        if (!this._indicesUpdated)
-            this._updateIndices();
-        return this._indices;
-    };
-    /**
-     *
-     */
-    GL_ElementsBase.prototype.getVertexBufferGL = function (attributesView) {
-        //first check if indices need updating which may affect vertices
-        if (!this._indicesUpdated)
-            this._updateIndices();
-        var bufferId = attributesView.attributesBuffer.id;
-        if (!this._verticesUpdated[bufferId])
-            this._updateVertices(attributesView);
-        return this._vertices[bufferId];
-    };
-    /**
-     *
-     */
-    GL_ElementsBase.prototype.activateVertexBufferVO = function (index, attributesView, dimensions, offset) {
-        if (dimensions === void 0) { dimensions = 0; }
-        if (offset === void 0) { offset = 0; }
-        this.getVertexBufferGL(attributesView).activate(index, attributesView.size, dimensions || attributesView.dimensions, attributesView.offset + offset, attributesView.unsigned);
-    };
-    /**
-     *
-     */
-    GL_ElementsBase.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._elements.removeEventListener(ElementsEvent.CLEAR_INDICES, this._onClearIndicesDelegate);
-        this._elements.removeEventListener(ElementsEvent.INVALIDATE_INDICES, this._onInvalidateIndicesDelegate);
-        this._elements.removeEventListener(ElementsEvent.CLEAR_VERTICES, this._onClearVerticesDelegate);
-        this._elements.removeEventListener(ElementsEvent.INVALIDATE_VERTICES, this._onInvalidateVerticesDelegate);
-        this._elements = null;
-        if (this._overflow) {
-            this._overflow.onClear(event);
-            this._overflow = null;
-        }
-    };
-    GL_ElementsBase.prototype._setRenderState = function (renderable, shader, camera, viewProjection) {
-        if (!this._verticesUpdated)
-            this._updateIndices();
-        //TODO replace overflow system with something sensible
-        //this._render(renderable, camera, viewProjection);
-        //
-        // if (this._overflow)
-        // 	this._overflow._iRender(renderable, camera, viewProjection);
-    };
-    GL_ElementsBase.prototype.draw = function (renderable, shader, camera, viewProjection, count, offset) {
-        throw new AbstractMethodError();
-    };
-    /**
-     * //TODO
-     *
-     * @private
-     */
-    GL_ElementsBase.prototype._updateIndices = function (indexOffset) {
-        if (indexOffset === void 0) { indexOffset = 0; }
-        var indices = this._elements.indices;
-        if (indices) {
-            this._indices = this._stage.getAbstraction(ElementsUtils.getSubIndices(indices, this._elements.numVertices, this._indexMappings, indexOffset));
-            this._numIndices = this._indices._attributesBuffer.count * indices.dimensions;
-        }
-        else {
-            this._indices = null;
-            this._numIndices = 0;
-            this._indexMappings = Array();
-        }
-        indexOffset += this._numIndices;
-        //check if there is more to split
-        if (indices && indexOffset < indices.count * this._elements.indices.dimensions) {
-            if (!this._overflow)
-                this._overflow = this._pGetOverflowElements();
-            this._overflow._updateIndices(indexOffset);
-        }
-        else if (this._overflow) {
-            this._overflow.onClear(new AssetEvent(AssetEvent.CLEAR, this._elements));
-            this._overflow = null;
-        }
-        this._indicesUpdated = true;
-        //invalidate vertices if index mappings exist
-        if (this._indexMappings.length)
-            for (var key in this._verticesUpdated)
-                this._verticesUpdated[key] = false;
-    };
-    /**
-     * //TODO
-     *
-     * @param attributesView
-     * @private
-     */
-    GL_ElementsBase.prototype._updateVertices = function (attributesView) {
-        this._numVertices = this._elements.numVertices;
-        var bufferId = attributesView.attributesBuffer.id;
-        this._vertices[bufferId] = this._stage.getAbstraction(ElementsUtils.getSubVertices(attributesView.attributesBuffer, this._indexMappings));
-        this._verticesUpdated[bufferId] = true;
-    };
-    /**
-     * //TODO
-     *
-     * @param event
-     * @private
-     */
-    GL_ElementsBase.prototype._onInvalidateIndices = function (event) {
-        if (!event.attributesView)
-            return;
-        this._indicesUpdated = false;
-    };
-    /**
-     * //TODO
-     *
-     * @param event
-     * @private
-     */
-    GL_ElementsBase.prototype._onClearIndices = function (event) {
-        if (!event.attributesView)
-            return;
-        this._indices.onClear(new AssetEvent(AssetEvent.CLEAR, event.attributesView));
-        this._indices = null;
-    };
-    /**
-     * //TODO
-     *
-     * @param event
-     * @private
-     */
-    GL_ElementsBase.prototype._onInvalidateVertices = function (event) {
-        if (!event.attributesView)
-            return;
-        var bufferId = event.attributesView.attributesBuffer.id;
-        this._verticesUpdated[bufferId] = false;
-    };
-    /**
-     * //TODO
-     *
-     * @param event
-     * @private
-     */
-    GL_ElementsBase.prototype._onClearVertices = function (event) {
-        if (!event.attributesView)
-            return;
-        var bufferId = event.attributesView.attributesBuffer.id;
-        if (this._vertices[bufferId]) {
-            this._vertices[bufferId].onClear(new AssetEvent(AssetEvent.CLEAR, event.attributesView));
-            delete this._vertices[bufferId];
-            delete this._verticesUpdated[bufferId];
-        }
-    };
-    /**
-     * //TODO
-     *
-     * @param pool
-     * @param renderable
-     * @param level
-     * @param indexOffset
-     * @returns {away.pool.GL_ShapeRenderable}
-     * @protected
-     */
-    GL_ElementsBase.prototype._pGetOverflowElements = function () {
-        throw new AbstractMethodError();
-    };
-    return GL_ElementsBase;
-}(AbstractionBase));
 
 /**
  *
@@ -38957,8 +40000,8 @@ var GL_LineElements = (function (_super) {
         _super.prototype.onClear.call(this, event);
         this._lineElements = null;
     };
-    GL_LineElements.prototype._setRenderState = function (renderable, shader, camera, viewProjection) {
-        _super.prototype._setRenderState.call(this, renderable, shader, camera, viewProjection);
+    GL_LineElements.prototype._setRenderState = function (renderable, shader, projection) {
+        _super.prototype._setRenderState.call(this, renderable, shader, projection);
         if (shader.colorBufferIndex >= 0)
             this.activateVertexBufferVO(shader.colorBufferIndex, this._lineElements.colors);
         this.activateVertexBufferVO(0, this._lineElements.positions, 3);
@@ -38971,16 +40014,16 @@ var GL_LineElements = (function (_super) {
         shader.vertexConstantData[10 + 16] = -1;
         shader.vertexConstantData[12 + 16] = this._thickness / ((this._stage.scissorRect) ? Math.min(this._stage.scissorRect.width, this._stage.scissorRect.height) : Math.min(this._stage.width, this._stage.height));
         shader.vertexConstantData[13 + 16] = 1 / 255;
-        shader.vertexConstantData[14 + 16] = camera.projection.near;
+        shader.vertexConstantData[14 + 16] = projection.near;
         var context = this._stage.context;
     };
-    GL_LineElements.prototype.draw = function (renderable, shader, camera, viewProjection, count, offset) {
+    GL_LineElements.prototype.draw = function (renderable, shader, projection, count, offset) {
         var context = this._stage.context;
         // projection matrix
-        shader.viewMatrix.copyFrom(camera.projection.matrix, true);
+        shader.viewMatrix.copyFrom(projection.frustumMatrix3D, true);
         var matrix3D = Matrix3D.CALCULATION_MATRIX;
-        matrix3D.copyFrom(renderable.sourceEntity.sceneTransform);
-        matrix3D.append(camera.inverseSceneTransform);
+        matrix3D.copyFrom(renderable.sourceEntity.transform.concatenatedMatrix3D);
+        matrix3D.append(projection.transform.inverseConcatenatedMatrix3D);
         shader.sceneMatrix.copyFrom(matrix3D, true);
         context.setProgramConstantsFromArray(exports.ContextGLProgramType.VERTEX, shader.vertexConstantData);
         if (this._indices)
@@ -39004,123 +40047,6 @@ var GL_LineElements = (function (_super) {
     return GL_LineElements;
 }(GL_ElementsBase));
 GL_LineElements.elementsType = "[elements Line]";
-
-/**
- *
- * @class away.pool.GL_TriangleElements
- */
-var GL_TriangleElements = (function (_super) {
-    __extends(GL_TriangleElements, _super);
-    function GL_TriangleElements(triangleElements, stage) {
-        var _this = _super.call(this, triangleElements, stage) || this;
-        _this._triangleElements = triangleElements;
-        return _this;
-    }
-    Object.defineProperty(GL_TriangleElements.prototype, "elementsType", {
-        get: function () {
-            return GL_TriangleElements.elementsType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_TriangleElements.prototype, "elementsClass", {
-        get: function () {
-            return GL_TriangleElements;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    GL_TriangleElements._iIncludeDependencies = function (shader) {
-    };
-    GL_TriangleElements._iGetVertexCode = function (shader, registerCache, sharedRegisters) {
-        var code = "";
-        //get the projection coordinates
-        var position = (shader.globalPosDependencies > 0) ? sharedRegisters.globalPositionVertex : sharedRegisters.animatedPosition;
-        //reserving vertex constants for projection matrix
-        var viewMatrixReg = registerCache.getFreeVertexConstant();
-        registerCache.getFreeVertexConstant();
-        registerCache.getFreeVertexConstant();
-        registerCache.getFreeVertexConstant();
-        shader.viewMatrixIndex = viewMatrixReg.index * 4;
-        if (shader.projectionDependencies > 0) {
-            sharedRegisters.projectionFragment = registerCache.getFreeVarying();
-            var temp = registerCache.getFreeVertexVectorTemp();
-            code += "m44 " + temp + ", " + position + ", " + viewMatrixReg + "\n" +
-                "mov " + sharedRegisters.projectionFragment + ", " + temp + "\n" +
-                "mov op, " + temp + "\n";
-        }
-        else {
-            code += "m44 op, " + position + ", " + viewMatrixReg + "\n";
-        }
-        return code;
-    };
-    GL_TriangleElements._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    GL_TriangleElements.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._triangleElements = null;
-    };
-    GL_TriangleElements.prototype._setRenderState = function (renderable, shader, camera, viewProjection) {
-        _super.prototype._setRenderState.call(this, renderable, shader, camera, viewProjection);
-        //set buffers
-        //TODO: find a better way to update a concatenated buffer when autoderiving
-        if (shader.normalIndex >= 0 && this._triangleElements.autoDeriveNormals)
-            this._triangleElements.normals;
-        if (shader.tangentIndex >= 0 && this._triangleElements.autoDeriveTangents)
-            this._triangleElements.tangents;
-        if (shader.curvesIndex >= 0)
-            this.activateVertexBufferVO(shader.curvesIndex, this._triangleElements.getCustomAtributes("curves"));
-        if (shader.uvIndex >= 0)
-            this.activateVertexBufferVO(shader.uvIndex, this._triangleElements.uvs || this._triangleElements.positions);
-        if (shader.secondaryUVIndex >= 0)
-            this.activateVertexBufferVO(shader.secondaryUVIndex, this._triangleElements.getCustomAtributes("secondaryUVs") || this._triangleElements.uvs || this._triangleElements.positions);
-        if (shader.normalIndex >= 0)
-            this.activateVertexBufferVO(shader.normalIndex, this._triangleElements.normals);
-        if (shader.tangentIndex >= 0)
-            this.activateVertexBufferVO(shader.tangentIndex, this._triangleElements.tangents);
-        if (shader.jointIndexIndex >= 0)
-            this.activateVertexBufferVO(shader.jointIndexIndex, this._triangleElements.jointIndices);
-        if (shader.jointWeightIndex >= 0)
-            this.activateVertexBufferVO(shader.jointIndexIndex, this._triangleElements.jointWeights);
-        this.activateVertexBufferVO(0, this._triangleElements.positions);
-    };
-    GL_TriangleElements.prototype.draw = function (renderable, shader, camera, viewProjection, count, offset) {
-        //set constants
-        if (shader.sceneMatrixIndex >= 0) {
-            shader.sceneMatrix.copyFrom(renderable.renderSceneTransform, true);
-            shader.viewMatrix.copyFrom(viewProjection, true);
-        }
-        else {
-            var matrix3D = Matrix3D.CALCULATION_MATRIX;
-            matrix3D.copyFrom(renderable.renderSceneTransform);
-            matrix3D.append(viewProjection);
-            shader.viewMatrix.copyFrom(matrix3D, true);
-        }
-        var context = this._stage.context;
-        context.setProgramConstantsFromArray(exports.ContextGLProgramType.VERTEX, shader.vertexConstantData);
-        context.setProgramConstantsFromArray(exports.ContextGLProgramType.FRAGMENT, shader.fragmentConstantData);
-        if (this._indices)
-            this.getIndexBufferGL().draw(exports.ContextGLDrawMode.TRIANGLES, offset * 3, count * 3 || this.numIndices);
-        else
-            this._stage.context.drawVertices(exports.ContextGLDrawMode.TRIANGLES, offset, count || this.numVertices);
-    };
-    /**
-     * //TODO
-     *
-     * @param pool
-     * @param renderable
-     * @param level
-     * @param indexOffset
-     * @returns {away.pool.GL_ShapeRenderable}
-     * @protected
-     */
-    GL_TriangleElements.prototype._pGetOverflowElements = function () {
-        return new GL_TriangleElements(this._triangleElements, this._stage);
-    };
-    return GL_TriangleElements;
-}(GL_ElementsBase));
-GL_TriangleElements.elementsType = "[elements Triangle]";
 
 /**
  *
@@ -39182,19 +40108,18 @@ var GL_SkyboxElements = (function (_super) {
     GL_SkyboxElements._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
         return "";
     };
-    GL_SkyboxElements.prototype.draw = function (renderable, shader, camera, viewProjection, count, offset) {
+    GL_SkyboxElements.prototype.draw = function (renderable, shader, projection, count, offset) {
         var index = shader.scenePositionIndex;
-        var pos = camera.scenePosition;
-        shader.vertexConstantData[index++] = 2 * pos.x;
-        shader.vertexConstantData[index++] = 2 * pos.y;
-        shader.vertexConstantData[index++] = 2 * pos.z;
+        var camPos = projection.transform.concatenatedMatrix3D.position;
+        shader.vertexConstantData[index++] = 2 * camPos.x;
+        shader.vertexConstantData[index++] = 2 * camPos.y;
+        shader.vertexConstantData[index++] = 2 * camPos.z;
         shader.vertexConstantData[index++] = 1;
-        shader.vertexConstantData[index++] = shader.vertexConstantData[index++] = shader.vertexConstantData[index++] = camera.projection.far / Math.sqrt(3);
+        shader.vertexConstantData[index++] = shader.vertexConstantData[index++] = shader.vertexConstantData[index++] = projection.far / Math.sqrt(3);
         shader.vertexConstantData[index] = 1;
         var near = new Vector3D();
-        this._skyboxProjection.copyFrom(viewProjection);
+        this._skyboxProjection.copyFrom(projection.viewMatrix3D);
         this._skyboxProjection.copyRowTo(2, near);
-        var camPos = camera.scenePosition;
         var cx = near.x;
         var cy = near.y;
         var cz = near.z;
@@ -40075,152 +41000,6 @@ var FXAAFilter3D = (function (_super) {
 }(Filter3DBase));
 
 /**
- * @class RenderableListItem
- */
-var GL_RenderableBase = (function (_super) {
-    __extends(GL_RenderableBase, _super);
-    /**
-     *
-     * @param renderable
-     * @param sourceEntity
-     * @param surface
-     * @param renderer
-     */
-    function GL_RenderableBase(renderable, entity, renderer, pool) {
-        var _this = _super.call(this, renderable, pool) || this;
-        _this._count = 0;
-        _this._offset = 0;
-        _this._elementsDirty = true;
-        _this._materialDirty = true;
-        _this.images = new Array();
-        _this.samplers = new Array();
-        _this._onInvalidateMaterialDelegate = function (event) { return _this._onInvalidateMaterial(event); };
-        _this._onInvalidateElementsDelegate = function (event) { return _this.onInvalidateElements(event); };
-        //store references
-        _this.sourceEntity = entity;
-        _this._renderer = renderer;
-        _this._stage = renderer.stage;
-        _this.renderable = renderable;
-        _this.renderable.addEventListener(RenderableEvent.INVALIDATE_MATERIAL, _this._onInvalidateMaterialDelegate);
-        _this.renderable.addEventListener(RenderableEvent.INVALIDATE_ELEMENTS, _this._onInvalidateElementsDelegate);
-        return _this;
-    }
-    Object.defineProperty(GL_RenderableBase.prototype, "elementsGL", {
-        get: function () {
-            if (this._elementsDirty)
-                this._updateElements();
-            return this._elementsGL;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(GL_RenderableBase.prototype, "materialGL", {
-        get: function () {
-            if (this._materialDirty)
-                this._updateMaterial();
-            return this._materialGL;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    GL_RenderableBase.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this.next = null;
-        this.masksConfig = null;
-        this.renderSceneTransform = null;
-        this.sourceEntity = null;
-        this._renderer = null;
-        this._stage = null;
-        this.renderable.removeEventListener(RenderableEvent.INVALIDATE_MATERIAL, this._onInvalidateMaterialDelegate);
-        this.renderable.removeEventListener(RenderableEvent.INVALIDATE_ELEMENTS, this._onInvalidateElementsDelegate);
-        this.renderable = null;
-        this._materialGL.usages--;
-        if (!this._materialGL.usages)
-            this._materialGL.onClear(new AssetEvent(AssetEvent.CLEAR, this._materialGL.material));
-        this._materialGL = null;
-        this._elementsGL = null;
-    };
-    GL_RenderableBase.prototype.onInvalidateElements = function (event) {
-        this._elementsDirty = true;
-    };
-    GL_RenderableBase.prototype._onInvalidateMaterial = function (event) {
-        this._materialDirty = true;
-    };
-    GL_RenderableBase.prototype._pGetElements = function () {
-        throw new AbstractMethodError();
-    };
-    GL_RenderableBase.prototype._pGetMaterial = function () {
-        throw new AbstractMethodError();
-    };
-    /**
-     * Renders an object to the current render target.
-     *
-     * @private
-     */
-    GL_RenderableBase.prototype._iRender = function (pass, camera, viewProjection) {
-        this._setRenderState(pass, camera, viewProjection);
-        this._elementsGL.draw(this, pass.shader, camera, viewProjection, this._count, this._offset);
-    };
-    GL_RenderableBase.prototype._setRenderState = function (pass, camera, viewProjection) {
-        if (this._elementsDirty)
-            this._updateElements();
-        pass._setRenderState(this, camera, viewProjection);
-        if (pass.shader.activeElements != this._elementsGL) {
-            pass.shader.activeElements = this._elementsGL;
-            this._elementsGL._setRenderState(this, pass.shader, camera, viewProjection);
-        }
-    };
-    /**
-     * //TODO
-     *
-     * @private
-     */
-    GL_RenderableBase.prototype._updateElements = function () {
-        this._elementsGL = this._pGetElements();
-        this._elementsDirty = false;
-    };
-    GL_RenderableBase.prototype._updateMaterial = function () {
-        var materialGL = this._pGetMaterial();
-        if (this._materialGL != materialGL) {
-            if (this._materialGL) {
-                this._materialGL.usages--;
-                //dispose current materialGL object
-                if (!this._materialGL.usages)
-                    this._materialGL.onClear(new AssetEvent(AssetEvent.CLEAR, this._materialGL.material));
-            }
-            this._materialGL = materialGL;
-            this._materialGL.usages++;
-        }
-        //create a cache of image & sampler objects for the renderable
-        var numImages = materialGL.numImages;
-        var style = this.renderable.style || this.sourceEntity.style;
-        var material = this._materialGL.material;
-        this.images.length = numImages;
-        this.samplers.length = numImages;
-        this.uvMatrix = style ? style.uvMatrix : material.style ? material.style.uvMatrix : null;
-        var numTextures = this._materialGL.material.getNumTextures();
-        var texture;
-        var numImages;
-        var image;
-        var sampler;
-        var index;
-        for (var i = 0; i < numTextures; i++) {
-            texture = material.getTextureAt(i);
-            numImages = texture.getNumImages();
-            for (var j = 0; j < numImages; j++) {
-                index = materialGL.getImageIndex(texture, j);
-                image = style ? style.getImageAt(texture, j) : null;
-                this.images[index] = image ? this._stage.getAbstraction(image) : null;
-                sampler = style ? style.getSamplerAt(texture, j) : null;
-                this.samplers[index] = sampler ? this._stage.getAbstraction(sampler) : null;
-            }
-        }
-        this._materialDirty = false;
-    };
-    return GL_RenderableBase;
-}(AbstractionBase));
-
-/**
  * @class away.pool.RenderableListItem
  */
 var GL_BillboardRenderable = (function (_super) {
@@ -40231,8 +41010,8 @@ var GL_BillboardRenderable = (function (_super) {
      * @param pool
      * @param billboard
      */
-    function GL_BillboardRenderable(billboard, entity, renderer, pool) {
-        var _this = _super.call(this, billboard, entity, renderer, pool) || this;
+    function GL_BillboardRenderable(billboard, renderablePool) {
+        var _this = _super.call(this, billboard, renderablePool) || this;
         _this._billboard = billboard;
         return _this;
     }
@@ -40271,49 +41050,11 @@ var GL_BillboardRenderable = (function (_super) {
         return this._stage.getAbstraction(elements);
     };
     GL_BillboardRenderable.prototype._pGetMaterial = function () {
-        return this._renderer.getMaterialPool(this.elementsGL).getAbstraction(this._billboard.material || DefaultMaterialManager.getDefaultMaterial(this.renderable));
+        return this._materialGroup.getMaterialPool(this.elementsGL).getAbstraction(this._billboard.material || DefaultMaterialManager.getDefaultMaterial(this.renderable));
     };
     return GL_BillboardRenderable;
 }(GL_RenderableBase));
 GL_BillboardRenderable._samplerElements = new Object();
-
-/**
- * @class away.pool.GL_ShapeRenderable
- */
-var GL_ShapeRenderable = (function (_super) {
-    __extends(GL_ShapeRenderable, _super);
-    /**
-     * //TODO
-     *
-     * @param pool
-     * @param shape
-     * @param level
-     * @param indexOffset
-     */
-    function GL_ShapeRenderable(shape, entity, renderer, pool) {
-        var _this = _super.call(this, shape, entity, renderer, pool) || this;
-        _this.shape = shape;
-        return _this;
-    }
-    GL_ShapeRenderable.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this.shape = null;
-    };
-    /**
-     *
-     * @returns {ElementsBase}
-     * @protected
-     */
-    GL_ShapeRenderable.prototype._pGetElements = function () {
-        this._offset = this.shape.offset;
-        this._count = this.shape.count;
-        return this._stage.getAbstraction((this.sourceEntity.animator) ? this.sourceEntity.animator.getRenderableElements(this, this.shape.elements) : this.shape.elements);
-    };
-    GL_ShapeRenderable.prototype._pGetMaterial = function () {
-        return this._renderer.getMaterialPool(this.elementsGL).getAbstraction(this.shape.material || this.sourceEntity.material || DefaultMaterialManager.getDefaultMaterial(this.renderable));
-    };
-    return GL_ShapeRenderable;
-}(GL_RenderableBase));
 
 /**
  * @class away.pool.GL_LineSegmentRenderable
@@ -40328,8 +41069,8 @@ var GL_LineSegmentRenderable = (function (_super) {
      * @param level
      * @param dataOffset
      */
-    function GL_LineSegmentRenderable(lineSegment, entity, renderer, pool) {
-        var _this = _super.call(this, lineSegment, entity, renderer, pool) || this;
+    function GL_LineSegmentRenderable(lineSegment, renderablePool) {
+        var _this = _super.call(this, lineSegment, renderablePool) || this;
         _this._lineSegment = lineSegment;
         return _this;
     }
@@ -40361,7 +41102,7 @@ var GL_LineSegmentRenderable = (function (_super) {
         return this._stage.getAbstraction(elements);
     };
     GL_LineSegmentRenderable.prototype._pGetMaterial = function () {
-        return this._renderer.getMaterialPool(this.elementsGL).getAbstraction(this._lineSegment.material || DefaultMaterialManager.getDefaultMaterial(this.renderable));
+        return this._materialGroup.getMaterialPool(this.elementsGL).getAbstraction(this._lineSegment.material || DefaultMaterialManager.getDefaultMaterial(this.renderable));
     };
     return GL_LineSegmentRenderable;
 }(GL_RenderableBase));
@@ -40378,8 +41119,8 @@ var GL_SkyboxRenderable = (function (_super) {
      * @param pool
      * @param skybox
      */
-    function GL_SkyboxRenderable(skybox, entity, renderer, pool) {
-        var _this = _super.call(this, skybox, entity, renderer, pool) || this;
+    function GL_SkyboxRenderable(skybox, renderablePool) {
+        var _this = _super.call(this, skybox, renderablePool) || this;
         _this._skybox = skybox;
         return _this;
     }
@@ -40402,7 +41143,7 @@ var GL_SkyboxRenderable = (function (_super) {
         return elementsGL;
     };
     GL_SkyboxRenderable.prototype._pGetMaterial = function () {
-        return this._renderer.getMaterialPool(this.elementsGL).getAbstraction(this._skybox);
+        return this._materialGroup.getMaterialPool(this.elementsGL).getAbstraction(this._skybox);
     };
     GL_SkyboxRenderable._iIncludeDependencies = function (shader) {
     };
@@ -40916,12 +41657,11 @@ var DisplayObject = (function (_super) {
         _this._queuedEvents = new Array();
         _this._boxBoundsInvalid = true;
         _this._sphereBoundsInvalid = true;
-        _this._pSceneTransform = new Matrix3D();
+        _this._concatenatedMatrix3D = new Matrix3D();
         _this._pIsEntity = false;
         _this._pIsContainer = false;
         _this._sessionID = -1;
         _this._depthID = -16384;
-        _this._inverseSceneTransform = new Matrix3D();
         _this._scenePosition = new Vector3D();
         _this._explicitVisibility = true;
         _this._explicitMaskId = -1;
@@ -40955,9 +41695,10 @@ var DisplayObject = (function (_super) {
         //this._debugVisible=true;
         _this._onInvalidatePropertiesDelegate = function (event) { return _this._onInvalidateProperties(event); };
         //creation of associated transform object
-        _this._transform = new Transform();
+        _this._transform = new Transform(null, _this._concatenatedMatrix3D);
         //setup transform listeners
         _this._transform.addEventListener(TransformEvent.INVALIDATE_MATRIX3D, function (event) { return _this._onInvalidateMatrix3D(event); });
+        _this._transform.addEventListener(TransformEvent.UPDATE_CONCATENATED_MATRIX3D, function (event) { return _this._onUpdateConcatenatedMatrix3D(event); });
         _this._transform.addEventListener(TransformEvent.INVALIDATE_COLOR_TRANSFORM, function (event) { return _this._onInvalidateColorTransform(event); });
         //default bounds type
         _this._boundsType = BoundsType.AXIS_ALIGNED_BOX;
@@ -41044,6 +41785,8 @@ var DisplayObject = (function (_super) {
          * set <code>depth</code> to a different value.</p>
          */
         get: function () {
+            if (this._registrationMatrix3D)
+                return this.getBox().depth * this.scaleZ * this._registrationMatrix3D[10];
             return this.getBox().depth * this.scaleZ;
         },
         set: function (val) {
@@ -41170,6 +41913,8 @@ var DisplayObject = (function (_super) {
          * set <code>height</code> to a different value.</p>
          */
         get: function () {
+            if (this._registrationMatrix3D)
+                return this.getBox().height * this.scaleY * this._registrationMatrix3D[5];
             return this.getBox().height * this.scaleY;
         },
         set: function (val) {
@@ -41194,21 +41939,6 @@ var DisplayObject = (function (_super) {
             if (this._pParent)
                 return this._pParent.getChildIndex(this);
             return 0;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DisplayObject.prototype, "inverseSceneTransform", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._inverseSceneTransformDirty) {
-                this._inverseSceneTransform.copyFrom(this.sceneTransform);
-                this._inverseSceneTransform.invert();
-                this._inverseSceneTransformDirty = false;
-            }
-            return this._inverseSceneTransform;
         },
         enumerable: true,
         configurable: true
@@ -41679,23 +42409,14 @@ var DisplayObject = (function (_super) {
                     this._scenePosition.x = -this._registrationMatrix3D._rawData[12];
                     this._scenePosition.y = -this._registrationMatrix3D._rawData[13];
                     this._scenePosition.z = -this._registrationMatrix3D._rawData[14];
-                    this._scenePosition = this.sceneTransform.transformVector(this._scenePosition, this._scenePosition);
+                    this._scenePosition = this._transform.concatenatedMatrix3D.transformVector(this._scenePosition, this._scenePosition);
                 }
                 else {
-                    this.sceneTransform.copyColumnTo(3, this._scenePosition);
+                    this._transform.concatenatedMatrix3D.copyColumnTo(3, this._scenePosition);
                 }
                 this._scenePositionDirty = false;
             }
             return this._scenePosition;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DisplayObject.prototype, "sceneTransform", {
-        get: function () {
-            if (this._hierarchicalPropsDirty & HierarchicalProperties.SCENE_TRANSFORM)
-                this.pUpdateSceneTransform();
-            return this._pSceneTransform;
         },
         enumerable: true,
         configurable: true
@@ -41877,6 +42598,8 @@ var DisplayObject = (function (_super) {
          * <code>width</code> to a different value.</p>
          */
         get: function () {
+            if (this._registrationMatrix3D)
+                return this.getBox().width * this.scaleX * this._registrationMatrix3D[0];
             return this.getBox().width * this.scaleX;
         },
         set: function (val) {
@@ -42002,7 +42725,7 @@ var DisplayObject = (function (_super) {
             displayObject.masks = this._explicitMasks;
         if (this._adapter)
             displayObject.adapter = this._adapter.clone(displayObject);
-        displayObject._transform.copyRawDataFrom(this._transform);
+        this._transform.copyRawDataTo(displayObject._transform);
     };
     /**
      *
@@ -42026,7 +42749,7 @@ var DisplayObject = (function (_super) {
         //this._transform = null;
         //
         //this._matrix3D = null;
-        //this._pSceneTransform = null;
+        //this._concatenatedMatrix3D = null;
         //this._inverseSceneTransform = null;
         this._explicitMasks = null;
     };
@@ -42096,10 +42819,20 @@ var DisplayObject = (function (_super) {
         }
         if (targetCoordinateSpace == null || targetCoordinateSpace == this)
             return this._pBoxBounds;
-        if (targetCoordinateSpace == this._pParent)
+        if (targetCoordinateSpace == this._pParent) {
+            if (this._registrationMatrix3D) {
+                if (this._tempTransform == null)
+                    this._tempTransform = new Matrix3D();
+                this._tempTransform.copyFrom(this._transform.matrix3D);
+                this._tempTransform.prepend(this._registrationMatrix3D);
+                if (this.alignmentMode != AlignmentMode.REGISTRATION_POINT)
+                    this._tempTransform.appendTranslation(-this._registrationMatrix3D._rawData[12] * this._transform.scale.x, -this._registrationMatrix3D._rawData[13] * this._transform.scale.y, -this._registrationMatrix3D._rawData[14] * this._transform.scale.z);
+                return this._tempTransform.transformBox(this._pBoxBounds);
+            }
             return this._transform.matrix3D.transformBox(this._pBoxBounds);
+        }
         else
-            return targetCoordinateSpace.inverseSceneTransform.transformBox(this.sceneTransform.transformBox(this._pBoxBounds));
+            return targetCoordinateSpace.transform.inverseConcatenatedMatrix3D.transformBox(this.transform.concatenatedMatrix3D.transformBox(this._pBoxBounds));
     };
     DisplayObject.prototype.getSphere = function (targetCoordinateSpace) {
         if (targetCoordinateSpace === void 0) { targetCoordinateSpace = null; }
@@ -42129,7 +42862,7 @@ var DisplayObject = (function (_super) {
     DisplayObject.prototype.globalToLocal = function (point, target) {
         if (target === void 0) { target = null; }
         this._tempVector3D.setTo(point.x, point.y, 0);
-        var pos = this.inverseSceneTransform.transformVector(this._tempVector3D, this._tempVector3D);
+        var pos = this._transform.inverseConcatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
         if (!target)
             target = new Point();
         target.x = pos.x;
@@ -42155,7 +42888,7 @@ var DisplayObject = (function (_super) {
      *         display object.
      */
     DisplayObject.prototype.globalToLocal3D = function (position) {
-        return this.inverseSceneTransform.transformVector(position);
+        return this._transform.inverseConcatenatedMatrix3D.transformVector(position);
     };
     /**
      * Evaluates the bounding box of the display object to see if it overlaps or
@@ -42341,7 +43074,7 @@ var DisplayObject = (function (_super) {
     DisplayObject.prototype.localToGlobal = function (point, target) {
         if (target === void 0) { target = null; }
         this._tempVector3D.setTo(point.x, point.y, 0);
-        var pos = this.sceneTransform.transformVector(this._tempVector3D, this._tempVector3D);
+        var pos = this._transform.concatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
         if (!target)
             target = new Point();
         target.x = pos.x;
@@ -42374,7 +43107,7 @@ var DisplayObject = (function (_super) {
      *         the Scene.
      */
     DisplayObject.prototype.localToGlobal3D = function (position) {
-        return this.sceneTransform.transformVector(position);
+        return this._transform.concatenatedMatrix3D.transformVector(position);
     };
     /**
      * Moves the local point around which the object rotates.
@@ -42420,7 +43153,7 @@ var DisplayObject = (function (_super) {
             }
             return this._orientationMatrix;
         }
-        return this.sceneTransform;
+        return this._transform.concatenatedMatrix3D;
     };
     /**
      *
@@ -42467,7 +43200,7 @@ var DisplayObject = (function (_super) {
             return true;
         this._hierarchicalPropsDirty |= propDirty;
         if (newPropDirty & HierarchicalProperties.SCENE_TRANSFORM) {
-            this._inverseSceneTransformDirty = true;
+            this.transform.invalidateConcatenatedMatrix3D();
             this._scenePositionDirty = true;
             if (this.isEntity)
                 this.invalidatePartitionBounds();
@@ -42504,22 +43237,18 @@ var DisplayObject = (function (_super) {
     /**
      * @protected
      */
-    DisplayObject.prototype.pUpdateSceneTransform = function () {
+    DisplayObject.prototype._onUpdateConcatenatedMatrix3D = function (event) {
         if (this._iController)
             this._iController.updateController();
-        this._pSceneTransform.copyFrom(this._transform.matrix3D);
+        this._concatenatedMatrix3D.copyFrom(this._transform.matrix3D);
         if (this._registrationMatrix3D) {
-            this._pSceneTransform.prepend(this._registrationMatrix3D);
+            this._concatenatedMatrix3D.prepend(this._registrationMatrix3D);
             if (this.alignmentMode != AlignmentMode.REGISTRATION_POINT)
-                this._pSceneTransform.appendTranslation(-this._registrationMatrix3D._rawData[12] * this._transform.scale.x, -this._registrationMatrix3D._rawData[13] * this._transform.scale.y, -this._registrationMatrix3D._rawData[14] * this._transform.scale.z);
+                this._concatenatedMatrix3D.appendTranslation(-this._registrationMatrix3D._rawData[12] * this._transform.scale.x, -this._registrationMatrix3D._rawData[13] * this._transform.scale.y, -this._registrationMatrix3D._rawData[14] * this._transform.scale.z);
         }
         if (this._pParent && !this._pParent._iIsRoot)
-            this._pSceneTransform.append(this._pParent.sceneTransform);
+            this._concatenatedMatrix3D.append(this._pParent._transform.concatenatedMatrix3D);
         this._matrix3DDirty = false;
-        this._positionDirty = false;
-        this._rotationDirty = false;
-        this._skewDirty = false;
-        this._scaleDirty = false;
         this._hierarchicalPropsDirty ^= HierarchicalProperties.SCENE_TRANSFORM;
     };
     /**
@@ -45004,7 +45733,7 @@ var AxisAlignedBoundingBox = (function (_super) {
     AxisAlignedBoundingBox.prototype._pUpdate = function () {
         _super.prototype._pUpdate.call(this);
         this._box = this._entity.getBox();
-        var matrix = this._entity.sceneTransform;
+        var matrix = this._entity.transform.concatenatedMatrix3D;
         var hx = this._box.width / 2;
         var hy = this._box.height / 2;
         var hz = this._box.depth / 2;
@@ -45443,7 +46172,7 @@ var BoundingSphere = (function (_super) {
     BoundingSphere.prototype._pUpdate = function () {
         _super.prototype._pUpdate.call(this);
         this._sphere = this._entity.getSphere();
-        var matrix = this._entity.sceneTransform;
+        var matrix = this._entity.transform.concatenatedMatrix3D;
         var cx = this._sphere.x;
         var cy = this._sphere.y;
         var cz = this._sphere.z;
@@ -46245,16 +46974,9 @@ var Camera = (function (_super) {
     function Camera(projection) {
         if (projection === void 0) { projection = null; }
         var _this = _super.call(this) || this;
-        _this._viewProjection = new Matrix3D();
-        _this._viewProjectionDirty = true;
-        _this._frustumPlanesDirty = true;
         _this._pIsEntity = true;
-        _this._onProjectionMatrixChangedDelegate = function (event) { return _this.onProjectionMatrixChanged(event); };
         _this._projection = projection || new PerspectiveProjection();
-        _this._projection.addEventListener(ProjectionEvent.MATRIX_CHANGED, _this._onProjectionMatrixChangedDelegate);
-        _this._frustumPlanes = [];
-        for (var i = 0; i < 6; ++i)
-            _this._frustumPlanes[i] = new Plane3D();
+        _this._projection.transform = _this._transform;
         _this.z = -1000;
         //default bounds type
         _this._boundsType = BoundsType.NULL;
@@ -46268,117 +46990,6 @@ var Camera = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Camera.prototype.onProjectionMatrixChanged = function (event) {
-        this._viewProjectionDirty = true;
-        this._frustumPlanesDirty = true;
-        this.dispatchEvent(event);
-    };
-    Object.defineProperty(Camera.prototype, "frustumPlanes", {
-        get: function () {
-            if (this._frustumPlanesDirty)
-                this.updateFrustum();
-            return this._frustumPlanes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Camera.prototype.updateFrustum = function () {
-        var a, b, c;
-        //var d : Number;
-        var c11, c12, c13, c14;
-        var c21, c22, c23, c24;
-        var c31, c32, c33, c34;
-        var c41, c42, c43, c44;
-        var p;
-        var raw = this.viewProjection._rawData;
-        var invLen;
-        c11 = raw[0];
-        c12 = raw[4];
-        c13 = raw[8];
-        c14 = raw[12];
-        c21 = raw[1];
-        c22 = raw[5];
-        c23 = raw[9];
-        c24 = raw[13];
-        c31 = raw[2];
-        c32 = raw[6];
-        c33 = raw[10];
-        c34 = raw[14];
-        c41 = raw[3];
-        c42 = raw[7];
-        c43 = raw[11];
-        c44 = raw[15];
-        // left plane
-        p = this._frustumPlanes[0];
-        a = c41 + c11;
-        b = c42 + c12;
-        c = c43 + c13;
-        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
-        p.a = a * invLen;
-        p.b = b * invLen;
-        p.c = c * invLen;
-        p.d = -(c44 + c14) * invLen;
-        // right plane
-        p = this._frustumPlanes[1];
-        a = c41 - c11;
-        b = c42 - c12;
-        c = c43 - c13;
-        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
-        p.a = a * invLen;
-        p.b = b * invLen;
-        p.c = c * invLen;
-        p.d = (c14 - c44) * invLen;
-        // bottom
-        p = this._frustumPlanes[2];
-        a = c41 + c21;
-        b = c42 + c22;
-        c = c43 + c23;
-        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
-        p.a = a * invLen;
-        p.b = b * invLen;
-        p.c = c * invLen;
-        p.d = -(c44 + c24) * invLen;
-        // top
-        p = this._frustumPlanes[3];
-        a = c41 - c21;
-        b = c42 - c22;
-        c = c43 - c23;
-        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
-        p.a = a * invLen;
-        p.b = b * invLen;
-        p.c = c * invLen;
-        p.d = (c24 - c44) * invLen;
-        // near
-        p = this._frustumPlanes[4];
-        a = c31;
-        b = c32;
-        c = c33;
-        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
-        p.a = a * invLen;
-        p.b = b * invLen;
-        p.c = c * invLen;
-        p.d = -c34 * invLen;
-        // far
-        p = this._frustumPlanes[5];
-        a = c41 - c31;
-        b = c42 - c32;
-        c = c43 - c33;
-        invLen = 1 / Math.sqrt(a * a + b * b + c * c);
-        p.a = a * invLen;
-        p.b = b * invLen;
-        p.c = c * invLen;
-        p.d = (c34 - c44) * invLen;
-        this._frustumPlanesDirty = false;
-    };
-    Camera.prototype.pInvalidateHierarchicalProperties = function (propDirty) {
-        if (_super.prototype.pInvalidateHierarchicalProperties.call(this, propDirty))
-            return true;
-        if (this._hierarchicalPropsDirty & HierarchicalProperties.SCENE_TRANSFORM) {
-            this._viewProjectionDirty = true;
-            this._frustumPlanesDirty = true;
-        }
-        return false;
-    };
     Object.defineProperty(Camera.prototype, "projection", {
         /**
          *
@@ -46391,48 +47002,22 @@ var Camera = (function (_super) {
                 return;
             if (!value)
                 throw new Error("Projection cannot be null!");
-            this._projection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+            this._projection.transform = null;
             this._projection = value;
-            this._projection.addEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+            this._projection.transform = this._transform;
             this.dispatchEvent(new CameraEvent(CameraEvent.PROJECTION_CHANGED, this));
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Camera.prototype, "viewProjection", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._viewProjectionDirty) {
-                this._viewProjection.copyFrom(this.inverseSceneTransform);
-                this._viewProjection.append(this._projection.matrix);
-                this._viewProjectionDirty = false;
-            }
-            return this._viewProjection;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Calculates the ray in scene space from the camera to the given normalized coordinates in screen space.
-     *
-     * @param nX The normalised x coordinate in screen space, -1 corresponds to the left edge of the viewport, 1 to the right.
-     * @param nY The normalised y coordinate in screen space, -1 corresponds to the top edge of the viewport, 1 to the bottom.
-     * @param sZ The z coordinate in screen space, representing the distance into the screen.
-     * @return The ray from the camera to the scene space position of the given screen coordinates.
-     */
-    Camera.prototype.getRay = function (nX, nY, sZ) {
-        return this.sceneTransform.deltaTransformVector(this._projection.unproject(nX, nY, sZ));
-    };
     /**
      * Calculates the normalised position in screen space of the given scene position.
      *
      * @param point3d the position vector of the scene coordinates to be projected.
      * @return The normalised screen position of the given scene coordinates.
      */
-    Camera.prototype.project = function (point3d) {
-        return this._projection.project(this.inverseSceneTransform.transformVector(point3d));
+    Camera.prototype.project = function (vector3D) {
+        return this._projection.project(vector3D);
     };
     /**
      * Calculates the scene position of the given normalized coordinates in screen space.
@@ -46443,7 +47028,7 @@ var Camera = (function (_super) {
      * @return The scene position of the given screen coordinates.
      */
     Camera.prototype.unproject = function (nX, nY, sZ) {
-        return this.sceneTransform.transformVector(this._projection.unproject(nX, nY, sZ));
+        return this._projection.unproject(nX, nY, sZ);
     };
     return Camera;
 }(DisplayObjectContainer));
@@ -46454,7 +47039,7 @@ var ShadowMapperBase = (function (_super) {
     __extends(ShadowMapperBase, _super);
     function ShadowMapperBase() {
         var _this = _super.apply(this, arguments) || this;
-        _this._pDepthMapSize = 2048;
+        _this._depthMapSize = 2048;
         _this._autoUpdateShadows = true;
         return _this;
     }
@@ -46478,10 +47063,10 @@ var ShadowMapperBase = (function (_super) {
     };
     Object.defineProperty(ShadowMapperBase.prototype, "light", {
         get: function () {
-            return this._pLight;
+            return this._light;
         },
         set: function (value) {
-            this._pLight = value;
+            this._light = value;
         },
         enumerable: true,
         configurable: true
@@ -46489,7 +47074,7 @@ var ShadowMapperBase = (function (_super) {
     Object.defineProperty(ShadowMapperBase.prototype, "depthMap", {
         get: function () {
             if (!this._depthMap)
-                this._depthMap = this.pCreateDepthTexture();
+                this._depthMap = this._createDepthTexture();
             return this._depthMap;
         },
         enumerable: true,
@@ -46497,12 +47082,12 @@ var ShadowMapperBase = (function (_super) {
     });
     Object.defineProperty(ShadowMapperBase.prototype, "depthMapSize", {
         get: function () {
-            return this._pDepthMapSize;
+            return this._depthMapSize;
         },
         set: function (value) {
-            if (value == this._pDepthMapSize)
+            if (value == this._depthMapSize)
                 return;
-            this._pSetDepthMapSize(value);
+            this._setDepthMapSize(value);
         },
         enumerable: true,
         configurable: true
@@ -46512,24 +47097,24 @@ var ShadowMapperBase = (function (_super) {
             this._depthMap.dispose();
         this._depthMap = null;
     };
-    ShadowMapperBase.prototype.pCreateDepthTexture = function () {
+    ShadowMapperBase.prototype._createDepthTexture = function () {
         throw new AbstractMethodError();
     };
     ShadowMapperBase.prototype.iRenderDepthMap = function (view, renderer) {
         this._iShadowsInvalid = false;
-        this.pUpdateDepthProjection(view.camera);
+        this._updateDepthProjection(view.camera.projection);
         if (!this._depthMap)
-            this._depthMap = this.pCreateDepthTexture();
-        this.pDrawDepthMap(view, this._depthMap, renderer);
+            this._depthMap = this._createDepthTexture();
+        this._drawDepthMap(view, this._depthMap, renderer);
     };
-    ShadowMapperBase.prototype.pUpdateDepthProjection = function (camera) {
+    ShadowMapperBase.prototype._updateDepthProjection = function (projection) {
         throw new AbstractMethodError();
     };
-    ShadowMapperBase.prototype.pDrawDepthMap = function (view, target, renderer) {
+    ShadowMapperBase.prototype._drawDepthMap = function (view, target, renderer) {
         throw new AbstractMethodError();
     };
-    ShadowMapperBase.prototype._pSetDepthMapSize = function (value) {
-        this._pDepthMapSize = value;
+    ShadowMapperBase.prototype._setDepthMapSize = function (value) {
+        this._depthMapSize = value;
         if (this._explicitDepthMap) {
             throw Error("Cannot set depth map size for the current renderer.");
         }
@@ -46545,31 +47130,31 @@ var DirectionalShadowMapper = (function (_super) {
     __extends(DirectionalShadowMapper, _super);
     function DirectionalShadowMapper() {
         var _this = _super.call(this) || this;
-        _this._pLightOffset = 10000;
-        _this._pSnap = 64;
-        _this._pCullPlanes = [];
-        _this._pOverallDepthProjection = new FreeMatrixProjection();
-        _this._pOverallDepthCamera = new Camera(_this._pOverallDepthProjection);
-        _this._pLocalFrustum = [];
-        _this._pMatrix = new Matrix3D();
+        _this._lightOffset = 10000;
+        _this._snap = 64;
+        _this._cullPlanes = [];
+        _this._overallDepthProjection = new PerspectiveProjection();
+        _this._overallDepthProjection.transform = new Transform();
+        _this._localFrustum = [];
+        _this._matrix = new Matrix3D();
         return _this;
     }
     Object.defineProperty(DirectionalShadowMapper.prototype, "snap", {
         get: function () {
-            return this._pSnap;
+            return this._snap;
         },
         set: function (value) {
-            this._pSnap = value;
+            this._snap = value;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(DirectionalShadowMapper.prototype, "lightOffset", {
         get: function () {
-            return this._pLightOffset;
+            return this._lightOffset;
         },
         set: function (value) {
-            this._pLightOffset = value;
+            this._lightOffset = value;
         },
         enumerable: true,
         configurable: true
@@ -46577,7 +47162,7 @@ var DirectionalShadowMapper = (function (_super) {
     Object.defineProperty(DirectionalShadowMapper.prototype, "iDepthProjection", {
         //@arcane
         get: function () {
-            return this._pOverallDepthCamera.viewProjection;
+            return this._overallDepthProjection.viewMatrix3D;
         },
         enumerable: true,
         configurable: true
@@ -46585,7 +47170,7 @@ var DirectionalShadowMapper = (function (_super) {
     Object.defineProperty(DirectionalShadowMapper.prototype, "depth", {
         //@arcane
         get: function () {
-            return this._pMaxZ - this._pMinZ;
+            return this._maxZ - this._minZ;
         },
         enumerable: true,
         configurable: true
@@ -46596,30 +47181,34 @@ var DirectionalShadowMapper = (function (_super) {
         _super.prototype.iSetDepthMap.call(this, depthMap);
         if (this._depthMap) {
             this._explicitDepthMap = true;
-            this._pDepthMapSize = depthMap.image2D.rect.width;
+            this._depthMapSize = depthMap.image2D.rect.width;
         }
         else {
             this._explicitDepthMap = false;
         }
     };
-    DirectionalShadowMapper.prototype.pCreateDepthTexture = function () {
-        return new Single2DTexture(new Image2D(this._pDepthMapSize, this._pDepthMapSize));
+    DirectionalShadowMapper.prototype._createDepthTexture = function () {
+        return new Single2DTexture(new Image2D(this._depthMapSize, this._depthMapSize));
     };
     //@override
-    DirectionalShadowMapper.prototype.pDrawDepthMap = function (view, target, renderer) {
-        renderer.cullPlanes = this._pCullPlanes;
-        renderer._iRender(this._pOverallDepthCamera, view, target.image2D);
+    DirectionalShadowMapper.prototype._drawDepthMap = function (view, target, renderer) {
+        renderer.cullPlanes = this._cullPlanes;
+        renderer._iRender(this._overallDepthProjection, view, target.image2D);
     };
-    //@protected
-    DirectionalShadowMapper.prototype.pUpdateCullPlanes = function (camera) {
-        var lightFrustumPlanes = this._pOverallDepthCamera.frustumPlanes;
-        var viewFrustumPlanes = camera.frustumPlanes;
-        this._pCullPlanes.length = 4;
-        this._pCullPlanes[0] = lightFrustumPlanes[0];
-        this._pCullPlanes[1] = lightFrustumPlanes[1];
-        this._pCullPlanes[2] = lightFrustumPlanes[2];
-        this._pCullPlanes[3] = lightFrustumPlanes[3];
-        var light = this._pLight;
+    /**
+     *
+     * @param projection
+     * @private
+     */
+    DirectionalShadowMapper.prototype._updateCullPlanes = function (projection) {
+        var lightFrustumPlanes = this._overallDepthProjection.frustumPlanes;
+        var viewFrustumPlanes = projection.frustumPlanes;
+        this._cullPlanes.length = 4;
+        this._cullPlanes[0] = lightFrustumPlanes[0];
+        this._cullPlanes[1] = lightFrustumPlanes[1];
+        this._cullPlanes[2] = lightFrustumPlanes[2];
+        this._cullPlanes[3] = lightFrustumPlanes[3];
+        var light = this._light;
         var dir = light.sceneDirection;
         var dirX = dir.x;
         var dirY = dir.y;
@@ -46628,41 +47217,50 @@ var DirectionalShadowMapper = (function (_super) {
         for (var i = 0; i < 6; ++i) {
             var plane = viewFrustumPlanes[i];
             if (plane.a * dirX + plane.b * dirY + plane.c * dirZ < 0)
-                this._pCullPlanes[j++] = plane;
+                this._cullPlanes[j++] = plane;
         }
     };
-    //@override
-    DirectionalShadowMapper.prototype.pUpdateDepthProjection = function (camera) {
-        this.pUpdateProjectionFromFrustumCorners(camera, camera.projection.frustumCorners, this._pMatrix);
-        this._pOverallDepthProjection.matrix = this._pMatrix;
-        this.pUpdateCullPlanes(camera);
+    /**
+     *
+     * @param projection
+     * @private
+     */
+    DirectionalShadowMapper.prototype._updateDepthProjection = function (projection) {
+        this._updateProjectionFromFrustumCorners(projection, projection.frustumCorners, this._matrix);
+        this._overallDepthProjection.frustumMatrix3D = this._matrix;
+        this._updateCullPlanes(projection);
     };
-    DirectionalShadowMapper.prototype.pUpdateProjectionFromFrustumCorners = function (camera, corners, matrix) {
+    /**
+     *
+     * @param projection
+     * @param matrix
+     * @private
+     */
+    DirectionalShadowMapper.prototype._updateProjectionFromFrustumCorners = function (projection, corners, matrix) {
         var dir;
         var x, y, z;
         var minX, minY;
         var maxX, maxY;
         var i;
-        var light = this._pLight;
+        var position = projection.transform.concatenatedMatrix3D.position;
+        var light = this._light;
         dir = light.sceneDirection;
-        this._pOverallDepthCamera.transform.matrix3D = this._pLight.sceneTransform;
-        x = Math.floor((camera.x - dir.x * this._pLightOffset) / this._pSnap) * this._pSnap;
-        y = Math.floor((camera.y - dir.y * this._pLightOffset) / this._pSnap) * this._pSnap;
-        z = Math.floor((camera.z - dir.z * this._pLightOffset) / this._pSnap) * this._pSnap;
-        this._pOverallDepthCamera.x = x;
-        this._pOverallDepthCamera.y = y;
-        this._pOverallDepthCamera.z = z;
-        this._pMatrix.copyFrom(this._pOverallDepthCamera.inverseSceneTransform);
-        this._pMatrix.prepend(camera.sceneTransform);
-        this._pMatrix.transformVectors(corners, this._pLocalFrustum);
-        minX = maxX = this._pLocalFrustum[0];
-        minY = maxY = this._pLocalFrustum[1];
-        this._pMaxZ = this._pLocalFrustum[2];
+        this._overallDepthProjection.transform.matrix3D = this._light.transform.concatenatedMatrix3D;
+        x = Math.floor((position.x - dir.x * this._lightOffset) / this._snap) * this._snap;
+        y = Math.floor((position.y - dir.y * this._lightOffset) / this._snap) * this._snap;
+        z = Math.floor((position.z - dir.z * this._lightOffset) / this._snap) * this._snap;
+        this._overallDepthProjection.transform.moveTo(x, y, z);
+        this._matrix.copyFrom(this._overallDepthProjection.transform.inverseConcatenatedMatrix3D);
+        this._matrix.prepend(projection.transform.concatenatedMatrix3D);
+        this._matrix.transformVectors(corners, this._localFrustum);
+        minX = maxX = this._localFrustum[0];
+        minY = maxY = this._localFrustum[1];
+        this._maxZ = this._localFrustum[2];
         i = 3;
         while (i < 24) {
-            x = this._pLocalFrustum[i];
-            y = this._pLocalFrustum[i + 1];
-            z = this._pLocalFrustum[i + 2];
+            x = this._localFrustum[i];
+            y = this._localFrustum[i + 1];
+            z = this._localFrustum[i + 2];
             if (x < minX)
                 minX = x;
             if (x > maxX)
@@ -46671,21 +47269,21 @@ var DirectionalShadowMapper = (function (_super) {
                 minY = y;
             if (y > maxY)
                 maxY = y;
-            if (z > this._pMaxZ)
-                this._pMaxZ = z;
+            if (z > this._maxZ)
+                this._maxZ = z;
             i += 3;
         }
-        this._pMinZ = 1;
+        this._minZ = 1;
         var w = maxX - minX;
         var h = maxY - minY;
-        var d = 1 / (this._pMaxZ - this._pMinZ);
+        var d = 1 / (this._maxZ - this._minZ);
         if (minX < 0)
-            minX -= this._pSnap; // because int() rounds up for < 0
+            minX -= this._snap; // because int() rounds up for < 0
         if (minY < 0)
-            minY -= this._pSnap;
-        minX = Math.floor(minX / this._pSnap) * this._pSnap;
-        minY = Math.floor(minY / this._pSnap) * this._pSnap;
-        var snap2 = 2 * this._pSnap;
+            minY -= this._snap;
+        minX = Math.floor(minX / this._snap) * this._snap;
+        minY = Math.floor(minY / this._snap) * this._snap;
+        var snap2 = 2 * this._snap;
         w = Math.floor(w / snap2 + 2) * snap2;
         h = Math.floor(h / snap2 + 2) * snap2;
         maxX = minX + w;
@@ -46698,7 +47296,7 @@ var DirectionalShadowMapper = (function (_super) {
         raw[10] = d;
         raw[12] = -(maxX + minX) * w;
         raw[13] = -(maxY + minY) * h;
-        raw[14] = -this._pMinZ * d;
+        raw[14] = -this._minZ * d;
         raw[15] = 1;
         raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
         matrix.invalidatePosition();
@@ -46901,8 +47499,8 @@ var DirectionalLight = (function (_super) {
     });
     Object.defineProperty(DirectionalLight.prototype, "sceneDirection", {
         get: function () {
-            if (this._hierarchicalPropsDirty & HierarchicalProperties.SCENE_TRANSFORM)
-                this.pUpdateSceneTransform();
+            if (this._sceneDirectionDirty)
+                this._updateSceneDirection();
             return this._sceneDirection;
         },
         enumerable: true,
@@ -46924,10 +47522,16 @@ var DirectionalLight = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    //@override
-    DirectionalLight.prototype.pUpdateSceneTransform = function () {
-        _super.prototype.pUpdateSceneTransform.call(this);
-        this.sceneTransform.copyColumnTo(2, this._sceneDirection);
+    DirectionalLight.prototype.pInvalidateHierarchicalProperties = function (propDirty) {
+        if (_super.prototype.pInvalidateHierarchicalProperties.call(this, propDirty))
+            return true;
+        if (this._hierarchicalPropsDirty & HierarchicalProperties.SCENE_TRANSFORM)
+            this._sceneDirectionDirty = true;
+        return false;
+    };
+    DirectionalLight.prototype._updateSceneDirection = function () {
+        this._sceneDirectionDirty = false;
+        this.transform.concatenatedMatrix3D.copyColumnTo(2, this._sceneDirection);
         this._sceneDirection.normalize();
     };
     //@override
@@ -46941,7 +47545,7 @@ var DirectionalLight = (function (_super) {
             target = new Matrix3D();
         var m = Matrix3D.CALCULATION_MATRIX;
         m.copyFrom(displayObject.getRenderSceneTransform(cameraTransform));
-        m.append(this.inverseSceneTransform);
+        m.append(this.transform.inverseConcatenatedMatrix3D);
         if (!this._projAABBPoints)
             this._projAABBPoints = [];
         m.transformVectors(this._pAabbPoints, this._projAABBPoints);
@@ -47812,7 +48416,7 @@ var MouseEvent = (function (_super) {
          * The position in scene space where the event took place
          */
         get: function () {
-            return this.entity.sceneTransform.transformVector(this.position);
+            return this.entity.transform.concatenatedMatrix3D.transformVector(this.position);
         },
         enumerable: true,
         configurable: true
@@ -47822,7 +48426,7 @@ var MouseEvent = (function (_super) {
          * The normal in scene space where the event took place
          */
         get: function () {
-            var sceneNormal = this.entity.sceneTransform.deltaTransformVector(this.normal);
+            var sceneNormal = this.entity.transform.concatenatedMatrix3D.deltaTransformVector(this.normal);
             sceneNormal.normalize();
             return sceneNormal;
         },
@@ -48361,6 +48965,13 @@ var BitmapFontTable = (function (_super) {
      *
      */
     BitmapFontTable.prototype.dispose = function () {
+        var len = this._materials.length;
+        for (var i = 0; i < len; ++i) {
+            this._materials[i].dispose();
+        }
+        this._materials.length = 0;
+        this._font_chars.length = 0;
+        this._font_chars_dic = null;
     };
     BitmapFontTable.prototype.addMaterial = function (material) {
         this._materials.push(material);
@@ -48863,7 +49474,6 @@ var TextField = (function (_super) {
         var char_width = 0;
         var numVertices = 0;
         var numVertices2 = 0;
-        var lastCharIsSpace = false;
         this._line_indices = [];
         // sort all chars into final lines
         for (tl = 0; tl < textlines.length; tl++) {
@@ -48878,13 +49488,6 @@ var TextField = (function (_super) {
             tl_justify[tl_cnt] = false;
             tl_linebreak[tl_cnt] = true;
             tl_cnt++;
-            // check if the last char is a space, if so we must add it at the end
-            /*
-            lastCharIsSpace=false;
-            if(textlines[tl].length>0){
-                lastCharIsSpace=textlines[tl].charCodeAt(textlines[tl].length-1)==32;
-            }
-            */
             words = textlines[tl].split(" ");
             for (w = 0; w < words.length; w++) {
                 if (words[w].length > 0) {
@@ -49082,7 +49685,16 @@ var TextField = (function (_super) {
                         vertices2[vert_cnt2++] = char_data[1];
                     }
                 }
-                y_offset += this._textFormat.leading;
+                //todo: this is a hack to fix multiline spacing in icycle. normally the multipliers should not be needed
+                if (this._textFormat.leading == 5) {
+                    y_offset += this._textFormat.leading * 1.6;
+                }
+                else if (this._textFormat.leading == 11) {
+                    y_offset += this._textFormat.leading * 1.8;
+                }
+                else {
+                    y_offset += this._textFormat.leading;
+                }
             }
             if (vert_cnt > 0) {
                 var attributesView = new AttributesView(Float32Array, 4);
@@ -50088,55 +50700,63 @@ var CubeMapShadowMapper = (function (_super) {
     __extends(CubeMapShadowMapper, _super);
     function CubeMapShadowMapper() {
         var _this = _super.call(this) || this;
-        _this._pDepthMapSize = 512;
+        _this._depthMapSize = 512;
         _this._needsRender = new Array();
         _this.initCameras();
         return _this;
     }
     CubeMapShadowMapper.prototype.initCameras = function () {
-        this._depthCameras = new Array();
-        this._projections = new Array();
+        this._depthProjections = new Array();
         // posX, negX, posY, negY, posZ, negZ
-        this.addCamera(0, 90, 0);
-        this.addCamera(0, -90, 0);
-        this.addCamera(-90, 0, 0);
-        this.addCamera(90, 0, 0);
-        this.addCamera(0, 0, 0);
-        this.addCamera(0, 180, 0);
+        this.addProjection(0, 90, 0);
+        this.addProjection(0, -90, 0);
+        this.addProjection(-90, 0, 0);
+        this.addProjection(90, 0, 0);
+        this.addProjection(0, 0, 0);
+        this.addProjection(0, 180, 0);
     };
-    CubeMapShadowMapper.prototype.addCamera = function (rotationX, rotationY, rotationZ) {
-        var cam = new Camera();
-        cam.rotationX = rotationX;
-        cam.rotationY = rotationY;
-        cam.rotationZ = rotationZ;
-        cam.projection.near = .01;
-        var projection = cam.projection;
+    CubeMapShadowMapper.prototype.addProjection = function (rotationX, rotationY, rotationZ) {
+        var projection = new PerspectiveProjection();
+        projection.transform.rotateTo(rotationX, rotationY, rotationZ);
+        projection.near = .01;
         projection.fieldOfView = 90;
-        this._projections.push(projection);
-        cam.projection._iAspectRatio = 1;
-        this._depthCameras.push(cam);
+        this._depthProjections.push(projection);
     };
-    //@override
-    CubeMapShadowMapper.prototype.pCreateDepthTexture = function () {
-        return new SingleCubeTexture(new ImageCube(this._pDepthMapSize));
+    /**
+     *
+     * @returns {SingleCubeTexture}
+     * @private
+     */
+    CubeMapShadowMapper.prototype._createDepthTexture = function () {
+        return new SingleCubeTexture(new ImageCube(this._depthMapSize));
     };
-    //@override
-    CubeMapShadowMapper.prototype.pUpdateDepthProjection = function (camera) {
-        var light = (this._pLight);
+    /**
+     *
+     * @param projection
+     * @private
+     */
+    CubeMapShadowMapper.prototype._updateDepthProjection = function (projection) {
+        var light = (this._light);
         var maxDistance = light._pFallOff;
-        var pos = this._pLight.scenePosition;
+        var pos = this._light.scenePosition;
         // todo: faces outside frustum which are pointing away from camera need not be rendered!
         for (var i = 0; i < 6; ++i) {
-            this._projections[i].far = maxDistance;
-            this._depthCameras[i].transform.moveTo(pos.x, pos.y, pos.z);
+            this._depthProjections[i].far = maxDistance;
+            this._depthProjections[i].transform.moveTo(pos.x, pos.y, pos.z);
             this._needsRender[i] = true;
         }
     };
-    //@override
-    CubeMapShadowMapper.prototype.pDrawDepthMap = function (view, target, renderer) {
+    /**
+     *
+     * @param view
+     * @param target
+     * @param renderer
+     * @private
+     */
+    CubeMapShadowMapper.prototype._drawDepthMap = function (view, target, renderer) {
         for (var i = 0; i < 6; ++i)
             if (this._needsRender[i])
-                renderer._iRender(this._depthCameras[i], view, target.imageCube, null, i);
+                renderer._iRender(this._depthProjections[i], view, target.imageCube, null, i);
     };
     return CubeMapShadowMapper;
 }(ShadowMapperBase));
@@ -50218,10 +50838,10 @@ var PointLight = (function (_super) {
         var m = Matrix3D.CALCULATION_MATRIX;
         // todo: do not use lookAt on Light
         m.copyFrom(displayObject.getRenderSceneTransform(cameraTransform));
-        m.append(this._pParent.inverseSceneTransform);
+        m.append(this._pParent.transform.inverseConcatenatedMatrix3D);
         this.lookAt(m.position);
         m.copyFrom(displayObject.getRenderSceneTransform(cameraTransform));
-        m.append(this.inverseSceneTransform);
+        m.append(this.transform.inverseConcatenatedMatrix3D);
         var box = displayObject.getBox();
         var v1 = m.deltaTransformVector(new Vector3D(box.left, box.bottom, box.front));
         var v2 = m.deltaTransformVector(new Vector3D(box.right, box.top, box.back));
@@ -50517,68 +51137,21 @@ var TextureProjector = (function (_super) {
      */
     function TextureProjector(texture) {
         var _this = _super.call(this) || this;
-        _this._viewProjectionInvalid = true;
-        _this._viewProjection = new Matrix3D();
-        _this._onProjectionMatrixChangedDelegate = function (event) { return _this.onProjectionMatrixChanged(event); };
         _this._projection = new PerspectiveProjection();
-        //this._projection.preserveFocalLength = true;
-        _this._projection.addEventListener(ProjectionEvent.MATRIX_CHANGED, _this._onProjectionMatrixChangedDelegate);
+        _this._projection.transform = _this._transform;
         _this._texture = texture;
         var width = texture.getImageAt(0).width;
         var height = texture.getImageAt(0).height;
-        _this._projection._iAspectRatio = width / height;
-        _this._projection._iUpdateScissorRect(0, 0, width, height);
-        _this._projection._iUpdateViewport(0, 0, width, height);
+        _this._projection.setViewRect(0, 0, width, height);
+        _this._projection.setStageRect(0, 0, width, height);
         return _this;
     }
-    Object.defineProperty(TextureProjector.prototype, "aspectRatio", {
-        /**
-         * The aspect ratio of the texture or projection. By default this is the same aspect ratio of the texture (width/height)
-         */
-        get: function () {
-            return this._projection._iAspectRatio;
-        },
-        set: function (value) {
-            this._projection._iAspectRatio = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProjector.prototype, "fieldOfView", {
-        /**
-         * The vertical field of view of the projection, or the angle of the cone.
-         */
-        get: function () {
-            return this._projection.fieldOfView;
-        },
-        set: function (value) {
-            this._projection.fieldOfView = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProjector.prototype, "preserveFocalLength", {
+    Object.defineProperty(TextureProjector.prototype, "projection", {
         /**
          *
          */
         get: function () {
-            return this._projection.preserveFocalLength;
-        },
-        set: function (value) {
-            this._projection.preserveFocalLength = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProjector.prototype, "focalLength", {
-        /**
-         * The focal length of the projection, or the distance to the viewing plance from the camera.
-         */
-        get: function () {
-            return this._projection.focalLength;
-        },
-        set: function (value) {
-            this._projection.focalLength = value;
+            return this._projection;
         },
         enumerable: true,
         configurable: true
@@ -50615,42 +51188,13 @@ var TextureProjector = (function (_super) {
             this._texture = value;
             var width = value.getImageAt(0).width;
             var height = value.getImageAt(0).height;
-            this._projection._iAspectRatio = width / height;
-            this._projection._iUpdateScissorRect(0, 0, width, height);
-            this._projection._iUpdateViewport(0, 0, width, height);
+            this._projection.setViewRect(0, 0, width, height);
+            this._projection.setStageRect(0, 0, width, height);
             this.dispatchEvent(new TextureProjectorEvent(TextureProjectorEvent.TEXTURE_CHANGE));
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(TextureProjector.prototype, "viewProjection", {
-        /**
-         * The matrix that projects a point in scene space into the texture coordinates.
-         */
-        get: function () {
-            if (this._viewProjectionInvalid) {
-                this._viewProjection.copyFrom(this.inverseSceneTransform);
-                this._viewProjection.append(this._projection.matrix);
-                this._viewProjectionInvalid = false;
-            }
-            return this._viewProjection;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @inheritDoc
-     */
-    TextureProjector.prototype.pInvalidateHierarchicalProperties = function (propDirty) {
-        if (_super.prototype.pInvalidateHierarchicalProperties.call(this, propDirty))
-            return true;
-        if (propDirty & HierarchicalProperties.SCENE_TRANSFORM)
-            this._viewProjectionInvalid = true;
-        return false;
-    };
-    TextureProjector.prototype.onProjectionMatrixChanged = function (event) {
-        this._viewProjectionInvalid = true;
-    };
     return TextureProjector;
 }(DisplayObjectContainer));
 TextureProjector.traverseName = TraverserBase.addEntityName("applyTextureProjector");
@@ -50770,7 +51314,7 @@ var TouchEvent = (function (_super) {
          * The position in scene space where the event took place
          */
         get: function () {
-            return this.entity.sceneTransform.transformVector(this.position);
+            return this.entity.transform.concatenatedMatrix3D.transformVector(this.position);
         },
         enumerable: true,
         configurable: true
@@ -50780,7 +51324,7 @@ var TouchEvent = (function (_super) {
          * The normal in scene space where the event took place
          */
         get: function () {
-            var sceneNormal = this.entity.sceneTransform.deltaTransformVector(this.normal);
+            var sceneNormal = this.entity.transform.concatenatedMatrix3D.deltaTransformVector(this.normal);
             sceneNormal.normalize();
             return sceneNormal;
         },
@@ -51178,7 +51722,7 @@ var CascadeShadowMapper = (function (_super) {
     function CascadeShadowMapper(numCascades) {
         if (numCascades === void 0) { numCascades = 3; }
         var _this = _super.call(this) || this;
-        _this._pScissorRectsInvalid = true;
+        _this._scissorRectsInvalid = true;
         if (numCascades < 1 || numCascades > 4)
             throw new Error("numCascades must be an integer between 1 and 4");
         _this._numCascades = numCascades;
@@ -51198,7 +51742,7 @@ var CascadeShadowMapper = (function (_super) {
         this._splitRatios[index] = value;
     };
     CascadeShadowMapper.prototype.getDepthProjections = function (partition /*uint*/) {
-        return this._depthCameras[partition].viewProjection;
+        return this._depthProjections[partition].viewMatrix3D;
     };
     CascadeShadowMapper.prototype.init = function () {
         this._splitRatios = new Array(this._numCascades);
@@ -51211,19 +51755,16 @@ var CascadeShadowMapper = (function (_super) {
         this._texOffsetsX = Array(-1, 1, -1, 1);
         this._texOffsetsY = Array(1, 1, -1, -1);
         this._pScissorRects = new Array(4);
-        this._depthLenses = new Array();
-        this._depthCameras = new Array();
-        for (i = 0; i < this._numCascades; ++i) {
-            this._depthLenses[i] = new FreeMatrixProjection();
-            this._depthCameras[i] = new Camera(this._depthLenses[i]);
-        }
+        this._depthProjections = new Array();
+        for (i = 0; i < this._numCascades; ++i)
+            this._depthProjections[i] = new PerspectiveProjection();
     };
-    CascadeShadowMapper.prototype._pSetDepthMapSize = function (value /*uint*/) {
-        _super.prototype._pSetDepthMapSize.call(this, value);
+    CascadeShadowMapper.prototype._setDepthMapSize = function (value /*uint*/) {
+        _super.prototype._setDepthMapSize.call(this, value);
         this.invalidateScissorRects();
     };
     CascadeShadowMapper.prototype.invalidateScissorRects = function () {
-        this._pScissorRectsInvalid = true;
+        this._scissorRectsInvalid = true;
     };
     Object.defineProperty(CascadeShadowMapper.prototype, "numCascades", {
         get: function () {
@@ -51242,35 +51783,34 @@ var CascadeShadowMapper = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    CascadeShadowMapper.prototype.pDrawDepthMap = function (view, target, renderer) {
-        if (this._pScissorRectsInvalid)
+    CascadeShadowMapper.prototype._drawDepthMap = function (view, target, renderer) {
+        if (this._scissorRectsInvalid)
             this.updateScissorRects();
-        renderer.cullPlanes = this._pCullPlanes;
-        renderer._iRenderCascades(this._pOverallDepthCamera, view, target.image2D, this._numCascades, this._pScissorRects, this._depthCameras);
+        renderer.cullPlanes = this._cullPlanes;
+        renderer._iRenderCascades(this._overallDepthProjection, view, target.image2D, this._numCascades, this._pScissorRects, this._depthProjections);
     };
     CascadeShadowMapper.prototype.updateScissorRects = function () {
-        var half = this._pDepthMapSize * .5;
+        var half = this._depthMapSize * .5;
         this._pScissorRects[0] = new Rectangle(0, 0, half, half);
         this._pScissorRects[1] = new Rectangle(half, 0, half, half);
         this._pScissorRects[2] = new Rectangle(0, half, half, half);
         this._pScissorRects[3] = new Rectangle(half, half, half, half);
-        this._pScissorRectsInvalid = false;
+        this._scissorRectsInvalid = false;
     };
-    CascadeShadowMapper.prototype.pUpdateDepthProjection = function (camera) {
+    CascadeShadowMapper.prototype._updateDepthProjection = function (projection) {
         var matrix;
-        var projection = camera.projection;
         var projectionNear = projection.near;
         var projectionRange = projection.far - projectionNear;
-        this.pUpdateProjectionFromFrustumCorners(camera, camera.projection.frustumCorners, this._pMatrix);
-        this._pMatrix.appendScale(.96, .96, 1);
-        this._pOverallDepthProjection.matrix = this._pMatrix;
-        this.pUpdateCullPlanes(camera);
+        this._updateProjectionFromFrustumCorners(projection, projection.frustumCorners, this._matrix);
+        this._matrix.appendScale(.96, .96, 1);
+        this._overallDepthProjection.frustumMatrix3D = this._matrix;
+        this._updateCullPlanes(projection);
         for (var i = 0; i < this._numCascades; ++i) {
-            matrix = this._depthLenses[i].matrix;
+            matrix = this._depthProjections[i].frustumMatrix3D;
             this._nearPlaneDistances[i] = projectionNear + this._splitRatios[i] * projectionRange;
-            this._depthCameras[i].transform.matrix3D = this._pOverallDepthCamera.transform.matrix3D;
+            this._depthProjections[i].transform.matrix3D = this._overallDepthProjection.transform.matrix3D;
             this.updateProjectionPartition(matrix, this._splitRatios[i], this._texOffsetsX[i], this._texOffsetsY[i]);
-            this._depthLenses[i].matrix = matrix;
+            this._depthProjections[i].frustumMatrix3D = matrix;
         }
     };
     CascadeShadowMapper.prototype.updateProjectionPartition = function (matrix, splitRatio, texOffsetX, texOffsetY) {
@@ -51280,12 +51820,12 @@ var CascadeShadowMapper = (function (_super) {
         var maxX = Number.NEGATIVE_INFINITY, maxY = Number.NEGATIVE_INFINITY, maxZ = Number.NEGATIVE_INFINITY;
         var i = 0;
         while (i < 12) {
-            xN = this._pLocalFrustum[i];
-            yN = this._pLocalFrustum[i + 1];
-            zN = this._pLocalFrustum[i + 2];
-            xF = xN + (this._pLocalFrustum[i + 12] - xN) * splitRatio;
-            yF = yN + (this._pLocalFrustum[i + 13] - yN) * splitRatio;
-            zF = zN + (this._pLocalFrustum[i + 14] - zN) * splitRatio;
+            xN = this._localFrustum[i];
+            yN = this._localFrustum[i + 1];
+            zN = this._localFrustum[i + 2];
+            xF = xN + (this._localFrustum[i + 12] - xN) * splitRatio;
+            yF = yN + (this._localFrustum[i + 13] - yN) * splitRatio;
+            zF = zN + (this._localFrustum[i + 14] - zN) * splitRatio;
             if (xN < minX)
                 minX = xN;
             if (xN > maxX)
@@ -51313,12 +51853,12 @@ var CascadeShadowMapper = (function (_super) {
         var h = (maxY - minY);
         var d = 1 / (maxZ - minZ);
         if (minX < 0)
-            minX -= this._pSnap; // because int() rounds up for < 0
+            minX -= this._snap; // because int() rounds up for < 0
         if (minY < 0)
-            minY -= this._pSnap;
-        minX = Math.floor(minX / this._pSnap) * this._pSnap;
-        minY = Math.floor(minY / this._pSnap) * this._pSnap;
-        var snap2 = 2 * this._pSnap;
+            minY -= this._snap;
+        minX = Math.floor(minX / this._snap) * this._snap;
+        minY = Math.floor(minY / this._snap) * this._snap;
+        var snap2 = 2 * this._snap;
         w = Math.floor(w / snap2 + 1) * snap2;
         h = Math.floor(h / snap2 + 1) * snap2;
         maxX = minX + w;
@@ -51373,15 +51913,15 @@ var NearDirectionalShadowMapper = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NearDirectionalShadowMapper.prototype.pUpdateDepthProjection = function (camera) {
-        var corners = camera.projection.frustumCorners;
+    NearDirectionalShadowMapper.prototype._updateDepthProjection = function (projection) {
+        var corners = projection.frustumCorners;
         for (var i = 0; i < 12; ++i) {
             var v = corners[i];
-            this._pLocalFrustum[i] = v;
-            this._pLocalFrustum[i + 12] = v + (corners[i + 12] - v) * this._coverageRatio;
+            this._localFrustum[i] = v;
+            this._localFrustum[i + 12] = v + (corners[i + 12] - v) * this._coverageRatio;
         }
-        this.pUpdateProjectionFromFrustumCorners(camera, this._pLocalFrustum, this._pMatrix);
-        this._pOverallDepthProjection.matrix = this._pMatrix;
+        this._updateProjectionFromFrustumCorners(projection, this._localFrustum, this._matrix);
+        this._overallDepthProjection.frustumMatrix3D = this._matrix;
     };
     return NearDirectionalShadowMapper;
 }(DirectionalShadowMapper));
@@ -52947,6 +53487,11 @@ var Font = (function (_super) {
      *
      */
     Font.prototype.dispose = function () {
+        var len = this._font_styles.length;
+        for (var i = 0; i < len; ++i) {
+            this._font_styles[i].dispose();
+        }
+        this._font_styles.length = 0;
     };
     /**
      *Get a font-table for a specific name, or create one if it does not exists.
@@ -53442,9 +53987,9 @@ var Merge = (function () {
                 vo.indices[iIdx++] = ind[calc + 2] + indexOffset;
             }
             if (!this._objectSpace) {
-                sprite.sceneTransform.transformVectors(vertices, vertices);
-                sprite.sceneTransform.deltaTransformVectors(normals, normals);
-                sprite.sceneTransform.deltaTransformVectors(tangents, tangents);
+                sprite.transform.concatenatedMatrix3D.transformVectors(vertices, vertices);
+                sprite.transform.concatenatedMatrix3D.deltaTransformVectors(normals, normals);
+                sprite.transform.concatenatedMatrix3D.deltaTransformVectors(tangents, tangents);
                 // Copy vertex data from temporary (transformed) vectors
                 vIdx = vo.vertices.length;
                 nIdx = vo.normals.length;
@@ -53899,8 +54444,8 @@ var LightingShader = (function (_super) {
      * @param stage
      * @param camera
      */
-    LightingShader.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        _super.prototype._setRenderState.call(this, renderable, camera, viewProjection);
+    LightingShader.prototype._setRenderState = function (renderable, projection) {
+        _super.prototype._setRenderState.call(this, renderable, projection);
         if (this._lightingPass.lightPicker)
             this._lightingPass.lightPicker.collectLights(renderable.sourceEntity);
         if (this.usesLights)
@@ -54089,290 +54634,15 @@ var RenderableNullSort = (function () {
 }());
 
 /**
- * PassBase provides an abstract base class for material shader passes. A material pass constitutes at least
- * a render call per required renderable.
- */
-var PassBase = (function (_super) {
-    __extends(PassBase, _super);
-    /**
-     * Creates a new PassBase object.
-     */
-    function PassBase(render, material, elementsClass, stage) {
-        var _this = _super.call(this) || this;
-        _this._preserveAlpha = true;
-        _this._forceSeparateMVP = false;
-        _this._render = render;
-        _this._material = material;
-        _this._elementsClass = elementsClass;
-        _this._stage = stage;
-        return _this;
-    }
-    Object.defineProperty(PassBase.prototype, "shader", {
-        get: function () {
-            return this._shader;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PassBase.prototype, "animationSet", {
-        get: function () {
-            return this._material.animationSet;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PassBase.prototype, "preserveAlpha", {
-        /**
-         * Indicates whether the output alpha value should remain unchanged compared to the material's original alpha.
-         */
-        get: function () {
-            return this._preserveAlpha;
-        },
-        set: function (value) {
-            if (this._preserveAlpha == value)
-                return;
-            this._preserveAlpha = value;
-            this.invalidate();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PassBase.prototype, "forceSeparateMVP", {
-        /**
-         * Indicates whether the screen projection should be calculated by forcing a separate scene matrix and
-         * view-projection matrix. This is used to prevent rounding errors when using multiple passes with different
-         * projection code.
-         */
-        get: function () {
-            return this._forceSeparateMVP;
-        },
-        set: function (value) {
-            if (this._forceSeparateMVP == value)
-                return;
-            this._forceSeparateMVP = value;
-            this.invalidate();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    PassBase.prototype.getImageIndex = function (texture, index) {
-        if (index === void 0) { index = 0; }
-        return this._render.getImageIndex(texture, index);
-    };
-    /**
-     * Marks the shader program as invalid, so it will be recompiled before the next render.
-     */
-    PassBase.prototype.invalidate = function () {
-        this._shader.invalidateProgram();
-        this.dispatchEvent(new PassEvent(PassEvent.INVALIDATE, this));
-    };
-    /**
-     * Cleans up any resources used by the current object.
-     * @param deep Indicates whether other resources should be cleaned up, that could potentially be shared across different instances.
-     */
-    PassBase.prototype.dispose = function () {
-        this._render = null;
-        this._material = null;
-        this._elementsClass = null;
-        this._stage = null;
-        if (this._shader) {
-            this._shader.dispose();
-            this._shader = null;
-        }
-    };
-    /**
-     * Renders the current pass. Before calling pass, activatePass needs to be called with the same index.
-     * @param pass The pass used to render the renderable.
-     * @param renderable The IRenderable object to draw.
-     * @param stage The Stage object used for rendering.
-     * @param entityCollector The EntityCollector object that contains the visible scene data.
-     * @param viewProjection The view-projection matrix used to project to the screen. This is not the same as
-     * camera.viewProjection as it includes the scaling factors when rendering to textures.
-     *
-     * @internal
-     */
-    PassBase.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        this._shader._setRenderState(renderable, camera, viewProjection);
-    };
-    /**
-     * Sets the render state for the pass that is independent of the rendered object. This needs to be called before
-     * calling pass. Before activating a pass, the previously used pass needs to be deactivated.
-     * @param stage The Stage object which is currently used for rendering.
-     * @param camera The camera from which the scene is viewed.
-     * @private
-     */
-    PassBase.prototype._iActivate = function (camera) {
-        this._shader._iActivate(camera);
-    };
-    /**
-     * Clears the render state for the pass. This needs to be called before activating another pass.
-     * @param stage The Stage used for rendering
-     *
-     * @private
-     */
-    PassBase.prototype._iDeactivate = function () {
-        this._shader._iDeactivate();
-    };
-    PassBase.prototype._iIncludeDependencies = function (shader) {
-        this._render._iIncludeDependencies(shader);
-        if (this._forceSeparateMVP)
-            shader.globalPosDependencies++;
-    };
-    PassBase.prototype._iInitConstantData = function (shader) {
-    };
-    PassBase.prototype._iGetPreLightingVertexCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    PassBase.prototype._iGetPreLightingFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    PassBase.prototype._iGetVertexCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    PassBase.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    PassBase.prototype._iGetNormalVertexCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    PassBase.prototype._iGetNormalFragmentCode = function (shader, registerCache, sharedRegisters) {
-        return "";
-    };
-    return PassBase;
-}(EventDispatcher));
-
-/**
- * BasicMaterialPass forms an abstract base class for the default shaded materials provided by Stage,
- * using material methods to define their appearance.
- */
-var BasicMaterialPass = (function (_super) {
-    __extends(BasicMaterialPass, _super);
-    function BasicMaterialPass(render, material, elementsClass, stage) {
-        var _this = _super.call(this, render, material, elementsClass, stage) || this;
-        _this._diffuseR = 1;
-        _this._diffuseG = 1;
-        _this._diffuseB = 1;
-        _this._diffuseA = 1;
-        _this._shader = new ShaderBase(elementsClass, _this, _this._stage);
-        _this.invalidate();
-        return _this;
-    }
-    BasicMaterialPass.prototype._iIncludeDependencies = function (shader) {
-        _super.prototype._iIncludeDependencies.call(this, shader);
-        if (this._textureVO != null)
-            shader.uvDependencies++;
-    };
-    BasicMaterialPass.prototype.invalidate = function () {
-        _super.prototype.invalidate.call(this);
-        this._textureVO = this._material.getTextureAt(0) ? this._shader.getAbstraction(this._material.getTextureAt(0)) : null;
-    };
-    BasicMaterialPass.prototype.dispose = function () {
-        if (this._textureVO) {
-            this._textureVO.onClear(new AssetEvent(AssetEvent.CLEAR, this._material.getTextureAt(0)));
-            this._textureVO = null;
-        }
-        _super.prototype.dispose.call(this);
-    };
-    /**
-     * @inheritDoc
-     */
-    BasicMaterialPass.prototype._iGetFragmentCode = function (shader, regCache, sharedReg) {
-        var code = "";
-        var alphaReg;
-        if (this.preserveAlpha) {
-            alphaReg = regCache.getFreeFragmentSingleTemp();
-            regCache.addFragmentTempUsages(alphaReg, 1);
-            code += "mov " + alphaReg + ", " + sharedReg.shadedTarget + ".w\n";
-        }
-        var targetReg = sharedReg.shadedTarget;
-        if (this._textureVO != null) {
-            code += this._textureVO._iGetFragmentCode(targetReg, regCache, sharedReg, sharedReg.uvVarying);
-            if (shader.alphaThreshold > 0) {
-                var cutOffReg = regCache.getFreeFragmentConstant();
-                this._fragmentConstantsIndex = cutOffReg.index * 4;
-                code += "sub " + targetReg + ".w, " + targetReg + ".w, " + cutOffReg + ".x\n" + "kil " + targetReg + ".w\n" + "add " + targetReg + ".w, " + targetReg + ".w, " + cutOffReg + ".x\n";
-            }
-        }
-        else if (shader.colorBufferIndex != -1) {
-            code += "mov " + targetReg + ", " + sharedReg.colorVarying + "\n";
-        }
-        else {
-            var diffuseInputReg = regCache.getFreeFragmentConstant();
-            this._fragmentConstantsIndex = diffuseInputReg.index * 4;
-            code += "mov " + targetReg + ", " + diffuseInputReg + "\n";
-        }
-        if (this.preserveAlpha) {
-            code += "mul " + sharedReg.shadedTarget + ".w, " + sharedReg.shadedTarget + ".w, " + alphaReg + "\n";
-            regCache.removeFragmentTempUsage(alphaReg);
-        }
-        return code;
-    };
-    BasicMaterialPass.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        _super.prototype._setRenderState.call(this, renderable, camera, viewProjection);
-        if (this._textureVO != null)
-            this._textureVO._setRenderState(renderable);
-    };
-    /**
-     * @inheritDoc
-     */
-    BasicMaterialPass.prototype._iActivate = function (camera) {
-        _super.prototype._iActivate.call(this, camera);
-        if (this._textureVO != null) {
-            this._textureVO.activate(this._render);
-            if (this._shader.alphaThreshold > 0)
-                this._shader.fragmentConstantData[this._fragmentConstantsIndex] = this._shader.alphaThreshold;
-        }
-        else if (this._shader.colorBufferIndex == -1) {
-            var index = this._fragmentConstantsIndex;
-            var data = this._shader.fragmentConstantData;
-            data[index] = this._diffuseR;
-            data[index + 1] = this._diffuseG;
-            data[index + 2] = this._diffuseB;
-            data[index + 3] = this._diffuseA;
-        }
-    };
-    return BasicMaterialPass;
-}(PassBase));
-
-/**
- * RenderMaterialObject forms an abstract base class for the default shaded materials provided by Stage,
- * using material methods to define their appearance.
- */
-var GL_BasicMaterial = (function (_super) {
-    __extends(GL_BasicMaterial, _super);
-    function GL_BasicMaterial(material, elementsClass, renderPool) {
-        var _this = _super.call(this, material, elementsClass, renderPool) || this;
-        _this._basicMaterial = material;
-        _this._pAddPass(_this._pass = new BasicMaterialPass(_this, material, elementsClass, _this._stage));
-        return _this;
-    }
-    GL_BasicMaterial.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._basicMaterial = null;
-    };
-    /**
-     * @inheritDoc
-     */
-    GL_BasicMaterial.prototype._pUpdateRender = function () {
-        _super.prototype._pUpdateRender.call(this);
-        this._pRequiresBlending = (this._basicMaterial.blendMode != BlendMode.NORMAL || this._basicMaterial.alphaBlending || (this._basicMaterial.colorTransform && this._basicMaterial.colorTransform.alphaMultiplier < 1));
-        this._pass.preserveAlpha = this._basicMaterial.preserveAlpha; //this._pRequiresBlending;
-        this._pass.shader.setBlendMode((this._basicMaterial.blendMode == BlendMode.NORMAL && this._pRequiresBlending) ? BlendMode.LAYER : this._basicMaterial.blendMode);
-        //this._pass.forceSeparateMVP = false;
-    };
-    return GL_BasicMaterial;
-}(GL_MaterialBase));
-
-/**
  * GL_SkyboxMaterial forms an abstract base class for the default shaded materials provided by Stage,
  * using material methods to define their appearance.
  */
 var GL_SkyboxMaterial = (function (_super) {
     __extends(GL_SkyboxMaterial, _super);
-    function GL_SkyboxMaterial(skybox, elementsClass, renderPool) {
-        var _this = _super.call(this, skybox, elementsClass, renderPool) || this;
+    function GL_SkyboxMaterial(skybox, materialPool) {
+        var _this = _super.call(this, skybox, materialPool) || this;
         _this._skybox = skybox;
-        _this._shader = new ShaderBase(elementsClass, _this, _this._stage);
+        _this._shader = new ShaderBase(materialPool.elementsClass, _this, _this._stage);
         _this._texture = _this._shader.getAbstraction(_this._skybox.texture);
         _this._pAddPass(_this);
         return _this;
@@ -54401,223 +54671,20 @@ var GL_SkyboxMaterial = (function (_super) {
     GL_SkyboxMaterial.prototype._iGetFragmentCode = function (shader, registerCache, sharedRegisters) {
         return this._texture._iGetFragmentCode(sharedRegisters.shadedTarget, registerCache, sharedRegisters, sharedRegisters.positionVarying);
     };
-    GL_SkyboxMaterial.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        _super.prototype._setRenderState.call(this, renderable, camera, viewProjection);
+    GL_SkyboxMaterial.prototype._setRenderState = function (renderable, projection) {
+        _super.prototype._setRenderState.call(this, renderable, projection);
         this._texture._setRenderState(renderable);
     };
     /**
      * @inheritDoc
      */
-    GL_SkyboxMaterial.prototype._iActivate = function (camera) {
-        _super.prototype._iActivate.call(this, camera);
+    GL_SkyboxMaterial.prototype._iActivate = function (projection) {
+        _super.prototype._iActivate.call(this, projection);
         this._stage.context.setDepthTest(false, exports.ContextGLCompareMode.LESS);
         this._texture.activate(this);
     };
     return GL_SkyboxMaterial;
 }(GL_MaterialPassBase));
-
-/**
- *
- * @class away.pool.GL_TextureBaseBase
- */
-var GL_TextureBase = (function (_super) {
-    __extends(GL_TextureBase, _super);
-    function GL_TextureBase(texture, shader) {
-        var _this = _super.call(this, texture, shader) || this;
-        _this._texture = texture;
-        _this._shader = shader;
-        _this._stage = shader._stage;
-        return _this;
-    }
-    /**
-     *
-     */
-    GL_TextureBase.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._texture = null;
-        this._shader = null;
-        this._stage = null;
-    };
-    GL_TextureBase.prototype._iGetFragmentCode = function (targetReg, regCache, sharedReg, inputReg) {
-        if (inputReg === void 0) { inputReg = null; }
-        throw new AbstractMethodError();
-    };
-    GL_TextureBase.prototype._setRenderState = function (renderable) {
-        //overidden for state logic
-    };
-    GL_TextureBase.prototype.activate = function (render) {
-        //overridden for activation logic
-    };
-    GL_TextureBase.prototype.getTextureReg = function (imageIndex, regCache, sharedReg) {
-        var index = this._shader.imageIndices.indexOf(imageIndex); //todo: collapse the index based on duplicate image objects to save registrations
-        if (index == -1) {
-            var textureReg = regCache.getFreeTextureReg();
-            sharedReg.textures.push(textureReg);
-            this._shader.imageIndices.push(imageIndex);
-            return textureReg;
-        }
-        return sharedReg.textures[index];
-    };
-    return GL_TextureBase;
-}(AbstractionBase));
-
-/**
- *
- * @class away.pool.GL_Single2DTexture
- */
-var GL_Single2DTexture = (function (_super) {
-    __extends(GL_Single2DTexture, _super);
-    function GL_Single2DTexture(single2DTexture, shader) {
-        var _this = _super.call(this, single2DTexture, shader) || this;
-        _this._single2DTexture = single2DTexture;
-        return _this;
-    }
-    GL_Single2DTexture.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._single2DTexture = null;
-    };
-    /**
-     *
-     * @param shader
-     * @param regCache
-     * @param targetReg The register in which to store the sampled colour.
-     * @param uvReg The uv coordinate vector with which to sample the texture map.
-     * @returns {string}
-     * @private
-     */
-    GL_Single2DTexture.prototype._iGetFragmentCode = function (targetReg, regCache, sharedReg, inputReg) {
-        var code = "";
-        var wrap = "wrap";
-        var format = ""; //this.getFormatString(this._single2DTexture.image2D);
-        var filter = "linear,miplinear";
-        var temp;
-        //modify depending on mapping mode
-        if (this._single2DTexture.mappingMode == MappingMode.RADIAL_GRADIENT) {
-            temp = regCache.getFreeFragmentVectorTemp();
-            code += "mul " + temp + ".xy, " + inputReg + ", " + inputReg + "\n";
-            code += "mul " + temp + ".xy, " + inputReg + ", " + inputReg + "\n";
-            code += "add " + temp + ".x, " + temp + ".x, " + temp + ".y\n";
-            code += "sub " + temp + ".y, " + temp + ".y, " + temp + ".y\n";
-            code += "sqt " + temp + ".x, " + temp + ".x, " + temp + ".x\n";
-            inputReg = temp;
-        }
-        //handles texture atlasing
-        if (this._shader.useImageRect) {
-            var samplerReg = regCache.getFreeFragmentConstant();
-            this._samplerIndex = samplerReg.index * 4;
-            temp = regCache.getFreeFragmentVectorTemp();
-            code += "mul " + temp + ", " + inputReg + ", " + samplerReg + ".xy\n";
-            code += "add " + temp + ", " + temp + ", " + samplerReg + ".zw\n";
-            inputReg = temp;
-        }
-        this._imageIndex = this._shader.getImageIndex(this._single2DTexture, 0);
-        var textureReg = this.getTextureReg(this._imageIndex, regCache, sharedReg);
-        this._textureIndex = textureReg.index;
-        code += "tex " + targetReg + ", " + inputReg + ", " + textureReg + " <2d," + filter + "," + format + wrap + ">\n";
-        return code;
-    };
-    GL_Single2DTexture.prototype.activate = function (render) {
-        var sampler = render.samplers[this._imageIndex];
-        sampler.activate(this._textureIndex);
-        var image = render.images[this._imageIndex];
-        image.activate(this._textureIndex, sampler._sampler.mipmap);
-        if (this._shader.useImageRect) {
-            var index = this._samplerIndex;
-            var data = this._shader.fragmentConstantData;
-            if (!sampler._sampler.imageRect) {
-                data[index] = 1;
-                data[index + 1] = 1;
-                data[index + 2] = 0;
-                data[index + 3] = 0;
-            }
-            else {
-                data[index] = sampler._sampler.imageRect.width;
-                data[index + 1] = sampler._sampler.imageRect.height;
-                data[index + 2] = sampler._sampler.imageRect.x;
-                data[index + 3] = sampler._sampler.imageRect.y;
-            }
-        }
-    };
-    GL_Single2DTexture.prototype._setRenderState = function (renderable) {
-        var sampler = renderable.samplers[this._imageIndex];
-        if (sampler)
-            sampler.activate(this._textureIndex);
-        var image = renderable.images[this._imageIndex];
-        if (image)
-            image.activate(this._textureIndex, sampler._sampler.mipmap);
-        if (this._shader.useImageRect && sampler) {
-            var index = this._samplerIndex;
-            var data = this._shader.fragmentConstantData;
-            if (!sampler._sampler.imageRect) {
-                data[index] = 1;
-                data[index + 1] = 1;
-                data[index + 2] = 0;
-                data[index + 3] = 0;
-            }
-            else {
-                data[index] = sampler._sampler.imageRect.width;
-                data[index + 1] = sampler._sampler.imageRect.height;
-                data[index + 2] = sampler._sampler.imageRect.x;
-                data[index + 3] = sampler._sampler.imageRect.y;
-            }
-        }
-    };
-    return GL_Single2DTexture;
-}(GL_TextureBase));
-
-/**
- *
- * @class away.pool.TextureDataBase
- */
-var GL_SingleCubeTexture = (function (_super) {
-    __extends(GL_SingleCubeTexture, _super);
-    function GL_SingleCubeTexture(singleCubeTexture, shader) {
-        var _this = _super.call(this, singleCubeTexture, shader) || this;
-        _this._singleCubeTexture = singleCubeTexture;
-        return _this;
-    }
-    GL_SingleCubeTexture.prototype.onClear = function (event) {
-        _super.prototype.onClear.call(this, event);
-        this._singleCubeTexture = null;
-    };
-    GL_SingleCubeTexture.prototype._iIncludeDependencies = function (includeInput) {
-        if (includeInput === void 0) { includeInput = true; }
-        if (includeInput)
-            this._shader.usesPositionFragment = true;
-    };
-    /**
-     *
-     * @param shader
-     * @param regCache
-     * @param targetReg The register in which to store the sampled colour.
-     * @param uvReg The direction vector with which to sample the cube map.
-     * @returns {string}
-     * @private
-     */
-    GL_SingleCubeTexture.prototype._iGetFragmentCode = function (targetReg, regCache, sharedReg, inputReg) {
-        var format = ""; //this.getFormatString(this._singleCubeTexture.imageCube);
-        var filter = "linear,miplinear";
-        this._imageIndex = this._shader.getImageIndex(this._singleCubeTexture, 0);
-        var textureReg = this.getTextureReg(this._imageIndex, regCache, sharedReg);
-        this._textureIndex = textureReg.index;
-        return "tex " + targetReg + ", " + inputReg + ", " + textureReg + " <cube," + format + filter + ">\n";
-    };
-    GL_SingleCubeTexture.prototype.activate = function (render) {
-        var sampler = render.samplers[this._imageIndex];
-        if (sampler)
-            sampler.activate(this._textureIndex);
-        if (render.images[this._imageIndex])
-            render.images[this._imageIndex].activate(this._textureIndex, sampler._sampler.mipmap);
-    };
-    GL_SingleCubeTexture.prototype._setRenderState = function (renderable) {
-        var sampler = renderable.samplers[this._imageIndex];
-        if (sampler)
-            sampler.activate(this._textureIndex);
-        if (renderable.images[this._imageIndex] && sampler)
-            renderable.images[this._imageIndex].activate(this._textureIndex, sampler._sampler.mipmap);
-    };
-    return GL_SingleCubeTexture;
-}(GL_TextureBase));
 
 /**
  * ...
@@ -55002,7 +55069,7 @@ var ShadingMethodBase = (function (_super) {
      *
      * @internal
      */
-    ShadingMethodBase.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    ShadingMethodBase.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
     };
     /**
      * Clears the render state for this method.
@@ -55168,7 +55235,7 @@ var AmbientBasicMethod = (function (_super) {
             data[index + 3] = this._alpha;
         }
     };
-    AmbientBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    AmbientBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         if (methodVO.textureGL)
             methodVO.textureGL._setRenderState(renderable);
     };
@@ -55519,7 +55586,7 @@ var DiffuseBasicMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    DiffuseBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    DiffuseBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         if (this._texture)
             methodVO.textureGL._setRenderState(renderable);
         //TODO move this to Activate (ambientR/G/B currently calc'd in render state)
@@ -55613,7 +55680,7 @@ var NormalBasicMethod = (function (_super) {
         if (this._texture)
             methodVO.textureGL.activate(methodVO.pass._render);
     };
-    NormalBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    NormalBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         if (this._texture)
             methodVO.textureGL._setRenderState(renderable);
     };
@@ -55881,7 +55948,7 @@ var SpecularBasicMethod = (function (_super) {
         data[index + 2] = this._iSpecularB;
         data[index + 3] = this._gloss;
     };
-    SpecularBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    SpecularBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         if (this._texture)
             methodVO.textureGL._setRenderState(renderable);
     };
@@ -56265,167 +56332,6 @@ var AmbientEnvMapMethod = (function (_super) {
 }(AmbientBasicMethod));
 
 /**
- * AmbientBasicMethod provides the default shading method for uniform ambient lighting.
- */
-var CurveBasicMethod = (function (_super) {
-    __extends(CurveBasicMethod, _super);
-    /**
-     * Creates a new AmbientBasicMethod object.
-     */
-    function CurveBasicMethod() {
-        var _this = _super.call(this) || this;
-        _this._color = 0xffffff;
-        _this._alpha = 1;
-        _this._colorR = 1;
-        _this._colorG = 1;
-        _this._colorB = 1;
-        _this._ambient = 1;
-        return _this;
-    }
-    /**
-     * @inheritDoc
-     */
-    CurveBasicMethod.prototype.iInitVO = function (shader, methodVO) {
-        if (this._texture) {
-            methodVO.textureGL = shader.getAbstraction(this._texture);
-            shader.uvDependencies++;
-        }
-        else if (methodVO.textureGL) {
-            methodVO.textureGL.onClear(new AssetEvent(AssetEvent.CLEAR, this._texture));
-            methodVO.textureGL = null;
-        }
-    };
-    /**
-     * @inheritDoc
-     */
-    CurveBasicMethod.prototype.iInitConstants = function (shader, methodVO) {
-        if (!methodVO.textureGL) {
-            this._color = methodVO.pass._material.style.color;
-            this.updateColor();
-        }
-    };
-    Object.defineProperty(CurveBasicMethod.prototype, "ambient", {
-        /**
-         * The strength of the ambient reflection of the surface.
-         */
-        get: function () {
-            return this._ambient;
-        },
-        set: function (value) {
-            if (this._ambient == value)
-                return;
-            this._ambient = value;
-            this.updateColor();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CurveBasicMethod.prototype, "alpha", {
-        /**
-         * The alpha component of the surface.
-         */
-        get: function () {
-            return this._alpha;
-        },
-        set: function (value) {
-            if (this._alpha == value)
-                return;
-            this._alpha = value;
-            this.updateColor();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CurveBasicMethod.prototype, "texture", {
-        /**
-         * The texture to use to define the diffuse reflection color per texel.
-         */
-        get: function () {
-            return this._texture;
-        },
-        set: function (value) {
-            if (this._texture == value)
-                return;
-            if (this._texture)
-                this.iRemoveTexture(this._texture);
-            this._texture = value;
-            if (this._texture)
-                this.iAddTexture(this._texture);
-            this.iInvalidateShaderProgram();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @inheritDoc
-     */
-    CurveBasicMethod.prototype.copyFrom = function (method) {
-        var m = method;
-        var b = m;
-    };
-    /**
-     * @inheritDoc
-     */
-    /*
-    public iGeVertexCode(shader:ShaderBase, methodVO:MethodVO, targetReg:ShaderRegisterElement, registerCache:ShaderRegisterCache, sharedRegisters:ShaderRegisterData):string {
-        var code:string = "";
-        code = "mov " + sharedRegisters.uvVarying + " " + registerCache.uv +  " \n";
-    }*/
-    CurveBasicMethod.prototype.iGetFragmentCode = function (shader, methodVO, targetReg, registerCache, sharedRegisters) {
-        var code = "";
-        var ambientInputRegister;
-        if (methodVO.textureGL) {
-            code += methodVO.textureGL._iGetFragmentCode(targetReg, registerCache, sharedRegisters, sharedRegisters.uvVarying);
-            if (shader.alphaThreshold > 0) {
-                var cutOffReg = registerCache.getFreeFragmentConstant();
-                methodVO.fragmentConstantsIndex = cutOffReg.index * 4;
-                code += "sub " + targetReg + ".w, " + targetReg + ".w, " + cutOffReg + ".x\n" +
-                    "kil " + targetReg + ".w\n" +
-                    "add " + targetReg + ".w, " + targetReg + ".w, " + cutOffReg + ".x\n";
-            }
-        }
-        else {
-            ambientInputRegister = registerCache.getFreeFragmentConstant();
-            methodVO.fragmentConstantsIndex = ambientInputRegister.index * 4;
-            code += "mov " + targetReg + ", " + ambientInputRegister + "\n";
-        }
-        code = "mov " + targetReg + ", " + sharedRegisters.uvVarying + "\n";
-        return code;
-    };
-    /**
-     * @inheritDoc
-     */
-    CurveBasicMethod.prototype.iActivate = function (shader, methodVO, stage) {
-        if (methodVO.textureGL) {
-            methodVO.textureGL.activate(methodVO.pass._render);
-            if (shader.alphaThreshold > 0)
-                shader.fragmentConstantData[methodVO.fragmentConstantsIndex] = shader.alphaThreshold;
-        }
-        else {
-            var index = methodVO.fragmentConstantsIndex;
-            var data = shader.fragmentConstantData;
-            data[index] = this._colorR;
-            data[index + 1] = this._colorG;
-            data[index + 2] = this._colorB;
-            data[index + 3] = this._alpha;
-        }
-    };
-    CurveBasicMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        if (methodVO.textureGL)
-            methodVO.textureGL._setRenderState(renderable);
-    };
-    /**
-     * Updates the ambient color data used by the render state.
-     */
-    CurveBasicMethod.prototype.updateColor = function () {
-        this._colorR = ((this._color >> 16) & 0xff) / 0xff * this._ambient;
-        this._colorG = ((this._color >> 8) & 0xff) / 0xff * this._ambient;
-        this._colorB = (this._color & 0xff) / 0xff * this._ambient;
-    };
-    return CurveBasicMethod;
-}(ShadingMethodBase));
-
-/**
  * DiffuseCompositeMethod provides a base class for diffuse methods that wrap a diffuse method to alter the
  * calculated diffuse reflection strength.
  */
@@ -56570,8 +56476,8 @@ var DiffuseCompositeMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    DiffuseCompositeMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        this.pBaseMethod.iSetRenderState(shader, methodVO, renderable, stage, camera);
+    DiffuseCompositeMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
+        this.pBaseMethod.iSetRenderState(shader, methodVO, renderable, stage, projection);
     };
     /**
      * @inheritDoc
@@ -56892,8 +56798,8 @@ var DiffuseGradientMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    DiffuseGradientMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, camera);
+    DiffuseGradientMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
+        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, projection);
         if (shader.numLights > 0)
             methodVO.secondaryTextureGL._setRenderState(renderable);
     };
@@ -57022,8 +56928,8 @@ var DiffuseLightMapMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    DiffuseLightMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, camera);
+    DiffuseLightMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
+        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, projection);
         methodVO.secondaryTextureGL._setRenderState(renderable);
     };
     return DiffuseLightMapMethod;
@@ -57217,7 +57123,7 @@ var DiffuseSubSurfaceMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    DiffuseSubSurfaceMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    DiffuseSubSurfaceMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         methodVO.secondaryTextureGL = shader.getAbstraction(this._depthPass._iGetDepthMap(renderable));
         methodVO.secondaryTextureGL._setRenderState(renderable);
         methodVO.vertexMatrices[0].copyFrom(this._depthPass._iGetProjection(renderable), true);
@@ -57465,7 +57371,7 @@ var EffectAlphaMaskMethod = (function (_super) {
         _super.prototype.iActivate.call(this, shader, methodVO, stage);
         methodVO.textureGL.activate(methodVO.pass._render);
     };
-    EffectAlphaMaskMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    EffectAlphaMaskMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         methodVO.textureGL._setRenderState(renderable);
     };
     return EffectAlphaMaskMethod;
@@ -57708,7 +57614,7 @@ var EffectEnvMapMethod = (function (_super) {
         if (this._mask)
             methodVO.secondaryTextureGL.activate(methodVO.pass._render);
     };
-    EffectEnvMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    EffectEnvMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         methodVO.textureGL._setRenderState(renderable);
         if (this._mask)
             methodVO.secondaryTextureGL._setRenderState(renderable);
@@ -57992,7 +57898,7 @@ var EffectFresnelEnvMapMethod = (function (_super) {
         if (this._mask)
             methodVO.secondaryTextureGL.activate(methodVO.pass._render);
     };
-    EffectFresnelEnvMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    EffectFresnelEnvMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         methodVO.textureGL._setRenderState(renderable);
         if (this._mask)
             methodVO.secondaryTextureGL._setRenderState(renderable);
@@ -58159,7 +58065,7 @@ var EffectLightMapMethod = (function (_super) {
     EffectLightMapMethod.prototype.iActivate = function (shader, methodVO, stage) {
         methodVO.textureGL.activate(methodVO.pass._render);
     };
-    EffectLightMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    EffectLightMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         methodVO.textureGL._setRenderState(renderable);
     };
     return EffectLightMapMethod;
@@ -58321,9 +58227,9 @@ var EffectProjectiveTextureMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    EffectProjectiveTextureMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    EffectProjectiveTextureMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         var matrix3D = Matrix3D.CALCULATION_MATRIX;
-        matrix3D.copyFrom(this._projector.viewProjection);
+        matrix3D.copyFrom(this._projector.projection.viewMatrix3D);
         matrix3D.prepend(renderable.renderSceneTransform);
         methodVO.vertexMatrices[0].copyFrom(matrix3D, true);
         methodVO.textureGL._setRenderState(renderable);
@@ -58517,7 +58423,7 @@ var EffectRefractionEnvMapMethod = (function (_super) {
         data[index + 3] = this._alpha;
         methodVO.textureGL.activate(methodVO.pass._render);
     };
-    EffectRefractionEnvMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    EffectRefractionEnvMapMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         methodVO.textureGL._setRenderState(renderable);
     };
     /**
@@ -58971,8 +58877,8 @@ var NormalSimpleWaterMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    NormalSimpleWaterMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, camera);
+    NormalSimpleWaterMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
+        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, projection);
         if (this._secondaryNormalMap)
             methodVO.secondaryTextureGL._setRenderState(renderable);
     };
@@ -59244,7 +59150,7 @@ var ShadowCascadeMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    ShadowCascadeMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    ShadowCascadeMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
     };
     /**
      * Called when the shadow mappers cascade configuration changes.
@@ -59405,7 +59311,7 @@ var ShadowMethodBase = (function (_super) {
     /**
      * @inheritDoc
      */
-    ShadowMethodBase.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    ShadowMethodBase.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         if (!this._pUsePoint)
             methodVO.vertexMatrices[0].copyFrom(this._pShadowMapper.iDepthProjection, true);
         methodVO.textureGL._setRenderState(renderable);
@@ -59585,8 +59491,8 @@ var ShadowDitheredMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    ShadowDitheredMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, camera);
+    ShadowDitheredMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
+        _super.prototype.iSetRenderState.call(this, shader, methodVO, renderable, stage, projection);
         methodVO.secondaryTextureGL._setRenderState(renderable);
     };
     /**
@@ -60034,10 +59940,10 @@ var ShadowNearMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    ShadowNearMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
+    ShadowNearMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
         // todo: move this to activate (needs camera)
-        var near = camera.projection.near;
-        var d = camera.projection.far - near;
+        var near = projection.near;
+        var d = projection.far - near;
         var maxDistance = this._nearShadowMapper.coverageRatio;
         var minDistance = maxDistance * (1 - this._fadeRatio);
         maxDistance = near + maxDistance * d;
@@ -60046,7 +59952,7 @@ var ShadowNearMethod = (function (_super) {
         var index = methodVO.secondaryFragmentConstantsIndex;
         fragmentData[index] = minDistance;
         fragmentData[index + 1] = 1 / (maxDistance - minDistance);
-        this._baseMethod.iSetRenderState(shader, methodVO, renderable, stage, camera);
+        this._baseMethod.iSetRenderState(shader, methodVO, renderable, stage, projection);
     };
     /**
      * @inheritDoc
@@ -60443,8 +60349,8 @@ var SpecularCompositeMethod = (function (_super) {
     /**
      * @inheritDoc
      */
-    SpecularCompositeMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, camera) {
-        this._baseMethod.iSetRenderState(shader, methodVO, renderable, stage, camera);
+    SpecularCompositeMethod.prototype.iSetRenderState = function (shader, methodVO, renderable, stage, projection) {
+        this._baseMethod.iSetRenderState(shader, methodVO, renderable, stage, projection);
     };
     /**
      * @inheritDoc
@@ -60805,8 +60711,8 @@ var MethodPass = (function (_super) {
      *
      * @param material The material to which this pass belongs.
      */
-    function MethodPass(mode, render, renderOwner, elementsClass, stage) {
-        var _this = _super.call(this, render, renderOwner, elementsClass, stage) || this;
+    function MethodPass(mode, render, material, materialPool) {
+        var _this = _super.call(this, render, material, materialPool) || this;
         _this._maxLights = 3;
         _this._mode = 0x03;
         _this._includeCasters = true;
@@ -60819,10 +60725,10 @@ var MethodPass = (function (_super) {
         _this.directionalLightsOffset = 0;
         _this.lightProbesOffset = 0;
         _this._mode = mode;
-        _this._methodMaterial = renderOwner;
+        _this._methodMaterial = material;
         _this._onLightsChangeDelegate = function (event) { return _this.onLightsChange(event); };
         _this._onMethodInvalidatedDelegate = function (event) { return _this.onMethodInvalidated(event); };
-        _this.lightPicker = renderOwner.lightPicker;
+        _this.lightPicker = material.lightPicker;
         if (_this._shader == null)
             _this._updateShader();
         return _this;
@@ -61213,8 +61119,8 @@ var MethodPass = (function (_super) {
     /**
      * @inheritDoc
      */
-    MethodPass.prototype._iActivate = function (camera) {
-        _super.prototype._iActivate.call(this, camera);
+    MethodPass.prototype._iActivate = function (projection) {
+        _super.prototype._iActivate.call(this, projection);
         var methodVO;
         var len = this._iMethodVOs.length;
         for (var i = 0; i < len; ++i) {
@@ -61230,14 +61136,14 @@ var MethodPass = (function (_super) {
      * @param stage
      * @param camera
      */
-    MethodPass.prototype._setRenderState = function (renderable, camera, viewProjection) {
-        _super.prototype._setRenderState.call(this, renderable, camera, viewProjection);
+    MethodPass.prototype._setRenderState = function (renderable, projection) {
+        _super.prototype._setRenderState.call(this, renderable, projection);
         var methodVO;
         var len = this._iMethodVOs.length;
         for (var i = 0; i < len; ++i) {
             methodVO = this._iMethodVOs[i];
             if (methodVO.useMethod)
-                methodVO.method.iSetRenderState(this._shader, methodVO, renderable, this._stage, camera);
+                methodVO.method.iSetRenderState(this._shader, methodVO, renderable, this._stage, projection);
         }
     };
     /**
@@ -61526,12 +61432,12 @@ var SingleObjectDepthPass = (function (_super) {
     /**
      * Creates a new SingleObjectDepthPass object.
      */
-    function SingleObjectDepthPass(render, renderOwner, elementsClass, stage) {
-        var _this = _super.call(this, render, renderOwner, elementsClass, stage) || this;
+    function SingleObjectDepthPass(render, material, materialPool) {
+        var _this = _super.call(this, render, material, materialPool) || this;
         _this._textureSize = 512;
         _this._polyOffset = new Float32Array([15, 0, 0, 0]);
         _this._projectionTexturesInvalid = true;
-        _this._methodMaterial = renderOwner;
+        _this._methodMaterial = material;
         return _this;
         //this._pNumUsedStreams = 2;
         //this._pNumUsedVertexConstants = 7;
@@ -61641,7 +61547,7 @@ var SingleObjectDepthPass = (function (_super) {
     /**
      * @inheritDoc
      */
-    SingleObjectDepthPass.prototype._iRender = function (renderableGL, camera, viewProjection) {
+    SingleObjectDepthPass.prototype._iRender = function (renderableGL, projection) {
         var matrix;
         var context = this._stage.context;
         var len;
@@ -61655,7 +61561,7 @@ var SingleObjectDepthPass = (function (_super) {
         len = lights.length;
         // local position = enough
         light = lights[0];
-        matrix = light.iGetObjectProjectionMatrix(renderableGL.sourceEntity, camera.sceneTransform, this._projections[rId]);
+        matrix = light.iGetObjectProjectionMatrix(renderableGL.sourceEntity, projection.transform.concatenatedMatrix3D, this._projections[rId]);
         this._stage.setRenderTarget(this._textures[rId], true);
         context.clear(1.0, 1.0, 1.0);
         //context.setProgramConstantsFromMatrix(ContextGLProgramType.VERTEX, 0, matrix, true);
@@ -61668,11 +61574,11 @@ var SingleObjectDepthPass = (function (_super) {
     /**
      * @inheritDoc
      */
-    SingleObjectDepthPass.prototype._iActivate = function (camera) {
+    SingleObjectDepthPass.prototype._iActivate = function (projection) {
         if (this._projectionTexturesInvalid)
             this.updateProjectionTextures();
         // never scale
-        _super.prototype._iActivate.call(this, camera);
+        _super.prototype._iActivate.call(this, projection);
         //this._stage.context.setProgramConstantsFromArray(ContextGLProgramType.VERTEX, 4, this._polyOffset, 1);
     };
     return SingleObjectDepthPass;
@@ -61689,9 +61595,10 @@ var GL_MethodMaterial = (function (_super) {
      *
      * @param material The material to which this pass belongs.
      */
-    function GL_MethodMaterial(material, elementsClass, pool) {
-        var _this = _super.call(this, material, elementsClass, pool) || this;
+    function GL_MethodMaterial(material, materialPool) {
+        var _this = _super.call(this, material, materialPool) || this;
         _this._methodMaterial = material;
+        _this._materialPool = materialPool;
         return _this;
     }
     Object.defineProperty(GL_MethodMaterial.prototype, "numLights", {
@@ -61805,7 +61712,7 @@ var GL_MethodMaterial = (function (_super) {
     };
     GL_MethodMaterial.prototype.initCasterLightPass = function () {
         if (this._casterLightPass == null)
-            this._casterLightPass = new MethodPass(MethodPassMode.LIGHTING, this, this._methodMaterial, this._elementsClass, this._stage);
+            this._casterLightPass = new MethodPass(MethodPassMode.LIGHTING, this, this._methodMaterial, this._materialPool);
         this._casterLightPass.lightPicker = new StaticLightPicker([this._methodMaterial.shadowMethod.castingLight]);
         this._casterLightPass.shadowMethod = this._methodMaterial.shadowMethod;
         this._casterLightPass.diffuseMethod = this._methodMaterial.diffuseMethod;
@@ -61833,7 +61740,7 @@ var GL_MethodMaterial = (function (_super) {
         }
         this._nonCasterLightPasses = new Array();
         while (dirLightOffset < numDirLights || pointLightOffset < numPointLights || probeOffset < numLightProbes) {
-            pass = new MethodPass(MethodPassMode.LIGHTING, this, this._methodMaterial, this._elementsClass, this._stage);
+            pass = new MethodPass(MethodPassMode.LIGHTING, this, this._methodMaterial, this._materialPool);
             pass.includeCasters = this._methodMaterial.shadowMethod == null;
             pass.directionalLightsOffset = dirLightOffset;
             pass.pointLightsOffset = pointLightOffset;
@@ -61870,7 +61777,7 @@ var GL_MethodMaterial = (function (_super) {
     };
     GL_MethodMaterial.prototype.initEffectPass = function () {
         if (this._pass == null)
-            this._pass = new MethodPass(MethodPassMode.SUPER_SHADER, this, this._methodMaterial, this._elementsClass, this._stage);
+            this._pass = new MethodPass(MethodPassMode.SUPER_SHADER, this, this._methodMaterial, this._materialPool);
         if (this._methodMaterial.mode == MethodMaterialMode.SINGLE_PASS) {
             this._pass.ambientMethod = this._methodMaterial.ambientMethod;
             this._pass.diffuseMethod = this._methodMaterial.diffuseMethod;
@@ -70105,8 +70012,8 @@ var EntityNode = (function (_super) {
         if (!this._entity._iIsVisible() || !this.isIntersectingMasks(globalRayPosition, globalRayDirection, this._entity._iAssignedMasks()))
             return false;
         var pickingCollision = this._entity._iPickingCollision;
-        pickingCollision.rayPosition = this._entity.inverseSceneTransform.transformVector(globalRayPosition);
-        pickingCollision.rayDirection = this._entity.inverseSceneTransform.deltaTransformVector(globalRayDirection);
+        pickingCollision.rayPosition = this._entity.transform.inverseConcatenatedMatrix3D.transformVector(globalRayPosition);
+        pickingCollision.rayDirection = this._entity.transform.inverseConcatenatedMatrix3D.deltaTransformVector(globalRayDirection);
         if (!pickingCollision.normal)
             pickingCollision.normal = new Vector3D();
         var rayEntryDistance = this.bounds.rayIntersection(pickingCollision.rayPosition, pickingCollision.rayDirection, pickingCollision.normal);
@@ -70897,6 +70804,7 @@ var View = (function () {
         if (scene === void 0) { scene = null; }
         if (camera === void 0) { camera = null; }
         var _this = this;
+        // Private
         this._width = 0;
         this._height = 0;
         this._time = 0;
@@ -70975,17 +70883,17 @@ var View = (function () {
         configurable: true
     });
     View.prototype.getLocalMouseX = function (displayObject) {
-        return displayObject.inverseSceneTransform.transformVector(this.unproject(this._pMouseX, this._pMouseY, 1000)).x;
+        return displayObject.transform.inverseConcatenatedMatrix3D.transformVector(this.unproject(this._pMouseX, this._pMouseY, 1000)).x;
     };
     View.prototype.getLocalMouseY = function (displayObject) {
-        return displayObject.inverseSceneTransform.transformVector(this.unproject(this._pMouseX, this._pMouseY, 1000)).y;
+        return displayObject.transform.inverseConcatenatedMatrix3D.transformVector(this.unproject(this._pMouseX, this._pMouseY, 1000)).y;
     };
     View.prototype.getLocalTouchPoints = function (displayObject) {
         var localPosition;
         var localTouchPoints = new Array();
         var len = this._pTouchPoints.length;
         for (var i = 0; i < len; i++) {
-            localPosition = displayObject.inverseSceneTransform.transformVector(this.unproject(this._pTouchPoints[i].x, this._pTouchPoints[i].y, 1000));
+            localPosition = displayObject.transform.inverseConcatenatedMatrix3D.transformVector(this.unproject(this._pTouchPoints[i].x, this._pTouchPoints[i].y, 1000));
             localTouchPoints.push(new TouchPoint(localPosition.x, localPosition.y, this._pTouchPoints[i].id));
         }
         return localTouchPoints;
@@ -71164,8 +71072,6 @@ var View = (function () {
             if (this._width == value)
                 return;
             this._width = value;
-            this._aspectRatio = this._width / this._height;
-            this._pCamera.projection._iAspectRatio = this._aspectRatio;
             this._pRenderer.width = value;
             if (this._htmlElement) {
                 this._htmlElement.style.width = value + "px";
@@ -71185,8 +71091,6 @@ var View = (function () {
             if (this._height == value)
                 return;
             this._height = value;
-            this._aspectRatio = this._width / this._height;
-            this._pCamera.projection._iAspectRatio = this._aspectRatio;
             this._pRenderer.height = value;
             if (this._htmlElement) {
                 this._htmlElement.style.height = value + "px";
@@ -71283,14 +71187,13 @@ var View = (function () {
     View.prototype.render = function () {
         this.pUpdateTime();
         //update view and size data
-        this._pCamera.projection._iAspectRatio = this._aspectRatio;
         if (this._scissorDirty) {
             this._scissorDirty = false;
-            this._pCamera.projection._iUpdateScissorRect(this._pRenderer.scissorRect.x, this._pRenderer.scissorRect.y, this._pRenderer.scissorRect.width, this._pRenderer.scissorRect.height);
+            this._pCamera.projection.setViewRect(this._pRenderer.scissorRect.x, this._pRenderer.scissorRect.y, this._pRenderer.scissorRect.width, this._pRenderer.scissorRect.height);
         }
         if (this._viewportDirty) {
             this._viewportDirty = false;
-            this._pCamera.projection._iUpdateViewport(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
+            this._pCamera.projection.setStageRect(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
         }
         // update picking
         if (!this._shareContext) {
@@ -71351,10 +71254,7 @@ var View = (function () {
         return v;
     };
     View.prototype.unproject = function (sX, sY, sZ) {
-        return this._pCamera.unproject(2 * (sX - this._width * this._pCamera.projection.originX) / this._pRenderer.viewPort.width, 2 * (sY - this._height * this._pCamera.projection.originY) / this._pRenderer.viewPort.height, sZ);
-    };
-    View.prototype.getRay = function (sX, sY, sZ) {
-        return this._pCamera.getRay((sX * 2 - this._width) / this._width, (sY * 2 - this._height) / this._height, sZ);
+        return this._pCamera.unproject((2 * sX - this._width) / this._pRenderer.viewPort.width, (2 * sY - this._height) / this._pRenderer.viewPort.height, sZ);
     };
     /*TODO: implement Background
      public get background():away.textures.Texture2DBase
@@ -71408,7 +71308,7 @@ Loader.enableParser(TextureAtlasParser);
 //register core attributes
 Stage.registerAbstraction(GL_AttributesBuffer, AttributesBuffer);
 //register scene entities
-MaterialPool.registerAbstraction(GL_SkyboxMaterial, Skybox);
+DefaultMaterialGroup.registerAbstraction(GL_SkyboxMaterial, Skybox);
 RenderablePool.registerAbstraction(GL_BillboardRenderable, Billboard);
 RenderablePool.registerAbstraction(GL_LineSegmentRenderable, LineSegment);
 RenderablePool.registerAbstraction(GL_ShapeRenderable, Shape);
@@ -71429,9 +71329,9 @@ Stage.registerAbstraction(GL_TriangleElements, TriangleElements);
 ShaderBase.registerAbstraction(GL_Single2DTexture, Single2DTexture);
 ShaderBase.registerAbstraction(GL_SingleCubeTexture, SingleCubeTexture);
 //register graphics materials
-MaterialPool.registerAbstraction(GL_BasicMaterial, BasicMaterial);
+DefaultMaterialGroup.registerAbstraction(GL_BasicMaterial, BasicMaterial);
 //regiater material materials
-MaterialPool.registerAbstraction(GL_MethodMaterial, MethodMaterial);
+DefaultMaterialGroup.registerAbstraction(GL_MethodMaterial, MethodMaterial);
 //register view nodes
 PartitionBase.registerAbstraction(CameraNode, Camera);
 PartitionBase.registerAbstraction(EntityNode, DirectionalLight);
@@ -71454,6 +71354,8 @@ exports.Float4Attributes = Float4Attributes;
 exports.Short2Attributes = Short2Attributes;
 exports.Short3Attributes = Short3Attributes;
 exports.WaveAudio = WaveAudio;
+exports.ColorTransform = ColorTransform;
+exports.Transform = Transform;
 exports.AbstractMethodError = AbstractMethodError;
 exports.ArgumentError = ArgumentError;
 exports.DocumentError = DocumentError;
@@ -71467,9 +71369,9 @@ exports.LoaderEvent = LoaderEvent;
 exports.ParserEvent = ParserEvent;
 exports.ProjectionEvent = ProjectionEvent;
 exports.TimerEvent = TimerEvent;
+exports.TransformEvent = TransformEvent;
 exports.URLLoaderEvent = URLLoaderEvent;
 exports.Box = Box;
-exports.ColorTransform = ColorTransform;
 exports.MathConsts = MathConsts;
 exports.Matrix = Matrix;
 exports.Matrix3D = Matrix3D;
@@ -71511,7 +71413,6 @@ exports.ParserDataFormat = ParserDataFormat;
 exports.ParserUtils = ParserUtils;
 exports.ResourceDependency = ResourceDependency;
 exports.WaveAudioParser = WaveAudioParser;
-exports.FreeMatrixProjection = FreeMatrixProjection;
 exports.ObliqueNearPlaneProjection = ObliqueNearPlaneProjection;
 exports.OrthographicOffCenterProjection = OrthographicOffCenterProjection;
 exports.OrthographicProjection = OrthographicProjection;
@@ -71534,7 +71435,6 @@ exports.ParticleData = ParticleData;
 exports.AnimationNodeBase = AnimationNodeBase;
 exports.Shape = Shape;
 exports.Style = Style;
-exports.Transform = Transform;
 exports.TraverserBase = TraverserBase;
 exports.CapsStyle = CapsStyle;
 exports.DrawMode = DrawMode;
@@ -71558,7 +71458,6 @@ exports.MaterialEvent = MaterialEvent;
 exports.RenderableEvent = RenderableEvent;
 exports.ShapeEvent = ShapeEvent;
 exports.StyleEvent = StyleEvent;
-exports.TransformEvent = TransformEvent;
 exports.ElementsBase = ElementsBase;
 exports.ElementsType = ElementsType;
 exports.LineElements = LineElements;
@@ -71600,7 +71499,6 @@ exports.MethodMaterial = MethodMaterial;
 exports.MethodMaterialMode = MethodMaterialMode;
 exports.AmbientBasicMethod = AmbientBasicMethod;
 exports.AmbientEnvMapMethod = AmbientEnvMapMethod;
-exports.CurveBasicMethod = CurveBasicMethod;
 exports.DiffuseBasicMethod = DiffuseBasicMethod;
 exports.DiffuseCelMethod = DiffuseCelMethod;
 exports.DiffuseCompositeMethod = DiffuseCompositeMethod;
@@ -71665,7 +71563,6 @@ exports.AS2SystemAdapter = AS2SystemAdapter;
 exports.AS2TextFieldAdapter = AS2TextFieldAdapter;
 exports.AS2SceneGraphFactory = AS2SceneGraphFactory;
 exports.AnimationElements = AnimationElements;
-exports.AnimationRegisterData = AnimationRegisterData;
 exports.ColorSegmentPoint = ColorSegmentPoint;
 exports.JointPose = JointPose;
 exports.ParticleAnimationData = ParticleAnimationData;
@@ -71731,8 +71628,6 @@ exports.VertexClipState = VertexClipState;
 exports.CrossfadeTransition = CrossfadeTransition;
 exports.CrossfadeTransitionNode = CrossfadeTransitionNode;
 exports.CrossfadeTransitionState = CrossfadeTransitionState;
-exports.AnimationSetBase = AnimationSetBase;
-exports.AnimatorBase = AnimatorBase;
 exports.ParticleAnimationSet = ParticleAnimationSet;
 exports.ParticleAnimator = ParticleAnimator;
 exports.SkeletonAnimationSet = SkeletonAnimationSet;
@@ -71742,14 +71637,9 @@ exports.VertexAnimator = VertexAnimator;
 exports.DefaultRenderer = DefaultRenderer;
 exports.DepthRenderer = DepthRenderer;
 exports.DistanceRenderer = DistanceRenderer;
-exports.GL_ElementsBase = GL_ElementsBase;
 exports.GL_LineElements = GL_LineElements;
 exports.GL_SkyboxElements = GL_SkyboxElements;
-exports.GL_TriangleElements = GL_TriangleElements;
-exports.AnimationSetError = AnimationSetError;
 exports.AnimationStateEvent = AnimationStateEvent;
-exports.AnimatorEvent = AnimatorEvent;
-exports.PassEvent = PassEvent;
 exports.RendererEvent = RendererEvent;
 exports.RTTEvent = RTTEvent;
 exports.ShadingMethodEvent = ShadingMethodEvent;
@@ -71765,34 +71655,17 @@ exports.Filter3DBase = Filter3DBase;
 exports.FXAAFilter3D = FXAAFilter3D;
 exports.RTTBufferManager = RTTBufferManager;
 exports.GL_BillboardRenderable = GL_BillboardRenderable;
-exports.GL_ShapeRenderable = GL_ShapeRenderable;
 exports.GL_LineSegmentRenderable = GL_LineSegmentRenderable;
-exports.GL_RenderableBase = GL_RenderableBase;
 exports.GL_SkyboxRenderable = GL_SkyboxRenderable;
-exports.RenderablePool = RenderablePool;
 exports.RendererBase = RendererBase;
-exports.CompilerBase = CompilerBase;
 exports.LightingCompiler = LightingCompiler;
 exports.LightingShader = LightingShader;
-exports.RegisterPool = RegisterPool;
-exports.ShaderBase = ShaderBase;
-exports.ShaderRegisterCache = ShaderRegisterCache;
-exports.ShaderRegisterData = ShaderRegisterData;
-exports.ShaderRegisterElement = ShaderRegisterElement;
 exports.RenderableMergeSort = RenderableMergeSort;
 exports.RenderableNullSort = RenderableNullSort;
-exports.BasicMaterialPass = BasicMaterialPass;
-exports.PassBase = PassBase;
-exports.GL_BasicMaterial = GL_BasicMaterial;
+exports.DefaultMaterialGroup = DefaultMaterialGroup;
 exports.GL_DepthMaterial = GL_DepthMaterial;
 exports.GL_DistanceMaterial = GL_DistanceMaterial;
 exports.GL_SkyboxMaterial = GL_SkyboxMaterial;
-exports.GL_MaterialBase = GL_MaterialBase;
-exports.GL_MaterialPassBase = GL_MaterialPassBase;
-exports.MaterialPool = MaterialPool;
-exports.GL_Single2DTexture = GL_Single2DTexture;
-exports.GL_SingleCubeTexture = GL_SingleCubeTexture;
-exports.GL_TextureBase = GL_TextureBase;
 exports.ParticleGraphicsHelper = ParticleGraphicsHelper;
 exports.ParticleGraphicsTransform = ParticleGraphicsTransform;
 exports.AlignmentMode = AlignmentMode;
@@ -71887,9 +71760,17 @@ exports.Header = Header;
 exports.Mapping = Mapping;
 exports.OpLUT = OpLUT;
 exports.Token = Token;
+exports.AnimationRegisterData = AnimationRegisterData;
+exports.AnimationSetBase = AnimationSetBase;
+exports.AnimatorBase = AnimatorBase;
 exports.GL_AttributesBuffer = GL_AttributesBuffer;
 exports.SamplerState = SamplerState;
+exports.GL_ElementsBase = GL_ElementsBase;
+exports.GL_TriangleElements = GL_TriangleElements;
+exports.AnimationSetError = AnimationSetError;
 exports.StageEvent = StageEvent;
+exports.AnimatorEvent = AnimatorEvent;
+exports.PassEvent = PassEvent;
 exports.ContextFlash = ContextFlash;
 exports.CubeTextureFlash = CubeTextureFlash;
 exports.IndexBufferFlash = IndexBufferFlash;
@@ -71921,6 +71802,22 @@ exports.GL_SamplerCube = GL_SamplerCube;
 exports.ProgramData = ProgramData;
 exports.ProgramDataPool = ProgramDataPool;
 exports.StageManager = StageManager;
+exports.BasicMaterialPass = BasicMaterialPass;
+exports.PassBase = PassBase;
+exports.GL_BasicMaterial = GL_BasicMaterial;
+exports.GL_MaterialBase = GL_MaterialBase;
+exports.GL_MaterialPassBase = GL_MaterialPassBase;
+exports.MaterialGroupBase = MaterialGroupBase;
+exports.MaterialPool = MaterialPool;
+exports.GL_ShapeRenderable = GL_ShapeRenderable;
+exports.GL_RenderableBase = GL_RenderableBase;
+exports.RenderablePool = RenderablePool;
+exports.CompilerBase = CompilerBase;
+exports.RegisterPool = RegisterPool;
+exports.ShaderBase = ShaderBase;
+exports.ShaderRegisterCache = ShaderRegisterCache;
+exports.ShaderRegisterData = ShaderRegisterData;
+exports.ShaderRegisterElement = ShaderRegisterElement;
 exports.ContextSoftware = ContextSoftware;
 exports.IndexBufferSoftware = IndexBufferSoftware;
 exports.ProgramSoftware = ProgramSoftware;
@@ -71928,6 +71825,9 @@ exports.ProgramVOSoftware = ProgramVOSoftware;
 exports.SoftwareSamplerState = SoftwareSamplerState;
 exports.TextureSoftware = TextureSoftware;
 exports.VertexBufferSoftware = VertexBufferSoftware;
+exports.GL_Single2DTexture = GL_Single2DTexture;
+exports.GL_SingleCubeTexture = GL_SingleCubeTexture;
+exports.GL_TextureBase = GL_TextureBase;
 exports.ContextWebGL = ContextWebGL;
 exports.CubeTextureWebGL = CubeTextureWebGL;
 exports.IndexBufferWebGL = IndexBufferWebGL;

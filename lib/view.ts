@@ -4,11 +4,11 @@ import {Loader, WaveAudioParser, AttributesBuffer} from "@awayjs/core";
 
 import {Image2DParser, ImageCubeParser, TextureAtlasParser, Shape, Image2D, ImageCube, BitmapImage2D, ExternalImage2D, BitmapImageCube, SpecularImage2D, Sampler2D, SamplerCube, LineElements, TriangleElements, Single2DTexture, SingleCubeTexture, BasicMaterial} from "@awayjs/graphics";
 
-import {Stage, GL_AttributesBuffer, GL_RenderImage2D, GL_RenderImageCube, GL_BitmapImage2D, GL_ExternalImage2D, GL_BitmapImageCube, GL_Sampler2D, GL_SamplerCube} from "@awayjs/stage";
+import {Stage, GL_AttributesBuffer, GL_RenderImage2D, GL_RenderImageCube, GL_BitmapImage2D, GL_ExternalImage2D, GL_BitmapImageCube, GL_Sampler2D, GL_SamplerCube, RenderablePool, ShaderBase, GL_ShapeRenderable, GL_TriangleElements, GL_Single2DTexture, GL_SingleCubeTexture, GL_BasicMaterial} from "@awayjs/stage";
 
 import {Skybox, Billboard, LineSegment, Camera, DirectionalLight, Sprite, MovieClip, TextField, LightProbe, PointLight} from "@awayjs/scene";
 
-import {MaterialPool, RenderablePool, ShaderBase, GL_SkyboxMaterial, GL_BillboardRenderable, GL_LineSegmentRenderable, GL_ShapeRenderable, GL_SkyboxRenderable, GL_LineElements, GL_TriangleElements, GL_Single2DTexture, GL_SingleCubeTexture, GL_BasicMaterial} from "@awayjs/renderer";
+import {GL_SkyboxMaterial, GL_BillboardRenderable, GL_LineSegmentRenderable, GL_SkyboxRenderable, GL_LineElements, DefaultMaterialGroup} from "@awayjs/renderer";
 
 import {MethodMaterial, GL_MethodMaterial} from "@awayjs/materials";
 
@@ -24,7 +24,7 @@ Loader.enableParser(TextureAtlasParser);
 Stage.registerAbstraction(GL_AttributesBuffer, AttributesBuffer);
 
 //register scene entities
-MaterialPool.registerAbstraction(GL_SkyboxMaterial, Skybox);
+DefaultMaterialGroup.registerAbstraction(GL_SkyboxMaterial, Skybox);
 
 RenderablePool.registerAbstraction(GL_BillboardRenderable, Billboard);
 RenderablePool.registerAbstraction(GL_LineSegmentRenderable, LineSegment);
@@ -50,10 +50,10 @@ ShaderBase.registerAbstraction(GL_Single2DTexture, Single2DTexture);
 ShaderBase.registerAbstraction(GL_SingleCubeTexture, SingleCubeTexture);
 
 //register graphics materials
-MaterialPool.registerAbstraction(GL_BasicMaterial, BasicMaterial);
+DefaultMaterialGroup.registerAbstraction(GL_BasicMaterial, BasicMaterial);
 
 //regiater material materials
-MaterialPool.registerAbstraction(GL_MethodMaterial, MethodMaterial);
+DefaultMaterialGroup.registerAbstraction(GL_MethodMaterial, MethodMaterial);
 
 //register view nodes
 PartitionBase.registerAbstraction(CameraNode, Camera);
