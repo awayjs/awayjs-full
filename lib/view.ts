@@ -59,6 +59,8 @@ DefaultMaterialGroup.registerAbstraction(GL_MethodMaterial, MethodMaterial);
 PartitionBase.registerAbstraction(CameraNode, Camera);
 PartitionBase.registerAbstraction(EntityNode, DirectionalLight);
 PartitionBase.registerAbstraction(EntityNode, Sprite);
+PartitionBase.registerAbstraction(EntityNode, DisplayObjectContainer);
+PartitionBase.registerAbstraction(EntityNode, Scene);
 PartitionBase.registerAbstraction(EntityNode, MovieClip);
 PartitionBase.registerAbstraction(EntityNode, Billboard);
 PartitionBase.registerAbstraction(EntityNode, LineSegment);
