@@ -1,6 +1,6 @@
 {
   "name": "awayjs-full",
-  "version": "0.2.41",
+  "version": "0.3.0",
   "description": "Complete monolitic build for all types of AwayJS projects",
   "main": "bundle/awayjs-full.umd.js",
   "types": "dist/index.d.ts",
@@ -45,15 +45,15 @@
   },
   "homepage": "https://github.com/awayjs/awayjs-full#readme",
   "dependencies": {
-    "@awayjs/core": "^0.6.0",
-    "@awayjs/graphics": "^0.1.0",
-    "@awayjs/scene": "^0.8.36",
-    "@awayjs/stage": "^0.8.12",
-    "@awayjs/view": "^0.2.0",
-    "@awayjs/renderer": "^0.8.26",
-    "@awayjs/materials": "^0.3.20",
-    "@awayjs/player": "^0.5.16",
-    "@awayjs/parsers": "^0.5.31",
+    "@awayjs/core": "^0.7.0",
+    "@awayjs/graphics": "^0.2.0",
+    "@awayjs/scene": "^0.9.0",
+    "@awayjs/stage": "^0.9.0",
+    "@awayjs/view": "^0.3.0",
+    "@awayjs/renderer": "^0.9.0",
+    "@awayjs/materials": "^0.9.0",
+    "@awayjs/player": "^0.6.0",
+    "@awayjs/parsers": "^0.6.0",
     "tslib": "github:microsoft/tslib"
   },
   "devDependencies": {
