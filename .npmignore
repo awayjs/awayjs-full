@@ -4,9 +4,6 @@ tests/
 docs/
 .travis.yml
 
-# Source files
-ts/
-
 # Project property files
 .actionScriptProperties
 .flexLibProperties
