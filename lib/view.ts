@@ -12,7 +12,7 @@ import {GL_SkyboxMaterial, GL_BillboardRenderable, GL_LineSegmentRenderable, GL_
 
 import {MethodMaterial, GL_MethodMaterial} from "@awayjs/materials";
 
-import {PartitionBase, CameraNode, EntityNode, SkyboxNode} from "@awayjs/view";
+import {PartitionBase, CameraNode, EntityNode, SkyboxNode, ViewImage2D} from "@awayjs/view";
 
 //enable parsers
 Loader.enableParser(WaveAudioParser);
@@ -38,6 +38,7 @@ Stage.registerAbstraction(GL_BitmapImage2D, BitmapImage2D);
 Stage.registerAbstraction(GL_ExternalImage2D, ExternalImage2D);
 Stage.registerAbstraction(GL_BitmapImageCube, BitmapImageCube);
 Stage.registerAbstraction(GL_BitmapImage2D, SpecularImage2D);
+Stage.registerAbstraction(GL_BitmapImage2D, ViewImage2D);
 Stage.registerAbstraction(GL_Sampler2D, Sampler2D);
 Stage.registerAbstraction(GL_SamplerCube, SamplerCube);
 
