@@ -1,6 +1,6 @@
 {
   "name": "awayjs-full",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Complete monolitic build for all types of AwayJS projects",
   "main": "bundle/awayjs-full.umd.js",
   "types": "dist/index.d.ts",
