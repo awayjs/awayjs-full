@@ -6,13 +6,13 @@ import {Image2DParser, ImageCubeParser, TextureAtlasParser, Shape, Image2D, Imag
 
 import {Stage, GL_AttributesBuffer, GL_RenderImage2D, GL_RenderImageCube, GL_BitmapImage2D, GL_ExternalImage2D, GL_BitmapImageCube, GL_Sampler2D, GL_SamplerCube, RenderablePool, ShaderBase, GL_ShapeRenderable, GL_TriangleElements, GL_Single2DTexture, GL_SingleCubeTexture, GL_BasicMaterial} from "@awayjs/stage";
 
-import {Skybox, DisplayObjectContainer, Scene, Billboard, LineSegment, Camera, Sprite, MovieClip, TextField} from "@awayjs/scene";
+import {Skybox, DisplayObjectContainer, Scene, Billboard, LineSegment, Camera, Sprite, MorphSprite, MovieClip, TextField} from "@awayjs/scene";
 
 import {GL_SkyboxMaterial, GL_BillboardRenderable, GL_LineSegmentRenderable, GL_SkyboxRenderable, GL_LineElements, DefaultMaterialGroup} from "@awayjs/renderer";
 
 import {MethodMaterial, GL_MethodMaterial} from "@awayjs/materials";
 
-import {PartitionBase, CameraNode, EntityNode, SkyboxNode} from "@awayjs/view";
+import {PartitionBase, CameraNode, EntityNode, SkyboxNode, ViewImage2D} from "@awayjs/view";
 
 //enable parsers
 Loader.enableParser(WaveAudioParser);
@@ -38,6 +38,7 @@ Stage.registerAbstraction(GL_BitmapImage2D, BitmapImage2D);
 Stage.registerAbstraction(GL_ExternalImage2D, ExternalImage2D);
 Stage.registerAbstraction(GL_BitmapImageCube, BitmapImageCube);
 Stage.registerAbstraction(GL_BitmapImage2D, SpecularImage2D);
+Stage.registerAbstraction(GL_BitmapImage2D, ViewImage2D);
 Stage.registerAbstraction(GL_Sampler2D, Sampler2D);
 Stage.registerAbstraction(GL_SamplerCube, SamplerCube);
 
@@ -60,6 +61,7 @@ PartitionBase.registerAbstraction(CameraNode, Camera);
 PartitionBase.registerAbstraction(EntityNode, Sprite);
 PartitionBase.registerAbstraction(EntityNode, DisplayObjectContainer);
 PartitionBase.registerAbstraction(EntityNode, Scene);
+PartitionBase.registerAbstraction(EntityNode, MorphSprite);
 PartitionBase.registerAbstraction(EntityNode, MovieClip);
 PartitionBase.registerAbstraction(EntityNode, Billboard);
 PartitionBase.registerAbstraction(EntityNode, LineSegment);
