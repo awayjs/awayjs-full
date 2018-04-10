@@ -1,19 +1,19 @@
 TITLE Init AwayJS Dev Enviroment
-ECHO Clone and links all AwayJS-modules into a directory "@away" next to the AwayJS-full directory
+ECHO Clone and links all AwayJS-modules into a directory "@awayjs" next to the AwayJS-full directory
 PAUSE
 cd..
 cd..
-mkdir @away
-cd @away
-git clone https://github.com/awayjs/core.git
-git clone https://github.com/awayjs/graphics.git
-git clone https://github.com/awayjs/scene.git
-git clone https://github.com/awayjs/stage.git
-git clone https://github.com/awayjs/renderer.git
-git clone https://github.com/awayjs/materials.git
-git clone https://github.com/awayjs/view.git
-git clone https://github.com/awayjs/player.git
-git clone https://github.com/awayjs/parsers.git
+mkdir @awayjs
+cd @awayjs
+git clone ssh://git@github.com:awayjs/core.git
+git clone ssh://git@github.com:awayjs/graphics.git
+git clone ssh://git@github.com:awayjs/scene.git
+git clone ssh://git@github.com:awayjs/stage.git
+git clone ssh://git@github.com:awayjs/renderer.git
+git clone ssh://git@github.com:awayjs/materials.git
+git clone ssh://git@github.com:awayjs/view.git
+git clone ssh://git@github.com:awayjs/player.git
+git clone ssh://git@github.com:awayjs/parsers.git
 
 cd core
 git checkout dev
@@ -21,28 +21,11 @@ call npm install
 call npm link
 cd..
 
-cd graphics
-git checkout dev
-call npm install
-call npm link
-call npm link ../core
-cd..
-
-cd scene
-git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../graphics
-cd..
-
 cd stage
 git checkout dev
 call npm install
 call npm link
 call npm link ../core
-call npm link ../graphics
-call npm link ../scene
 cd..
 
 cd renderer
@@ -50,9 +33,16 @@ git checkout dev
 call npm install
 call npm link
 call npm link ../core
-call npm link ../graphics
-call npm link ../scene
 call npm link ../stage
+cd..
+
+cd graphics
+git checkout dev
+call npm install
+call npm link
+call npm link ../core
+call npm link ../stage
+call npm link ../renderer
 cd..
 
 cd materials
@@ -60,10 +50,19 @@ git checkout dev
 call npm install
 call npm link
 call npm link ../core
-call npm link ../graphics
-call npm link ../renderer
-call npm link ../scene
 call npm link ../stage
+call npm link ../renderer
+cd..
+
+cd scene
+git checkout dev
+call npm install
+call npm link
+call npm link ../core
+call npm link ../stage
+call npm link ../renderer
+call npm link ../graphics
+call npm link ../materials
 cd..
 
 cd view
@@ -71,20 +70,10 @@ git checkout dev
 call npm install
 call npm link
 call npm link ../core
+call npm link ../stage
+call npm link ../renderer
 call npm link ../graphics
-call npm link ../renderer
 call npm link ../scene
-call npm link ../stage
-cd..
-
-cd player
-git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../renderer
-call npm link ../scene
-call npm link ../stage
 cd..
 
 cd parsers
@@ -92,26 +81,36 @@ git checkout dev
 call npm install
 call npm link
 call npm link ../core
+call npm link ../stage
+call npm link ../renderer
 call npm link ../graphics
 call npm link ../materials
-call npm link ../player
+call npm link ../scene
+cd..
+
+cd player
+git checkout dev
+call npm install
+call npm link
+call npm link ../core
+call npm link ../stage
 call npm link ../renderer
 call npm link ../scene
-call npm link ../stage
+call npm link ../parsers
 cd..
 
 cd..
 cd awayjs-full
 call npm install
-call npm link ../@away/core
-call npm link ../@away/graphics
-call npm link ../@away/scene
-call npm link ../@away/stage
-call npm link ../@away/renderer
-call npm link ../@away/materials
-call npm link ../@away/view
-call npm link ../@away/player
-call npm link ../@away/parsers
 call npm link
+call npm link ../@awayjs/core
+call npm link ../@awayjs/stage
+call npm link ../@awayjs/renderer
+call npm link ../@awayjs/graphics
+call npm link ../@awayjs/materials
+call npm link ../@awayjs/scene
+call npm link ../@awayjs/view
+call npm link ../@awayjs/parsers
+call npm link ../@awayjs/player
 
 PAUSE
