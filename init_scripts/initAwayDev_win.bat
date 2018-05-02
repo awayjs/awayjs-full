@@ -5,15 +5,15 @@ cd..
 cd..
 mkdir @awayjs
 cd @awayjs
-git clone ssh://git@github.com:awayjs/core.git
-git clone ssh://git@github.com:awayjs/graphics.git
-git clone ssh://git@github.com:awayjs/scene.git
-git clone ssh://git@github.com:awayjs/stage.git
-git clone ssh://git@github.com:awayjs/renderer.git
-git clone ssh://git@github.com:awayjs/materials.git
-git clone ssh://git@github.com:awayjs/view.git
-git clone ssh://git@github.com:awayjs/player.git
-git clone ssh://git@github.com:awayjs/parsers.git
+git clone https://github.com/awayjs/core.git
+git clone https://github.com/awayjs/graphics.git
+git clone https://github.com/awayjs/scene.git
+git clone https://github.com/awayjs/stage.git
+git clone https://github.com/awayjs/renderer.git
+git clone https://github.com/awayjs/materials.git
+git clone https://github.com/awayjs/view.git
+git clone https://github.com/awayjs/player.git
+git clone https://github.com/awayjs/parsers.git
 
 cd core
 git checkout dev
