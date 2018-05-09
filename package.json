@@ -9,7 +9,7 @@
     "rimraf": "rimraf",
     "rollup": "rollup -c",
     "uglifyjs": "uglifyjs ./bundle/awayjs-full.umd.js -o ./bundle/awayjs-full.umd.min.js --source-map \"content='./bundle/awayjs-full.umd.js.map'\" --mangle",
-    "tsc": "tsc --lib ES2015.Symbol,DOM,ScriptHost,ES5,ES2015.Iterable || exit 0",
+    "tsc": "tsc --lib ES2015.Symbol,DOM,ScriptHost,ES5,ES2015.Iterable",
     "clean": "npm cache clean && npm run rimraf -- node_modules dist bundle",
     "clean:dist": "npm run rimraf -- dist bundle",
     "watch": "npm run tsc -- --w",
@@ -55,7 +55,7 @@
     "@awayjs/materials": "^0.4.0",
     "@awayjs/player": "^0.6.0",
     "@awayjs/parsers": "^0.6.0",
-    "tslib": "github:microsoft/tslib"
+    "tslib": "^1.9.0"
   },
   "devDependencies": {
     "concurrently": "^3.1.0",
@@ -63,7 +63,7 @@
     "rollup": "^0.57.1",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "typescript": "2.2.0-dev.20161123",
+    "typescript": "^2.6.1",
     "uglify-js": "^3.0.15"
   }
 }
