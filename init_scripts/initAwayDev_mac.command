@@ -15,98 +15,98 @@ git clone https://github.com/awayjs/parsers.git
 
 cd core
 git checkout dev
-npm install
-npm link
+yarn
+yarn link
 cd ..
 
 cd stage
 git checkout dev
-npm install
-npm link
-npm link ../core
+yarn
+yarn link
+yarn link @awayjs/core
 cd ..
 
 cd renderer
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
 cd ..
 
 cd graphics
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
-npm link ../renderer
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
 cd ..
 
 cd materials
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
-npm link ../renderer
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
 cd ..
 
 cd scene
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
-npm link ../renderer
-npm link ../graphics
-npm link ../materials
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
+yarn link @awayjs/graphics
+yarn link @awayjs/materials
 cd ..
 
 cd view
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
-npm link ../renderer
-npm link ../graphics
-npm link ../scene
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
+yarn link @awayjs/graphics
+yarn link @awayjs/scene
 cd ..
 
 cd parsers
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
-npm link ../renderer
-npm link ../graphics
-npm link ../materials
-npm link ../scene
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
+yarn link @awayjs/graphics
+yarn link @awayjs/materials
+yarn link @awayjs/scene
 cd ..
 
 cd player
 git checkout dev
-npm install
-npm link
-npm link ../core
-npm link ../stage
-npm link ../renderer
-npm link ../scene
-npm link ../parsers
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
+yarn link @awayjs/scene
+yarn link @awayjs/parsers
 cd ..
 
 cd ..
 cd awayjs-full
-npm install
-npm link
-npm link ../@awayjs/core
-npm link ../@awayjs/stage
-npm link ../@awayjs/renderer
-npm link ../@awayjs/graphics
-npm link ../@awayjs/materials
-npm link ../@awayjs/scene
-npm link ../@awayjs/view
-npm link ../@awayjs/parsers
-npm link ../@awayjs/player
+yarn
+yarn link
+yarn link @awayjs/core
+yarn link @awayjs/stage
+yarn link @awayjs/renderer
+yarn link @awayjs/graphics
+yarn link @awayjs/materials
+yarn link @awayjs/scene
+yarn link @awayjs/view
+yarn link @awayjs/parsers
+yarn link @awayjs/player

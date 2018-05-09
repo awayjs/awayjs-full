@@ -17,100 +17,100 @@ git clone https://github.com/awayjs/parsers.git
 
 cd core
 git checkout dev
-call npm install
-call npm link
+call yarn
+call yarn link
 cd..
 
 cd stage
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
+call yarn
+call yarn link
+call yarn link @awayjs/core
 cd..
 
 cd renderer
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
 cd..
 
 cd graphics
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
-call npm link ../renderer
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
 cd..
 
 cd materials
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
-call npm link ../renderer
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
 cd..
 
 cd scene
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
-call npm link ../renderer
-call npm link ../graphics
-call npm link ../materials
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
+call yarn link @awayjs/graphics
+call yarn link @awayjs/materials
 cd..
 
 cd view
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
-call npm link ../renderer
-call npm link ../graphics
-call npm link ../scene
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
+call yarn link @awayjs/graphics
+call yarn link @awayjs/scene
 cd..
 
 cd parsers
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
-call npm link ../renderer
-call npm link ../graphics
-call npm link ../materials
-call npm link ../scene
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
+call yarn link @awayjs/graphics
+call yarn link @awayjs/materials
+call yarn link @awayjs/scene
 cd..
 
 cd player
 git checkout dev
-call npm install
-call npm link
-call npm link ../core
-call npm link ../stage
-call npm link ../renderer
-call npm link ../scene
-call npm link ../parsers
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
+call yarn link @awayjs/scene
+call yarn link @awayjs/parsers
 cd..
 
 cd..
 cd awayjs-full
-call npm install
-call npm link
-call npm link ../@awayjs/core
-call npm link ../@awayjs/stage
-call npm link ../@awayjs/renderer
-call npm link ../@awayjs/graphics
-call npm link ../@awayjs/materials
-call npm link ../@awayjs/scene
-call npm link ../@awayjs/view
-call npm link ../@awayjs/parsers
-call npm link ../@awayjs/player
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
+call yarn link @awayjs/graphics
+call yarn link @awayjs/materials
+call yarn link @awayjs/scene
+call yarn link @awayjs/view
+call yarn link @awayjs/parsers
+call yarn link @awayjs/player
 
 PAUSE
