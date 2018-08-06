@@ -99,6 +99,19 @@ call yarn link @awayjs/scene
 call yarn link @awayjs/parsers
 cd..
 
+cd swf-viewer
+git checkout dev
+call yarn
+call yarn link
+call yarn link @awayjs/core
+call yarn link @awayjs/stage
+call yarn link @awayjs/renderer
+call yarn link @awayjs/graphics
+call yarn link @awayjs/materials
+call yarn link @awayjs/scene
+call yarn link @awayjs/view
+cd..
+
 cd..
 cd awayjs-full
 call yarn
