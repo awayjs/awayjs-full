@@ -48,10 +48,10 @@
   "homepage": "https://github.com/awayjs/awayjs-full#readme",
   "dependencies": {
     "@awayjs/core": "^0.7.0",
-    "@awayjs/graphics": "^0.2.0",
-    "@awayjs/scene": "^0.9.0",
+    "@awayjs/graphics": "^0.3.0",
+    "@awayjs/scene": "^0.11.0",
     "@awayjs/stage": "^0.9.0",
-    "@awayjs/view": "^0.3.0",
+    "@awayjs/view": "^0.4.0",
     "@awayjs/renderer": "^0.9.0",
     "@awayjs/materials": "^0.4.0",
     "@awayjs/player": "^0.6.0",
