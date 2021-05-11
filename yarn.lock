@@ -18,6 +18,12 @@
     tess2 "^1.0.0"
     tslib "^1.9.0"
 
+"@awayjs/graphics@^0.3.0":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@awayjs/graphics/-/graphics-0.3.19.tgz#a4cae36739d73ac864438be7554df8f3c6e21e78"
+  dependencies:
+    tess2 "^1.0.0"
+
 "@awayjs/materials@^0.4.0":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@awayjs/materials/-/materials-0.4.7.tgz#af6ad098bcc306d019799c82a9b3d36aa6026a82"
@@ -58,6 +64,10 @@
     "@awayjs/stage" "^0.9.0"
     tslib "github:microsoft/tslib"
 
+"@awayjs/scene@^0.11.0":
+  version "0.11.38"
+  resolved "https://registry.yarnpkg.com/@awayjs/scene/-/scene-0.11.38.tgz#9dcabab23b94490d1e2520571ebf54797078d263"
+
 "@awayjs/scene@^0.9.0":
   version "0.9.39"
   resolved "https://registry.yarnpkg.com/@awayjs/scene/-/scene-0.9.39.tgz#2ecd63976d11783779efbd48c17a217ef0fcf0fb"
@@ -76,16 +86,9 @@
     "@awayjs/core" "^0.7.0"
     tslib "github:microsoft/tslib"
 
-"@awayjs/view@^0.3.0":
-  version "0.3.19"
-  resolved "https://registry.yarnpkg.com/@awayjs/view/-/view-0.3.19.tgz#cfc5f14de4fe0cf1b78e20180b721f97034b4967"
-  dependencies:
-    "@awayjs/core" "^0.7.0"
-    "@awayjs/graphics" "^0.2.0"
-    "@awayjs/renderer" "^0.9.0"
-    "@awayjs/scene" "^0.9.0"
-    "@awayjs/stage" "^0.9.0"
-    tslib "github:microsoft/tslib"
+"@awayjs/view@^0.4.0":
+  version "0.4.20"
+  resolved "https://registry.yarnpkg.com/@awayjs/view/-/view-0.4.20.tgz#b2612858047027c2846d71b562bfbf41d9b84b86"
 
 "@types/acorn@^4.0.3":
   version "4.0.3"
@@ -392,7 +395,7 @@ estree-walker@^0.5.1, estree-walker@^0.5.2:
 
 event-stream@~3.3.0:
   version "3.3.4"
-  resolved "http://registry.npmjs.org/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
+  resolved "https://registry.npmjs.org/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
   dependencies:
     duplexer "~0.1.1"
     from "~0"
@@ -738,8 +741,8 @@ locate-character@^2.0.5:
   resolved "https://registry.yarnpkg.com/locate-character/-/locate-character-2.0.5.tgz#f2d2614d49820ecb3c92d80d193b8db755f74c0f"
 
 lodash@^4.5.1:
-  version "4.17.10"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
 
 magic-string@^0.22.4:
   version "0.22.5"
