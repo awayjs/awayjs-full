@@ -18,6 +18,12 @@
     tess2 "^1.0.0"
     tslib "^1.9.0"
 
+"@awayjs/graphics@^0.3.0":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@awayjs/graphics/-/graphics-0.3.19.tgz#a4cae36739d73ac864438be7554df8f3c6e21e78"
+  dependencies:
+    tess2 "^1.0.0"
+
 "@awayjs/materials@^0.4.0":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@awayjs/materials/-/materials-0.4.7.tgz#af6ad098bcc306d019799c82a9b3d36aa6026a82"
@@ -58,6 +64,10 @@
     "@awayjs/stage" "^0.9.0"
     tslib "github:microsoft/tslib"
 
+"@awayjs/scene@^0.11.0":
+  version "0.11.38"
+  resolved "https://registry.yarnpkg.com/@awayjs/scene/-/scene-0.11.38.tgz#9dcabab23b94490d1e2520571ebf54797078d263"
+
 "@awayjs/scene@^0.9.0":
   version "0.9.39"
   resolved "https://registry.yarnpkg.com/@awayjs/scene/-/scene-0.9.39.tgz#2ecd63976d11783779efbd48c17a217ef0fcf0fb"
@@ -76,16 +86,9 @@
     "@awayjs/core" "^0.7.0"
     tslib "github:microsoft/tslib"
 
-"@awayjs/view@^0.3.0":
-  version "0.3.19"
-  resolved "https://registry.yarnpkg.com/@awayjs/view/-/view-0.3.19.tgz#cfc5f14de4fe0cf1b78e20180b721f97034b4967"
-  dependencies:
-    "@awayjs/core" "^0.7.0"
-    "@awayjs/graphics" "^0.2.0"
-    "@awayjs/renderer" "^0.9.0"
-    "@awayjs/scene" "^0.9.0"
-    "@awayjs/stage" "^0.9.0"
-    tslib "github:microsoft/tslib"
+"@awayjs/view@^0.4.0":
+  version "0.4.20"
+  resolved "https://registry.yarnpkg.com/@awayjs/view/-/view-0.4.20.tgz#b2612858047027c2846d71b562bfbf41d9b84b86"
 
 "@types/acorn@^4.0.3":
   version "4.0.3"
@@ -136,18 +139,6 @@ arr-flatten@^1.1.0:
 arr-union@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/arr-union/-/arr-union-3.1.0.tgz#e39b09aea9def866a8f206e288af63919bae39c4"
-
-array-filter@~0.0.0:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/array-filter/-/array-filter-0.0.1.tgz#7da8cf2e26628ed732803581fd21f67cacd2eeec"
-
-array-map@~0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/array-map/-/array-map-0.0.0.tgz#88a2bab73d1cf7bcd5c1b118a003f66f665fa662"
-
-array-reduce@~0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/array-reduce/-/array-reduce-0.0.0.tgz#173899d3ffd1c7d9383e4479525dbe278cab5f2b"
 
 array-unique@^0.3.2:
   version "0.3.2"
@@ -392,7 +383,7 @@ estree-walker@^0.5.1, estree-walker@^0.5.2:
 
 event-stream@~3.3.0:
   version "3.3.4"
-  resolved "http://registry.npmjs.org/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
+  resolved "https://registry.npmjs.org/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
   dependencies:
     duplexer "~0.1.1"
     from "~0"
@@ -699,10 +690,6 @@ isobject@^3.0.0, isobject@^3.0.1:
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
-
-jsonify@~0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
@@ -1071,13 +1058,8 @@ shebang-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
 
 shell-quote@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.6.1.tgz#f4781949cce402697127430ea3b3c5476f481767"
-  dependencies:
-    array-filter "~0.0.0"
-    array-map "~0.0.0"
-    array-reduce "~0.0.0"
-    jsonify "~0.0.0"
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.3.tgz#aa40edac170445b9a431e17bb62c0b881b9c4123"
 
 signal-exit@^3.0.2:
   version "3.0.2"
